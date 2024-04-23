@@ -1,7 +1,7 @@
-package com.ssafy.backend.global.exception;
+package com.c206.backend.global.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.global.common.dto.Message;
+import com.c206.backend.global.common.dto.Message;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

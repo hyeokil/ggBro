@@ -1,4 +1,4 @@
-package com.ssafy.backend.global.exception;
+package com.c206.backend.global.exception;
 
 import lombok.Getter;
 
