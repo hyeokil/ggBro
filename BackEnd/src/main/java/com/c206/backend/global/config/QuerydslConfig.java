@@ -1,4 +1,4 @@
-package com.ssafy.backend.global.config;
+package com.c206.backend.global.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

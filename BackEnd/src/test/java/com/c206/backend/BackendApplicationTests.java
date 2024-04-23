@@ -1,4 +1,4 @@
-package com.ssafy.backend;
+package com.c206.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

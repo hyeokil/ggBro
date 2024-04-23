@@ -1,4 +1,4 @@
-package com.ssafy.backend.global.common.dto;
+package com.c206.backend.global.common.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.ssafy.backend.global.exception;
+package com.c206.backend.global.exception;
 
-import com.ssafy.backend.global.common.dto.Message;
+import com.c206.backend.global.common.dto.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
