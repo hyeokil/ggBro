@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +57,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -64,6 +65,47 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold();
+    return Scaffold(
+      body: Column(
+        children: [
+          Center(
+            child: Text(
+              '큐트폰트',
+              style: CustomFontStyle.cuteFont,
+            ),
+          ),
+          Center(
+            child: Text(
+              '연성폰트',
+              style: CustomFontStyle.yeonSung,
+            ),
+          ),
+          Center(
+            child: Container(
+              height: 30,
+              color: AppColors.basicpink
+            ),
+          ),
+          Center(
+            child: Container(
+                height: 30,
+                color: AppColors.basicgray
+            ),
+          ),
+          Center(
+            child: Container(
+                height: 30,
+                color: AppColors.basicgreen
+            ),
+          ),
+          Center(
+            child: Container(
+                height: 30,
+                color: AppColors.basicnavy
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
