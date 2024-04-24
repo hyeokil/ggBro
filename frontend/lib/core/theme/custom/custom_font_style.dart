@@ -13,13 +13,15 @@ class CustomFontStyle {
   /// Typography
   static const cuteFont = TextStyle(
     fontFamily: "CuteFont",
-    fontSize: 50,
+    fontSize: 40,
+    color: Colors.black,
     fontWeight: CustomFontWeight.semiBold,
   );
 
   static const yeonSung = TextStyle(
     fontFamily: "YeonSung",
     fontSize: 50,
+    color: Colors.black,
     fontWeight: CustomFontWeight.semiBold,
   );
 

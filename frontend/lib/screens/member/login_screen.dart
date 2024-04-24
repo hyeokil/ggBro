@@ -12,15 +12,27 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TextButton(
-        onPressed: () {
-          context.go('/intro');
-        },
-        child: Text(
-          '로그인페이지',
-          style: CustomFontStyle.yeonSung,
-        ),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Column(
+        children: [
+          Text(
+            '로그인페이지',
+            style: CustomFontStyle.yeonSung,
+          ),
+          GestureDetector(
+            onTap: () {
+              context.go('/intro');
+            },
+            child: Container(
+              width: 200,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.red,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
