@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/component/profile_image.dart';
-import 'package:frontend/screens/component/setting.dart';
-import 'package:frontend/screens/component/gging_bar.dart';
+import 'package:frontend/screens/component/topbar/profile_image.dart';
+import 'package:frontend/screens/component/topbar/setting.dart';
+import 'package:frontend/screens/component/topbar/gging_bar.dart';
 
 class TopBar extends StatefulWidget {
   const TopBar({super.key});
