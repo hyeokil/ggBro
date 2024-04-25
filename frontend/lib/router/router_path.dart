@@ -8,4 +8,13 @@ class RoutePath{
 
   //  메인 페이지
   static const String main = '/main';
+
+  //  랭킹 페이지
+  static const String ranking = '/ranking';
+
+  //  히스토리 페이지
+  static const String history = '/history';
+
+  //  캠페인 페이지
+  static const String campaign = '/campaign';
 }

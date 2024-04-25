@@ -44,8 +44,11 @@ class _IntroSayEarthState extends State<IntroSayEarth> {
             child: Container(
               color: Colors.transparent,
               child: Center(
-                child: Text('도와줘!!', style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung200),)
-              ),
+                  child: Text(
+                '도와줘!!',
+                style: CustomFontStyle.getTextStyle(
+                    context, CustomFontStyle.yeonSung200),
+              )),
             ),
           ),
         ],

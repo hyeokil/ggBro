@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/theme_data.dart';
 import 'package:frontend/router/routes.dart';
+import 'package:provider/provider.dart';
+
+import 'provider/main_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MainProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {

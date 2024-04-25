@@ -97,7 +97,7 @@ class _IntroScreenState extends State<IntroScreen> {
             bottom: MediaQuery.of(context).size.height * 0.05,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.red,
+                // color: Colors.red,
                 image: DecorationImage(
                   image: AssetImage("assets/images/intro_sentence.png"),
                   fit: BoxFit.cover,
