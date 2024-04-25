@@ -26,4 +26,5 @@ class AppIcons {
   static const String intro_trash_4 = "assets/images/intro_trash_4.png";
   static const String intro_trash_5 = "assets/images/intro_trash_5.png";
 
+  static const String error_icon = "assets/images/error_icon.png";
 }

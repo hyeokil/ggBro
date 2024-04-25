@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Text(
             '로그인페이지',
-            style: CustomFontStyle.yeonSung,
+            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung50),
           ),
           GestureDetector(
             onTap: () {
