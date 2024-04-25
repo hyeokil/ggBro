@@ -135,10 +135,14 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ExpBar(),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  decoration: BoxDecoration(
+                GestureDetector(
+                  onTap: () {
+                    context.push('/ploggingReady');
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    decoration: BoxDecoration(
                       color: AppColors.readyButton,
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(width: 3, color: Colors.white),
@@ -148,28 +152,30 @@ class _MainScreenState extends State<MainScreen> {
                             offset: Offset(0, 4),
                             blurRadius: 1,
                             spreadRadius: 1)
-                      ]),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        top: MediaQuery.of(context).size.height * 0.003,
-                        left: MediaQuery.of(context).size.width * 0.015,
-                        child: Container(
-                          child: Icon(
-                            Icons.directions_run_sharp,
-                            size: 30,
-                            color: Colors.white,
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.003,
+                          left: MediaQuery.of(context).size.width * 0.015,
+                          child: Container(
+                            child: Icon(
+                              Icons.directions_run_sharp,
+                              size: 30,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                      Center(
-                        child: Text(
-                          '   시작하기',
-                          style: CustomFontStyle.getTextStyle(
-                              context, CustomFontStyle.yeonSung80_white),
+                        Center(
+                          child: Text(
+                            '   준비하기',
+                            style: CustomFontStyle.getTextStyle(
+                                context, CustomFontStyle.yeonSung80_white),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

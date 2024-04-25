@@ -17,4 +17,7 @@ class RoutePath{
 
   //  캠페인 페이지
   static const String campaign = '/campaign';
+
+  //  플로깅 페이지
+  static const String ploggingReady = '/ploggingReady';
 }
