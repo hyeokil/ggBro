@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/screens/intro/dialog/intro_dialog_helping.dart';
+import 'package:frontend/screens/intro/dialog/intro_dialog_warning.dart';
 import 'package:frontend/screens/intro/intro_angryearth.dart';
 import 'package:frontend/screens/intro/intro_animal.dart';
 import 'package:frontend/screens/intro/intro_animal_box.dart';
@@ -13,6 +15,7 @@ import 'package:frontend/screens/intro/intro_earth.dart';
 import 'package:frontend/screens/intro/intro_earth_spacedevil.dart';
 import 'package:frontend/screens/intro/intro_sayearth.dart';
 import 'package:frontend/screens/intro/intro_trash.dart';
+import 'package:go_router/go_router.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -44,13 +47,13 @@ class _IntroScreenState extends State<IntroScreen> {
     '화가난 지구는',
     '용사들에게 도움을 요청했어요',
   ];
-  int count = 0;
+  int page = 0;
 
   void goNext() {
     setState(() {
-      count++;
+      page++;
     });
-    // print(count);
+    // print(page);
   }
 
   @override
@@ -61,14 +64,30 @@ class _IntroScreenState extends State<IntroScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              if (count < 8) {
+              if (page < 8) {
                 goNext();
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const IntroDialogWarning();
+                  },
+                ).then((_) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const IntroDialogHelping();
+                    },
+                  ).then((_) {
+                    context.go('/main');
+                  });
+                });
               }
             },
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(introBackground[count]), // 로컬 이미지 사용
+                  image: AssetImage(introBackground[page]), // 로컬 이미지 사용
                   fit: BoxFit.cover, // 이미지가 컨테이너 전체를 채우도록 설정
                 ),
               ),
@@ -88,28 +107,28 @@ class _IntroScreenState extends State<IntroScreen> {
               width: MediaQuery.of(context).size.width * 1,
               child: Center(
                 child: Text(
-                  introSentence[count],
+                  introSentence[page],
                   style: CustomFontStyle.cuteFont,
                 ),
               ),
             ),
           ),
           IgnorePointer(
-            child: count == 1
+            child: page == 1
                 ? IntroAnimal()
-                : count == 2
+                : page == 2
                     ? IntroEarth()
-                    : count == 3
+                    : page == 3
                         ? IntroEarthSpacedevil()
-                        : count == 4
+                        : page == 4
                             ? IntroTrash()
-                            : count == 5
+                            : page == 5
                                 ? IntroAnimalTrash()
-                                : count == 6
+                                : page == 6
                                     ? IntroAnimalBox()
-                                    : count == 7
+                                    : page == 7
                                         ? IntroAngryEarth()
-                                        : count == 8
+                                        : page == 8
                                             ? IntroSayEarth()
                                             : Container(),
           ),

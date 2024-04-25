@@ -7,5 +7,5 @@ class RoutePath{
   static const String intro = '/intro';
 
   //  메인 페이지
-  static const String home = '/home';
+  static const String main = '/main';
 }
