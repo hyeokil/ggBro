@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/component/top_bar.dart';
+import 'package:frontend/screens/component/topbar/top_bar.dart';
 
 class RankingScreen extends StatefulWidget {
   const RankingScreen({super.key});

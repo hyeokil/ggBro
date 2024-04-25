@@ -19,4 +19,6 @@ class AppColors {
 
   static const Color error = Color(0xFFFE4C4C);
   static const Color help = Color(0xFF2E6F68);
+
+  static const Color readyButton = Color(0xFF67EB00);
 }

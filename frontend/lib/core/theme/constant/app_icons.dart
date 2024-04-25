@@ -27,4 +27,5 @@ class AppIcons {
   static const String intro_trash_5 = "assets/images/intro_trash_5.png";
 
   static const String gging = "assets/images/gging.png";
+  static const String intersect = "assets/images/intersect.png";
 }
