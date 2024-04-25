@@ -1,5 +1,6 @@
 import 'package:frontend/router/router_path.dart';
 import 'package:frontend/screens/intro/intro_screen.dart';
+import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +15,11 @@ final GoRouter globalRouter = GoRouter(
       path: RoutePath.intro,
       name: 'intro',
       builder: (context, state) => IntroScreen(),
+    ),
+    GoRoute(
+      path: RoutePath.main,
+      name: 'main',
+      builder: (context, state) => MainScreen(),
     )
     // GoRoute(
     //   path: RoutePath.main,

@@ -18,11 +18,87 @@ class CustomFontStyle {
     fontWeight: CustomFontWeight.semiBold,
   );
 
-  static const yeonSung = TextStyle(
+  static const yeonSung50 = TextStyle(
     fontFamily: "YeonSung",
     fontSize: 50,
     color: Colors.black,
     fontWeight: CustomFontWeight.semiBold,
   );
 
+  static const yeonSung90 = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 90,
+    color: Colors.black,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung80 = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 80,
+    color: Colors.black,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung70 = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 70,
+    color: Colors.black,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung60 = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 60,
+    color: Colors.black,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung200 = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 200,
+    color: Colors.black,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung50_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 50,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung90_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 90,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung80_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 80,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung70_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 70,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung60_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 60,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
+  static const yeonSung200_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 200,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
 }
