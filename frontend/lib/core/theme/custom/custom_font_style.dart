@@ -11,17 +11,17 @@ class CustomFontStyle {
   }
 
   /// Typography
-  static const huge = TextStyle(
+  static const cuteFont = TextStyle(
     fontFamily: "CuteFont",
-    color: AppColors.black,
-    fontSize: 400,
+    fontSize: 40,
+    color: Colors.black,
     fontWeight: CustomFontWeight.semiBold,
   );
 
-  static const huge1 = TextStyle(
+  static const yeonSung = TextStyle(
     fontFamily: "YeonSung",
-    color: AppColors.black,
-    fontSize: 400,
+    fontSize: 50,
+    color: Colors.black,
     fontWeight: CustomFontWeight.semiBold,
   );
 
