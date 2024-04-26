@@ -28,16 +28,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: const MyHomePage(),
       builder: (context, child) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter, // 그라데이션 시작 위치
               end: Alignment.bottomCenter, // 그라데이션 끝 위치
               colors: [
-                Color(0xFFEAFFE8), // HEX 색상 코드
-                Color(0xFF9CFFB2),
+                Color.fromRGBO(203, 242, 245, 1),
+                Color.fromRGBO(247, 255, 230, 1),
+                Color.fromRGBO(247, 255, 230, 1),
+                Color.fromRGBO(247, 255, 230, 1),
+                Color.fromRGBO(254, 206, 224, 1),
               ], // 그라데이션 색상 배열
             ),
           ), // 전체 배경색으로 파란색 설정

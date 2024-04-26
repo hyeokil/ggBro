@@ -1,7 +1,9 @@
-class RoutePath{
-
+class RoutePath {
   //  로그인 페이지
   static const String login = '/login';
+
+  //  회원가입 페이지
+  static const String singUp = '/signUp';
 
   //  인트로 페이지
   static const String intro = '/intro';
@@ -20,4 +22,10 @@ class RoutePath{
 
   //  플로깅 페이지
   static const String ploggingReady = '/ploggingReady';
+
+  //  프로필 페이지
+  static const String profile = '/profile';
+
+  //  구출하기 페이지
+  static const String rescue = '/rescue';
 }

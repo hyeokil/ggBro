@@ -4,14 +4,14 @@ import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/component/quest_list.dart';
 
-class WeeklyQuestDialog extends StatefulWidget {
-  const WeeklyQuestDialog({super.key});
+class AchievementDialog extends StatefulWidget {
+  const AchievementDialog({super.key});
 
   @override
-  State<WeeklyQuestDialog> createState() => _WeeklyQuestDialogState();
+  State<AchievementDialog> createState() => _WeeklyQuestDialogState();
 }
 
-class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
+class _WeeklyQuestDialogState extends State<AchievementDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -26,12 +26,12 @@ class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
                 height: MediaQuery.of(context).size.height * 0.04,
                 width: MediaQuery.of(context).size.width * 0.65,
                 decoration: BoxDecoration(
-                  color: AppColors.basicpink,
+                  color: AppColors.achievementButton,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(
                   child: Text(
-                    '주간 퀘스트',
+                    '업 적',
                     style: CustomFontStyle.getTextStyle(
                       context,
                       CustomFontStyle.yeonSung80_white,
@@ -56,7 +56,7 @@ class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.basicpink,
+                    color: AppColors.achievementButton,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: GestureDetector(
@@ -77,8 +77,8 @@ class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           QuestList(
-            content: '수돌이랑 플로깅 진행하기',
-            compensation: '10',
+            content: '플라스틱 100개 줍기',
+            compensation: '100',
           ),
         ],
       ),

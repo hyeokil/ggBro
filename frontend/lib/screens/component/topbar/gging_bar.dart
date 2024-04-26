@@ -43,8 +43,7 @@ class _GgingBarState extends State<GgingBar> {
           top: MediaQuery.of(context).size.height * 0.017,
           left: MediaQuery.of(context).size.width * 0.04,
           child: Container(
-            height: 30,
-            width: 30,
+            width: MediaQuery.of(context).size.width * 0.08,
             child: Image.asset(AppIcons.gging),
           ),
         )
