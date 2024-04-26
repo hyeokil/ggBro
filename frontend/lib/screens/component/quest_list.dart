@@ -6,7 +6,14 @@ import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class QuestList extends StatefulWidget {
-  const QuestList({super.key});
+  final String content;
+  final String compensation;
+
+  const QuestList({
+    super.key,
+    required this.content,
+    required this.compensation,
+  });
 
   @override
   State<QuestList> createState() => _QuestListState();
@@ -35,12 +42,12 @@ class _QuestListState extends State<QuestList> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '수돌이랑 플로깅 진행하기',
+                widget.content,
                 style: CustomFontStyle.getTextStyle(
                     context, CustomFontStyle.yeonSung60_white),
               ),
               Text(
-                '10',
+                widget.compensation,
                 style: CustomFontStyle.getTextStyle(
                     context, CustomFontStyle.yeonSung60_white),
               ),
