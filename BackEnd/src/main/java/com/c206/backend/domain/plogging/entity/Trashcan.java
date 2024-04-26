@@ -1,6 +1,6 @@
-package com.c206.backend.domain.member.entity;
+package com.c206.backend.domain.plogging.entity;
 
-import com.c206.backend.global.common.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,17 +12,18 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+public class Trashcan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberId;
+    private Long trashcanId;
 
-    private String email;
+    private Double latitude;
 
-    private String password;
+    private Double longitude;
 
-    private String nickname;
+    private String detail;
 
+    private String trashcanType;
 
 }

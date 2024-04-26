@@ -1,6 +1,8 @@
-package com.c206.backend.domain.achievement.entity;
+package com.c206.backend.domain.plogging.entity;
+
 
 import com.c206.backend.domain.member.entity.Member;
+import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,31 +12,21 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class memberAchievement extends BaseEntity {
+public class Plogging extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberAchievementId;
+    private Long ploggingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "achievement_id")
-    private Achievement achievement;
+    @JoinColumn(name = "member_pet_id")
+    private MemberPet memberPet;
 
-    private int progress;
+    private String time;
 
-    private int goalMultiply;
-
-    public void updateProgress(int progress) {
-        this.progress = progress;
-    }
-
-    public void updateGoalMultiply() {
-        this.progress+=1;
-    }
 
 }
-

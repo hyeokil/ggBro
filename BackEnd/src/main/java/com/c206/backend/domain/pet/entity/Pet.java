@@ -1,6 +1,6 @@
-package com.c206.backend.domain.partner.entity;
+package com.c206.backend.domain.pet.entity;
 
-import com.c206.backend.domain.partner.entity.enums.PartnerType;
+import com.c206.backend.domain.pet.entity.enums.PetType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,19 +9,18 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Partner {
+public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long partnerId;
+    private Long petId;
 
-    private String imageUrl;
+    private String image;
 
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private PartnerType partnerType;
-
+    private PetType petType;
 
 
 }

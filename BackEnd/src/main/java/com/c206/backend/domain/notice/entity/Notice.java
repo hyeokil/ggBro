@@ -1,6 +1,6 @@
-package com.c206.backend.domain.member.entity;
+package com.c206.backend.domain.notice.entity;
 
-import com.c206.backend.global.common.BaseEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,17 +12,14 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntity {
+public class Notice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberId;
+    private Long noticeId;
 
-    private String email;
+    private String title;
 
-    private String password;
-
-    private String nickname;
-
+    private String image;
 
 }

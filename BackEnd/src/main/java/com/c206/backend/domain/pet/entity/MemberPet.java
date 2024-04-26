@@ -1,6 +1,7 @@
-package com.c206.backend.domain.partner.entity;
+package com.c206.backend.domain.pet.entity;
 
 import com.c206.backend.domain.member.entity.Member;
+import com.c206.backend.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,19 +10,19 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberPartner {
+public class MemberPet extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberPartnerId;
+    private Long memberPetId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partner_id")
-    private Partner partner;
+    @JoinColumn(name = "pet_id")
+    private Pet pet;
 
     private int exp;
 
