@@ -44,7 +44,7 @@ class _AchievementButtonState extends State<RescueButton> {
           ),
           Center(
             child: Text(
-              '    구 출',
+              '    구 조',
               style: CustomFontStyle.getTextStyle(
                   context, CustomFontStyle.yeonSung60_white),
             ),
