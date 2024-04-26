@@ -19,7 +19,7 @@ class _RescueScreenState extends State<RescueScreen> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            TopBar(),
+            const TopBar(),
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.height * 0.07,
@@ -30,7 +30,7 @@ class _RescueScreenState extends State<RescueScreen> {
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.basicShadowGray.withOpacity(0.5),
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                     blurRadius: 1,
                     spreadRadius: 1,
                   ),
@@ -66,7 +66,7 @@ class _RescueScreenState extends State<RescueScreen> {
                 ],
               ),
             ),
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height * 0.3,
               child: Image.asset(AppIcons.trashs),
             ),
@@ -80,7 +80,7 @@ class _RescueScreenState extends State<RescueScreen> {
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.basicgray.withOpacity(0.5),
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                     blurRadius: 1,
                     spreadRadius: 1,
                   )
@@ -101,7 +101,7 @@ class _RescueScreenState extends State<RescueScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.08,
                     child: Image.asset(AppIcons.gging),
                   ),

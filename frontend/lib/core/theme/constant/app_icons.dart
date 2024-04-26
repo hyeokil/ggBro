@@ -1,5 +1,4 @@
 class AppIcons {
-
   static const String earth_1 = "assets/images/earth_1.png";
   static const String earth_2 = "assets/images/earth_2.png";
   static const String earth_3 = "assets/images/earth_3.png";
@@ -18,7 +17,8 @@ class AppIcons {
   static const String intro_forest = "assets/images/intro_forest.PNG";
   static const String intro_sentnece = "assets/images/intro_sentence.png";
   static const String intro_space = "assets/images/intro_space.PNG";
-  static const String intro_speak_bubble = "assets/images/intro_speak_bubble.png";
+  static const String intro_speak_bubble =
+      "assets/images/intro_speak_bubble.png";
   static const String intro_spacedevil = "assets/images/intro_spacedevil.png";
   static const String intro_trash_1 = "assets/images/intro_trash_1.png";
   static const String intro_trash_2 = "assets/images/intro_trash_2.png";
@@ -28,5 +28,6 @@ class AppIcons {
 
   static const String gging = "assets/images/gging.png";
   static const String intersect = "assets/images/intersect.png";
+  static const String flogging_logo = "assets/images/flogging_logo.png";
   static const String trashs = "assets/images/trashs.png";
 }
