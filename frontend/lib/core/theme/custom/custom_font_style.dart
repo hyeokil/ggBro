@@ -67,6 +67,13 @@ class CustomFontStyle {
     fontWeight: CustomFontWeight.semiBold,
   );
 
+  static const yeonSung55_white = TextStyle(
+    fontFamily: "YeonSung",
+    fontSize: 50,
+    color: Colors.white,
+    fontWeight: CustomFontWeight.semiBold,
+  );
+
   static const yeonSung90_white = TextStyle(
     fontFamily: "YeonSung",
     fontSize: 90,
