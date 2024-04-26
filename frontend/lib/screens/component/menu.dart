@@ -25,7 +25,6 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -39,10 +38,11 @@ class _MenuState extends State<Menu> {
             border: Border.all(width: 3, color: Colors.white),
             boxShadow: [
               BoxShadow(
-                  color: AppColors.basicgray.withOpacity(0.5),
-                  offset: Offset(0, 4),
-                  blurRadius: 1,
-                  spreadRadius: 1)
+                color: AppColors.basicgray.withOpacity(0.5),
+                offset: Offset(0, 4),
+                blurRadius: 1,
+                spreadRadius: 1,
+              )
             ],
           ),
         ),
