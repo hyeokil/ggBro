@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            TopBar(),
+            const TopBar(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -127,18 +127,16 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,
             ),
-            Partner(),
+            const Partner(),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.01,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ExpBar(),
+                const ExpBar(),
                 GestureDetector(
-                  onTap: () {
-                    context.push('/ploggingReady');
-                  },
+                  onTap: () {},
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.05,
                     width: MediaQuery.of(context).size.width * 0.3,
@@ -149,7 +147,7 @@ class _MainScreenState extends State<MainScreen> {
                       boxShadow: [
                         BoxShadow(
                             color: AppColors.basicgray.withOpacity(0.5),
-                            offset: Offset(0, 4),
+                            offset: const Offset(0, 4),
                             blurRadius: 1,
                             spreadRadius: 1)
                       ],
@@ -160,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                           top: MediaQuery.of(context).size.height * 0.003,
                           left: MediaQuery.of(context).size.width * 0.015,
                           child: Container(
-                            child: Icon(
+                            child: const Icon(
                               Icons.directions_run_sharp,
                               size: 30,
                               color: Colors.white,
@@ -183,7 +181,7 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,
             ),
-            ClearMonster(),
+            const ClearMonster(),
           ],
         ),
       ),
