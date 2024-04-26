@@ -58,7 +58,7 @@ class _RankingState extends State<CampaignScreen> {
                       period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
                     ),
                     CampaignList(
-                      title: '아따 제목이랑께랑 까랑',
+                      title: '아따 제목이랑께랑',
                       period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
                     ),
                     CampaignList(

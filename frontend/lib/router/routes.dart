@@ -6,7 +6,9 @@ import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
 import 'package:frontend/screens/plogging/ready_plogging.dart';
+import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
+import 'package:frontend/screens/rescue/rescue_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter globalRouter = GoRouter(
@@ -49,6 +51,16 @@ final GoRouter globalRouter = GoRouter(
       path: RoutePath.ploggingReady,
       name: 'ploggingReady',
       builder: (context, state) => const ReadyPlogging(),
+    ),
+    GoRoute(
+      path: RoutePath.profile,
+      name: 'profile',
+      builder: (context, state) => const ProfileScreen(),
+    ),
+    GoRoute(
+      path: RoutePath.rescue,
+      name: 'rescue',
+      builder: (context, state) => const RescueScreen(),
     )
     // GoRoute(
     //   path: RoutePath.main,

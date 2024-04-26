@@ -22,4 +22,10 @@ class RoutePath {
 
   //  플로깅 페이지
   static const String ploggingReady = '/ploggingReady';
+
+  //  프로필 페이지
+  static const String profile = '/profile';
+
+  //  구출하기 페이지
+  static const String rescue = '/rescue';
 }
