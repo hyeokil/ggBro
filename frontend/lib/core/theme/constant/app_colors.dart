@@ -21,4 +21,6 @@ class AppColors {
   static const Color help = Color(0xFF2E6F68);
 
   static const Color readyButton = Color(0xFF67EB00);
+  static const Color achievementButton = Color(0xFF08B9FF);
+  static const Color rescueButton = Color(0xFFA75CF4);
 }
