@@ -2,7 +2,7 @@ package com.c206.backend.domain.quest.entity;
 
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.pet.entity.MemberPet;
-import com.c206.backend.global.common.BaseEntity;
+import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +15,8 @@ public class MemberQuest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberQuestId;
+    @Column(name = "member_quest_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

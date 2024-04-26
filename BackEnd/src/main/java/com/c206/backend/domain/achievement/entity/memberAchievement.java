@@ -1,7 +1,7 @@
 package com.c206.backend.domain.achievement.entity;
 
 import com.c206.backend.domain.member.entity.Member;
-import com.c206.backend.global.common.BaseEntity;
+import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +14,8 @@ public class memberAchievement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberAchievementId;
+    @Column(name = "member_achievement_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
