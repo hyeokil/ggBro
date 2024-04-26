@@ -2,7 +2,7 @@ package com.c206.backend.domain.plogging.entity;
 
 
 import com.c206.backend.domain.plogging.entity.enums.TrashType;
-import com.c206.backend.global.common.BaseEntity;
+import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

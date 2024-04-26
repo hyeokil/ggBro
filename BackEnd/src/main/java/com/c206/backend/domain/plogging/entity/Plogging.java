@@ -3,7 +3,7 @@ package com.c206.backend.domain.plogging.entity;
 
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.pet.entity.MemberPet;
-import com.c206.backend.global.common.BaseEntity;
+import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
