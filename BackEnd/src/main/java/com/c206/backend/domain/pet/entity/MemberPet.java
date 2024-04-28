@@ -33,7 +33,12 @@ public class MemberPet extends BaseEntity {
 
     private int normal;
 
-    private int ;
+    private int plastic;
+
+    private int can;
+
+    private int glass;
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -46,4 +51,18 @@ public class MemberPet extends BaseEntity {
         this.active = true;
     }
 
+    public void updateNormal() {
+        this.normal += 1;
+    }
+
+    public void updatePlastic() {
+        this.plastic += 1;
+    }
+
+    public void updateCan() {
+        this.can += 1;
+    }
+    public void updateGlass() {
+        this.glass += 1;
+    }
 }

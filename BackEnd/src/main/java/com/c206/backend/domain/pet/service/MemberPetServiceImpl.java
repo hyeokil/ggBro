@@ -40,7 +40,7 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public MemberPetDetailResponseDto getMemberPetDetail(Long memberId, Long memberPetId) {
+    public MemberPetDetailResponseDto getMemberPetDetail(Long memberPetId) {
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new MemberPetException(MemberPetError.NOT_FOUND_MEMBER_PET));
         // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 주울시 컬럼에 추가하는 것으로 변경
@@ -61,20 +61,16 @@ public class MemberPetServiceImpl implements MemberPetService {
 //            }
 //
 //        }
-        MemberPetDetailResponseDto memberPetDetailResponseDto = new MemberPetDetailResponseDto(
+        return new MemberPetDetailResponseDto(
                 memberPet.getNickname(),
                 memberPet.isActive(),
                 memberPet.getExp(),
                 memberPet.getPet().getImage(),
-
-
-
-
-
-
-
+                memberPet.getNormal(),
+                memberPet.getPlastic(),
+                memberPet.getCan(),
+                memberPet.getGlass()
 
         );
-        return null;
     }
 }
