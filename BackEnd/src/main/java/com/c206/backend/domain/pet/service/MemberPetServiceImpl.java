@@ -77,4 +77,10 @@ public class MemberPetServiceImpl implements MemberPetService {
                 memberPet.getGlass()
         );
     }
+
+    @Override
+    public Boolean rescuePet(Long memberId) {
+
+        return null;
+    }
 }

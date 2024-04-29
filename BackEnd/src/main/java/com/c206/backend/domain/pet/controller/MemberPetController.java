@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,7 +32,6 @@ public class MemberPetController {
     }
 
 
-
     // todo: redis에서 latest memberPetId 가져오기
     // AuthenticationPrincipal 변경
     @GetMapping("/{memberPetId}")
@@ -43,7 +39,16 @@ public class MemberPetController {
     public ResponseEntity<Message<MemberPetDetailResponseDto>> getMemberPetDetail(
             @AuthenticationPrincipal Long memberId,
             @PathVariable("memberPetId") Long memberPetId) {
-        MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId,memberPetId);
+        MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, memberPetId);
         return ResponseEntity.ok().body(Message.success(memberPetDetailResponseDto));
+    }
+
+    // AuthenticationPrincipal 변경
+    @PostMapping("/rescue")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Message<Boolean>> rescuePet(
+            @AuthenticationPrincipal Long memberId) {
+        Boolean isRescue = false;
+        return ResponseEntity.ok().body(Message.success(isRescue));
     }
 }

@@ -1,6 +1,6 @@
 package com.c206.backend.domain.member.exception;
 
-import com.ssafy.backend.global.common.dto.Message;
+import com.c206.backend.global.common.dto.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
