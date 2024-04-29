@@ -31,6 +31,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
          //request 에서 Authorization 헤더 찾기
         String header = request.getHeader("Authorization");
 
+        logger.info("filter  " + header);
 
         //Authorization 헤더 검증
 //        if (header != null && header.startsWith("Bearer ")) {
@@ -49,6 +50,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if(header == null || !header.startsWith("Bearer ")){
             System.out.println("token null");
             filterChain.doFilter(request, response);
+
+            return;
         }
 
         System.out.println("authorization now");

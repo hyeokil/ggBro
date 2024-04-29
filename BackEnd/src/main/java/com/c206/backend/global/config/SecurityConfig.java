@@ -87,15 +87,21 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         http
-                .formLogin(AbstractHttpConfigurer::disable);
+                .formLogin((auth) -> auth.loginPage("/signin")
+                        .loginProcessingUrl("/loginProc")
+                        .permitAll()
+                );
+//                .formLogin(AbstractHttpConfigurer::disable);
 
         http
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         http
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/", "/**", "/api/v1", "/api/v1/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .anyRequest().permitAll());
+                        .requestMatchers("/", "/**","/signin",
+                                "/api/v1", "/api/v1/", "/api/v1/**",
+                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .anyRequest().authenticated());
 //                        .anyRequest().authenticated());
 
         http
