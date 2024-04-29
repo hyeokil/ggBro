@@ -3,12 +3,12 @@ package com.c206.backend.domain.pet.exception;
 import lombok.Getter;
 
 @Getter
-public class MemberPetException extends RuntimeException {
-    private final MemberPetError errorCode;
+public class PetException extends RuntimeException {
+    private final PetError errorCode;
     private final int status;
     private final String errorMessage;
 
-    public MemberPetException(MemberPetError errorCode) {
+    public PetException(PetError errorCode) {
         super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
         this.status = errorCode.getHttpStatus().value();
