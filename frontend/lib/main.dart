@@ -13,7 +13,7 @@ import 'provider/main_provider.dart';
 void main() async {
   // dotenv 설정
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: "assets/config/.env");
 
   // 지도 초기화
   await _initialize();
