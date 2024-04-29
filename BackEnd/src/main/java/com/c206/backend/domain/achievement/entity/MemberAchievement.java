@@ -1,7 +1,7 @@
 package com.c206.backend.domain.achievement.entity;
 
 import com.c206.backend.domain.member.entity.Member;
-import com.c206.backend.global.common.BaseEntity;
+import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,11 +10,12 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class memberAchievement extends BaseEntity {
+public class MemberAchievement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberAchievementId;
+    @Column(name = "member_achievement_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
