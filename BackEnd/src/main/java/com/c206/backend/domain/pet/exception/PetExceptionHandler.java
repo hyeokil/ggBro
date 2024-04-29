@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class MemberPetExceptionHandler {
-    @ExceptionHandler(MemberPetException.class)
-    public ResponseEntity<Message<Void>> memberException(MemberPetException e) {
+public class PetExceptionHandler {
+    @ExceptionHandler(PetException.class)
+    public ResponseEntity<Message<Void>> memberException(PetException e) {
         log.error("{} is occurred", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(Message.fail(null, e.getErrorMessage()));
     }

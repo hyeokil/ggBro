@@ -3,8 +3,8 @@ package com.c206.backend.domain.pet.service;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.entity.MemberPet;
-import com.c206.backend.domain.pet.exception.MemberPetError;
-import com.c206.backend.domain.pet.exception.MemberPetException;
+import com.c206.backend.domain.pet.exception.PetError;
+import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +47,8 @@ public class MemberPetServiceImpl implements MemberPetService {
 //
 //        }
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
-                -> new MemberPetException(MemberPetError.NOT_FOUND_MEMBER_PET));
-        // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 주울시 컬럼에 추가하는 것으로 변경
+                -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+        // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 컬럼 추가하는 것으로 변경
 //        List<Plogging> ploggings = ploggingRepository.findByMemberPetId(memberPetId);
 //        int normal, plastic, can, glass;
 //        for (Plogging plogging : ploggings) {
