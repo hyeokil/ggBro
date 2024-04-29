@@ -21,10 +21,28 @@ class _SignUpState extends State<SignUpScreen> {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const EmailInput(),
-                const NickNameInput(),
-                const PasswordInput(),
-                const PasswordCheckInput(),
+                const CustomInput(
+                  icon: Icon(Icons.mail),
+                  hint: "Email",
+                  label: "이메일",
+                ),
+                const CustomInput(
+                  icon: Icon(Icons.person),
+                  hint: "Nickname",
+                  label: "닉네임",
+                ),
+                const CustomInput(
+                  icon: Icon(Icons.lock),
+                  hint: "Password",
+                  label: "비밀번호",
+                  obscure: true,
+                ),
+                const CustomInput(
+                  icon: Icon(Icons.check),
+                  hint: "Password Check",
+                  label: "비밀번호 확인",
+                  obscure: true,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -49,68 +67,5 @@ class _SignUpState extends State<SignUpScreen> {
                 )
               ],
             )));
-  }
-}
-
-class NickNameInput extends StatelessWidget {
-  const NickNameInput({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      margin: const EdgeInsets.only(bottom: 20),
-      child: TextFormField(
-        decoration: const InputDecoration(
-            icon: Icon(Icons.lock),
-            hintText: "nickname",
-            labelText: "닉네임",
-            contentPadding: EdgeInsets.symmetric(horizontal: 10),
-            filled: true,
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                )),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-            )),
-      ),
-    );
-  }
-}
-
-class PasswordCheckInput extends StatelessWidget {
-  const PasswordCheckInput({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      margin: const EdgeInsets.only(bottom: 20),
-      child: TextFormField(
-        obscureText: true,
-        decoration: const InputDecoration(
-            icon: Icon(Icons.check),
-            hintText: "Password check",
-            labelText: "비밀번호 확인",
-            contentPadding: EdgeInsets.symmetric(horizontal: 10),
-            filled: true,
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                )),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-            )),
-      ),
-    );
   }
 }
