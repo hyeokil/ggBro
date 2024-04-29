@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> requestPermissions() async {
     await [
       Permission.location,
+      Permission.bluetooth,
     ].request();
   }
 
