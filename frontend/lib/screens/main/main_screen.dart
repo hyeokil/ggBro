@@ -11,6 +11,7 @@ import 'package:frontend/screens/component/topbar/top_bar.dart';
 import 'package:frontend/screens/main/component/exp_bar.dart';
 import 'package:frontend/screens/main/dialog/weekly_quest_dialog.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
+import 'package:frontend/screens/ranking/ranking_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -70,8 +71,30 @@ class _MainScreenState extends State<MainScreen> {
                 // ),
                 GestureDetector(
                   onTap: () {
-                    context.go('/ranking');
+                    context.push('/ranking');
                     selectedMenu('ranking');
+                    // Navigator.push(
+                    //   context,
+                    //   PageRouteBuilder(
+                    //     pageBuilder: (context, animation, secondaryAnimation) =>
+                    //         RankingScreen(),
+                    //     transitionsBuilder:
+                    //         (context, animation, secondaryAnimation, child) {
+                    //       var begin = Offset(1.0, 0.0);
+                    //       var end = Offset.zero;
+                    //       var curve = Curves.ease;
+                    //
+                    //       var tween = Tween(begin: begin, end: end)
+                    //           .chain(CurveTween(curve: curve));
+                    //
+                    //       return SlideTransition(
+                    //         position: animation.drive(tween),
+                    //         child: child,
+                    //       );
+                    //     },
+                    //   ),
+                    // );
+                    // selectedMenu('ranking');
                   },
                   child: Menu(
                     color: AppColors.basicgray,
@@ -89,7 +112,7 @@ class _MainScreenState extends State<MainScreen> {
                 // ),
                 GestureDetector(
                   onTap: () {
-                    context.go('/history');
+                    context.push('/history');
                     selectedMenu('history');
                   },
                   child: Menu(
@@ -108,7 +131,7 @@ class _MainScreenState extends State<MainScreen> {
                 // ),
                 GestureDetector(
                   onTap: () {
-                    context.go('/campaign');
+                    context.push('/campaign');
                     selectedMenu('campaign');
                   },
                   child: Menu(
