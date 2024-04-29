@@ -13,7 +13,8 @@ public class Achievement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long achievementId;
+    @Column(name = "achievement_id")
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private Reward reward;
