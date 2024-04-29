@@ -48,7 +48,7 @@ public class MemberPetController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<Boolean>> rescuePet(
             @AuthenticationPrincipal Long memberId) {
-        Boolean isRescue = false;
+        Boolean isRescue = memberPetService.rescuePet(memberId);
         return ResponseEntity.ok().body(Message.success(isRescue));
     }
 }
