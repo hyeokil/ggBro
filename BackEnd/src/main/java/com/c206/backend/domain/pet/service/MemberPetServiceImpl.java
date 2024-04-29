@@ -40,7 +40,12 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public MemberPetDetailResponseDto getMemberPetDetail(Long memberPetId) {
+    public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
+        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기
+//        if (memberPetId == -1) {
+//            memberPetId =
+//
+//        }
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new MemberPetException(MemberPetError.NOT_FOUND_MEMBER_PET));
         // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 주울시 컬럼에 추가하는 것으로 변경
@@ -70,7 +75,6 @@ public class MemberPetServiceImpl implements MemberPetService {
                 memberPet.getPlastic(),
                 memberPet.getCan(),
                 memberPet.getGlass()
-
         );
     }
 }

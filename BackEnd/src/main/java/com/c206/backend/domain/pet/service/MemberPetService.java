@@ -11,6 +11,6 @@ public interface MemberPetService {
     List<MemberPetListResponseDto> getMemberPetList(Long memberId);
 
     // 회원이 보유한 펫 상세조회
-    MemberPetDetailResponseDto getMemberPetDetail(Long memberPetId);
+    MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId);
 
 }
