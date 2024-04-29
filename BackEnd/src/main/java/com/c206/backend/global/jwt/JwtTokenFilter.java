@@ -2,6 +2,7 @@ package com.c206.backend.global.jwt;
 
 import com.c206.backend.domain.member.dto.CustomUserDetails;
 import com.c206.backend.domain.member.dto.MemberDto;
+import com.c206.backend.domain.member.entity.Member;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         //Authorization 헤더 검증
 //        if (header != null && header.startsWith("Bearer ")) {
-//            String token = header.substring(7);
+    //            String token = header.substring(7);
 //            // if (jwtTokenUtil.validateToken(token)) { // 토큰 유효성 검증
 //            String username = "exampleUser"; // 예시, 실제로는 토큰에서 추출
 //
@@ -50,13 +51,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if(header == null || !header.startsWith("Bearer ")){
             System.out.println("token null");
             filterChain.doFilter(request, response);
-
             return;
         }
 
         System.out.println("authorization now");
         //Bearer 부분 제거
-
         String token = header.split(" ")[1];
 
         if(jwtTokenUtil.isExpired(token)){
@@ -71,13 +70,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         //...
         //userEntity를 생성하여 값 set
-
-        MemberDto memberDto = new MemberDto();
-        memberDto.setEmail(email);
-        memberDto.setNickname(nickname);
+        Member member = Member.builder()
+                .email(email)
+                .nickname(nickname)
+                .build();
 
         //UserDetails에 회원 정보 객체 담기
-        CustomUserDetails customUserDetails = new CustomUserDetails(memberDto);
+        CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());

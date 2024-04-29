@@ -48,62 +48,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf((auth) -> auth.disable());
+
+        http
+                .formLogin((auth) -> auth.disable());
+
+        http
+                .httpBasic((auth) -> auth.disable());
+
 //        http
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/", "/**").permitAll()
-////                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .csrf(CsrfConfigurer::disable) // CSRF 보호 비활성화
-//                .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-
-        http
-                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8181"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-//                        configuration.addExposedHeader("Authorization");
-
-//                        configuration.setExposedHeaders(Arrays.asList("Authorization", "refreshToken"));
-
-                        return configuration;
-                    }
-                }));
-
-        http
-                .csrf(AbstractHttpConfigurer::disable);
-
-        http
-                .formLogin((auth) -> auth.loginPage("/signin")
-                        .loginProcessingUrl("/loginProc")
-                        .permitAll()
-                );
-//                .formLogin(AbstractHttpConfigurer::disable);
-
-        http
-                .httpBasic(AbstractHttpConfigurer::disable);
-
+//                .authorizeHttpRequests((auth) -> auth
+//                        .requestMatchers("/login", "/", "/join",
+//                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
+//                        .anyRequest().authenticated());
         http
                 .authorizeHttpRequests((auth)->auth
-                        .requestMatchers("/", "/**","/signin",
+                        .requestMatchers("/", "/**", "/api/v1/member/signin",
                                 "/api/v1", "/api/v1/", "/api/v1/**",
-                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
                         .anyRequest().authenticated());
-//                        .anyRequest().authenticated());
 
+        //JWTFilter 등록
         http
                 .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), LoginFilter.class);
 
@@ -112,29 +79,7 @@ public class SecurityConfig {
 
         http
                 .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
-
-//        http
-//                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//
-//                    @Override
-//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//
-//                        CorsConfiguration configuration = new CorsConfiguration();
-//
-//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:8181"));
-//                        configuration.setAllowedMethods(Collections.singletonList("*"));
-//                        configuration.setAllowCredentials(true);
-//                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-//                        configuration.setMaxAge(3600L);
-//
-//                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-//
-//                        return configuration;
-//                    }
-//                })));
-
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

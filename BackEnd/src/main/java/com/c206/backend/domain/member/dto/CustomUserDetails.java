@@ -9,10 +9,10 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final MemberDto memberDto;
+    private final Member member;
 
-    public CustomUserDetails(MemberDto memberDto) {
-        this.memberDto = memberDto;
+    public CustomUserDetails(Member member) {
+        this.member = member;
     }
 
     @Override
@@ -32,18 +32,23 @@ public class CustomUserDetails implements UserDetails {
         return collection;
     }
 
-    @Override
-    public String getPassword() {
-//        return memberDto.getPassword();
-        return null;
-    }
+
+    private Long getMemberId(){ return member.getMemberId(); }
 
     @Override
     public String getUsername() {
-        return memberDto.getEmail();
+        return "UserName hello";
+    }
+    @Override
+    public String getPassword() {
+        return member.getPassword();
     }
 
-    public String getNickname() { return memberDto.getNickname(); }
+    public String getEmail() {
+        return member.getEmail();
+    }
+
+    public String getNickname() { return member.getNickname(); }
 
     @Override
     public boolean isAccountNonExpired() {
