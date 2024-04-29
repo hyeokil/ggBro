@@ -17,19 +17,16 @@ import com.c206.backend.domain.member.repository.MemberRepository;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.entity.Pet;
 import com.c206.backend.domain.pet.entity.enums.PetType;
-import com.c206.backend.domain.pet.exception.PetError;
-import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.pet.repository.PetRepository;
+import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -42,6 +39,7 @@ public class MemberAchievementServiceImpl implements MemberAchievementService {
     private final MemberRepository memberRepository;
     private final MemberPetRepository memberPetRepository;
     private final PetRepository petRepository;
+    private final MemberPetServiceImpl memberPetServiceImpl;
 
     @Override
     public List<MemberAchievementListResponseDto> getMemberAchievementList(Long memberId) {
@@ -89,29 +87,7 @@ public class MemberAchievementServiceImpl implements MemberAchievementService {
         } else if (memberAchievement.getAchievement().getReward() == Reward.PET) {
             List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
             List<Pet> pets = petRepository.findByPetTypeIs(PetType.ACHIEVEMENT);
-            HashSet<Long> petIdSet = new HashSet<>();
-            for (Pet pet:pets) {
-                petIdSet.add(pet.getId());
-            }
-            for (MemberPet memberPet : memberPets) {
-                petIdSet.remove(memberPet.getPet().getId());
-            }
-            List<Long> petIdList = new ArrayList<>(petIdSet);
-            Long randomPetId = petIdList.get(new Random().nextInt(petIdList.size()));
-            Pet pet = petRepository.findById(randomPetId).orElseThrow(()
-                    -> new PetException(PetError.NOT_FOUND_PET));
-            MemberPet newMemberPet = MemberPet.builder()
-                    .member(member)
-                    .pet(pet)
-                    .exp(0)
-                    .nickname(pet.getName())
-                    .active(false)
-                    .normal(0)
-                    .plastic(0)
-                    .can(0)
-                    .glass(0)
-                    .build();
-            memberPetRepository.save(newMemberPet);
+            memberPetServiceImpl.createMemberPet(memberPets, pets, member);
         }
         return new NewGoalResponseDto(
                 memberAchievement.getGoalMultiply() * memberAchievement.getAchievement().getGoalCoefficient()
