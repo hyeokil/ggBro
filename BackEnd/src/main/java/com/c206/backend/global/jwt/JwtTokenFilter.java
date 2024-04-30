@@ -1,7 +1,5 @@
 package com.c206.backend.global.jwt;
 
-import com.c206.backend.domain.member.dto.CustomUserDetails;
-import com.c206.backend.domain.member.dto.MemberDto;
 import com.c206.backend.domain.member.entity.Member;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,20 +31,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         logger.info("filter  " + header);
-
-        //Authorization 헤더 검증
-//        if (header != null && header.startsWith("Bearer ")) {
-    //            String token = header.substring(7);
-//            // if (jwtTokenUtil.validateToken(token)) { // 토큰 유효성 검증
-//            String username = "exampleUser"; // 예시, 실제로는 토큰에서 추출
-//
-//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-//                    username, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//            // }
-//        }
 
         if(header == null || !header.startsWith("Bearer ")){
             System.out.println("token null");
@@ -82,8 +66,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         System.out.println("여기의 닉네임은 "+ customUserDetails.getNickname());
 
         //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails.getEmail(),customUserDetails.getNickname(), null);
-        System.out.println(authToken);
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails,null, customUserDetails.getAuthorities());
+//        System.out.println(authToken.getPrincipal()); // 이메일값 test01@gmail.com
+//        System.out.println(authToken.getCredentials()); // 닉네임값 싸피맨
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 

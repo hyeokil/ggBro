@@ -1,16 +1,9 @@
 package com.c206.backend.domain.member.service;
 
-import com.c206.backend.domain.member.dto.CustomUserDetailsService;
+import com.c206.backend.global.jwt.CustomUserDetailsService;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
-import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.repository.MemberRepository;
-import com.c206.backend.global.jwt.JwtTokenFilter;
-import com.c206.backend.global.jwt.JwtTokenUtil;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

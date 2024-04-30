@@ -1,11 +1,12 @@
-package com.c206.backend.domain.member.dto;
+package com.c206.backend.global.jwt;
 
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.repository.MemberRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,15 +20,22 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // 혁일이형한테 물어보기
-        Member member = memberRepository.findByEmail(email);
         System.out.println("여기는 CustomUserDetailsService");
 
-        if(member.getId() != null){
-            //UserDetails에 담아서 return하면 AuthenticationManager가 검증 함
-            System.out.println(member.getEmail());
-            System.out.println(member.getNickname());
-            return new CustomUserDetails(member);
+        // 혁일이형한테 값이 null일때의 처리 물어보기
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if(member.isPresent()){
+            if(member.get().getId() != null){
+                //UserDetails에 담아서 return하면 AuthenticationManager가 검증 함
+                System.out.println(member.get().getEmail());
+                System.out.println(member.get().getNickname());
+                return new CustomUserDetails(member.get());
+            }
+        }
+        else{
+            System.out.println("없는 회원입니다.");
+            //에러처리하기
+            return null;
         }
 
         return null;

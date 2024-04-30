@@ -1,4 +1,4 @@
-package com.c206.backend.domain.member.dto;
+package com.c206.backend.global.jwt;
 
 import com.c206.backend.domain.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,19 +17,21 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
 
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-
-//                return member.getRole();
-                return "true";
-            }
-        });
-
-        return collection;
+        return new ArrayList<>();
+//        Collection<GrantedAuthority> collection = new ArrayList<>();
+//
+//        collection.add(new GrantedAuthority() {
+//
+//            @Override
+//            public String getAuthority() {
+//
+////                return member.getRole();
+//                return "true";
+//            }
+//        });
+//
+//        return collection;
     }
 
 
