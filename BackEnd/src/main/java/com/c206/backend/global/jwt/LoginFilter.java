@@ -4,7 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,11 +24,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private CustomUserDetailsService customUserDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Value("${spring.jwt.expired-min.access-expiration}")
+    private Long AccessTokenExpireTime;
+    @Value("${spring.jwt.expired-min.refresh-expiration}")
+    private Long RefreshTokenExpireTime;
+
 
     public LoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
 
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
+
         setFilterProcessesUrl("/api/v1/member/signin");
     }
 
@@ -70,6 +77,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //UserDetailsS
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
+        Long memberId = customUserDetails.getId();
         String email = customUserDetails.getEmail();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -78,9 +86,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //        String role = auth.getAuthority();
         String nickname = customUserDetails.getNickname();
 
-        String accessToken = jwtTokenUtil.createAccessJwt(email, nickname, 60*60*10L);
+
+        System.out.println("토큰에서 확인할 수 있는 정보들"+" "+memberId+" "+email+" "+nickname);
+
+        String accessToken = jwtTokenUtil.createAccessJwt(email, nickname, AccessTokenExpireTime);
         System.out.println("액세스 토큰은 이렇게 생겼다. "+ accessToken);
-        String refreshToken = jwtTokenUtil.createRefreshJwt(email, nickname, 60*60*10L);
+        String refreshToken = jwtTokenUtil.createRefreshJwt(email, nickname, RefreshTokenExpireTime);
         System.out.println("리프레쉬 토큰은 이렇게 생겼다. "+ refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);

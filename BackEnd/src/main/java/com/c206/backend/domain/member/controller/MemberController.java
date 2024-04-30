@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-    @Value("${spring.jwt.access}")String access;
-    @Value("${spring.jwt.refresh}")String refresh;
 
     public MemberController(MemberService memberService){
         this.memberService = memberService;
@@ -74,7 +72,7 @@ public class MemberController {
 
         try{
 //            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-////
+//
 //            System.out.println(customUserDetails.getEmail());
 //            System.out.println(customUserDetails.getNickname());
             memberService.emailDupCheck(email);
