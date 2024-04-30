@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:frontend/router/router_path.dart';
+import 'package:frontend/screens/bluetooth/blutooth_test.dart';
 import 'package:frontend/screens/campaign/campaign_screen.dart';
 import 'package:frontend/screens/history/history_screen.dart';
 import 'package:frontend/screens/intro/intro_screen.dart';
 import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
-import 'package:frontend/screens/plogging/ready_plogging.dart';
+import 'package:frontend/screens/plogging/readyplogging/ready_plogging.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
 import 'package:frontend/screens/rescue/rescue_screen.dart';
@@ -35,33 +37,122 @@ final GoRouter globalRouter = GoRouter(
     GoRoute(
       path: RoutePath.ranking,
       name: 'ranking',
-      builder: (context, state) => const RankingScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: RankingScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.history,
       name: 'history',
-      builder: (context, state) => const HistoryScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: HistoryScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.campaign,
       name: 'campaign',
-      builder: (context, state) => const CampaignScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: CampaignScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.ploggingReady,
       name: 'ploggingReady',
-      builder: (context, state) => const ReadyPlogging(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: ReadyPlogging(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.profile,
       name: 'profile',
-      builder: (context, state) => const ProfileScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: ProfileScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.rescue,
       name: 'rescue',
-      builder: (context, state) => const RescueScreen(),
-    )
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: RescueScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: RoutePath.bluetooth,
+      name: 'bluetooth',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: FlutterBlueApp(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
     // GoRoute(
     //   path: RoutePath.main,
     //   name: 'main',

@@ -6,7 +6,8 @@ spring:
     password : ssafy
   jpa:
     hibernate:
-      ddl-auto: create-drop                # ddl 자동 작성 여부
+#      ddl-auto: create-drop                # ddl 자동 작성 여부
+      ddl-auto: update                # ddl 자동 작성 여부
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -18,12 +19,28 @@ spring:
     redis:
       host: localhost
       port: 6379
+  springdoc:
+    api-docs:
+      enabled: true
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
+      configUrl: /v3/api-docs/swagger-config
+  jwt:
+    access: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+    refresh: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+    expired-min:
+      refresh-expiration: 14d
+      access-expiration: 14d
+
+#server:
+#  servlet:
+#    context-path: /api/v1
+
+  sql:
+    init:
+      mode: always
+      data-locations:
+#        - 'classpath:/data_achievement.sql'
 
 
-
-
-jwt:
-  access-key: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refresh-key: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refresh-expiration: 14d
-  access-expiration: 14d

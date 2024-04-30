@@ -28,4 +28,7 @@ class RoutePath {
 
   //  구출하기 페이지
   static const String rescue = '/rescue';
+
+  //  블루투스 테스트
+  static const String bluetooth = '/bluetooth';
 }

@@ -30,4 +30,6 @@ class AppIcons {
   static const String intersect = "assets/images/intersect.png";
   static const String flogging_logo = "assets/images/flogging_logo.png";
   static const String trashs = "assets/images/trashs.png";
+  static const String trash_tong = "assets/images/trash_tong.png";
+
 }

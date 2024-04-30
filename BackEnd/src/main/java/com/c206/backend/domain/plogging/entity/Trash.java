@@ -2,7 +2,7 @@ package com.c206.backend.domain.plogging.entity;
 
 
 import com.c206.backend.domain.plogging.entity.enums.TrashType;
-import com.c206.backend.global.common.BaseEntity;
+import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +15,8 @@ public class Trash extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long trashId;
+    @Column(name = "trash_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plogging_id")
