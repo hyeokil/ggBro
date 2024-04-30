@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/router/router_path.dart';
+import 'package:frontend/screens/bluetooth/blutooth_test.dart';
 import 'package:frontend/screens/campaign/campaign_screen.dart';
 import 'package:frontend/screens/history/history_screen.dart';
 import 'package:frontend/screens/intro/intro_screen.dart';
@@ -142,6 +143,23 @@ final GoRouter globalRouter = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const ProgressPlogging(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: RoutePath.bluetooth,
+      name: 'bluetooth',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: FlutterBlueApp(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
