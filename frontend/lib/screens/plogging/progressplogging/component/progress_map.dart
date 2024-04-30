@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:geolocator/geolocator.dart';
 
-class ReadyMap extends StatefulWidget {
-  const ReadyMap({super.key});
+class ProgressMap extends StatefulWidget {
+  const ProgressMap({super.key});
 
   @override
-  State<ReadyMap> createState() => _ReadyMapState();
+  State<ProgressMap> createState() => _ProgressMapState();
 }
 
-class _ReadyMapState extends State<ReadyMap> {
+class _ProgressMapState extends State<ProgressMap> {
   late double latitude;
   late double longitude;
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
@@ -37,7 +37,6 @@ class _ReadyMapState extends State<ReadyMap> {
   @override
   Widget build(BuildContext context) {
     final Completer<NaverMapController> mapControllerCompleter = Completer();
-
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -52,7 +51,7 @@ class _ReadyMapState extends State<ReadyMap> {
                     tilt: 0),
               ),
               onMapReady: (controller) async {
-                // 지도 준비 완료 시 호출되는 콜백 함수
+                controller.setLocationTrackingMode(NLocationTrackingMode.face);
                 mapControllerCompleter
                     .complete(controller); // Completer에 지도 컨트롤러 완료 신호 전송
                 log("onMapReady", name: "onMapReady");
