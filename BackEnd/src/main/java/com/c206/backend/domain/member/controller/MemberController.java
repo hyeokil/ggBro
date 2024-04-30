@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class MemberController {
     }
 
 
-    @PostMapping("/signin")
+    @PostMapping(value = "/signin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "로그인을 진행합니다.")
     public ResponseEntity<?> loginP(@RequestBody @Parameter SignInRequestDto signInRequestDto // HashMap<String, Object> map
     ){
@@ -84,7 +85,11 @@ public class MemberController {
     public ResponseEntity<?> memberEmailDupCheck(@RequestBody @Parameter String email, @Parameter(hidden = true) Authentication authentication){
 
         try{
-            memberService.emailDupCheck(email);
+            CustomUserDetails CUD = (CustomUserDetails) authentication.getDetails();
+
+            System.out.println(CUD.getEmail());
+            System.out.println(CUD.getNickname());
+//            memberService.emailDupCheck(email);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();

@@ -15,7 +15,8 @@ public class MemberQuest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberQuestId;
+    @Column(name = "member_quest_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

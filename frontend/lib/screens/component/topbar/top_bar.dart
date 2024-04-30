@@ -36,7 +36,9 @@ class _TopBarState extends State<TopBar> {
         children: [
           GestureDetector(
             onTap: () {
-              context.go('/profile');
+              if (mainProvider.isMenuSelected != 'profile') {
+                context.push('/profile');
+              }
               selectedMenu('profile');
             },
             child: ProfileImage(),

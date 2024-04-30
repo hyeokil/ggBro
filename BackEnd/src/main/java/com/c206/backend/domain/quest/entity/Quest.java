@@ -12,7 +12,8 @@ public class Quest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long questId;
+    @Column(name = "quest_id")
+    private Long id;
 
     private int goalMax;
 

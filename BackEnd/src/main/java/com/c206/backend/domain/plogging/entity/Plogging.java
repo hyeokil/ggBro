@@ -16,7 +16,8 @@ public class Plogging extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ploggingId;
+    @Column(name = "plogging_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

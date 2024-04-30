@@ -5,7 +5,9 @@ import com.c206.backend.domain.member.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
@@ -15,16 +17,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
+        // 혁일이형한테 물어보기
         Member member = memberRepository.findByEmail(email);
-
-
-
         System.out.println("여기는 CustomUserDetailsService");
 
-        if(member.getMemberId() != null){
+        if(member.getId() != null){
             //UserDetails에 담아서 return하면 AuthenticationManager가 검증 함
+            System.out.println(member.getEmail());
+            System.out.println(member.getNickname());
             return new CustomUserDetails(member);
         }
 

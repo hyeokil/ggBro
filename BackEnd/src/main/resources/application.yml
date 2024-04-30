@@ -37,7 +37,10 @@ spring:
 #  servlet:
 #    context-path: /api/v1
 
-
-
+  sql:
+    init:
+      mode: always
+      data-locations:
+#        - 'classpath:/data_achievement.sql'
 
 

@@ -10,11 +10,12 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class memberAchievement extends BaseEntity {
+public class MemberAchievement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberAchievementId;
+    @Column(name = "member_achievement_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

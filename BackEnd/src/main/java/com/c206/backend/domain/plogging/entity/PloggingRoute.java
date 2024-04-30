@@ -13,7 +13,8 @@ public class PloggingRoute {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ploggingRouteId;
+    @Column(name = "plogging_route_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plogging_id")

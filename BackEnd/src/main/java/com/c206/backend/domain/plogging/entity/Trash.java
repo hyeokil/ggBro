@@ -15,7 +15,8 @@ public class Trash extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long trashId;
+    @Column(name = "trash_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plogging_id")

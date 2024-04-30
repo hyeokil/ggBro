@@ -54,7 +54,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("authorization now");
         //Bearer 부분 제거
         String token = header.split(" ")[1];
 
@@ -78,8 +77,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
+        System.out.println("여기는 JwtTokenFilter");
+        System.out.println("여기의 이메일은 "+ customUserDetails.getEmail());
+        System.out.println("여기의 닉네임은 "+ customUserDetails.getNickname());
+
         //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails.getEmail(),customUserDetails.getNickname(), null);
+        System.out.println(authToken);
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
 

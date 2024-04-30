@@ -14,7 +14,8 @@ public class MemberInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberInfoId;
+    @Column(name = "member_info_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
