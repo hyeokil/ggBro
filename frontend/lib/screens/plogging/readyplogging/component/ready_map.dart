@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,6 +24,8 @@ class _ReadyMapState extends State<ReadyMap> {
   late double latitude;
   late double longitude;
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
+  NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
+  bool isSelectedTrashTong = false;
 
   Future<void> getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -34,21 +38,104 @@ class _ReadyMapState extends State<ReadyMap> {
     print('위치요 ${position.latitude}, ${position.longitude}');
   }
 
+  Future<List<dynamic>> readJsonData() async {
+    String jsonString =
+        await rootBundle.loadString('assets/data/trash_tong_data.json');
+    return jsonDecode(jsonString);
+  }
+
   @override
   void initState() {
     super.initState();
     getLocation();
   }
 
+  void trashTongToggle() {
+    setState(() {
+      isSelectedTrashTong = !isSelectedTrashTong;
+    });
+    // print(isSelectedTrashTong);
+    updateMarkers();
+  }
+
+  String getClusterKey(double lat, double lng, double zoomLevel) {
+    // 위치와 줌 레벨에 따라 클러스터 키 생성
+    int latIndex = (lat * zoomLevel).floor();
+    int lngIndex = (lng * zoomLevel).floor();
+    return "$latIndex:$lngIndex";
+  }
+
+  NMarker createClusterMarker(List<NMarker> markers) {
+    // 클러스터 마커 생성 로직
+    // 예를 들어 클러스터의 중심점을 계산하거나, 마커 수를 표시 등
+    double centerLat = 0;
+    double centerLng = 0;
+    for (var marker in markers) {
+      centerLat += marker.position.latitude;
+      centerLng += marker.position.longitude;
+    }
+    centerLat /= markers.length;
+    centerLng /= markers.length;
+
+    return NMarker(
+      id: "cluster_${markers.first}",
+      position: NLatLng(centerLat, centerLng),
+      icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+      size: NSize(50, 50),
+    );
+  }
+
+  void updateMarkers() async {
+    if (_mapController == null || !_isLocationLoaded) return;
+    await _mapController!.clearOverlays();
+
+    var jsonData = await readJsonData();
+    Map<String, List<NMarker>> clusters = {};
+
+    if (isSelectedTrashTong) {
+      for (var data in jsonData) {
+        String clusterKey = getClusterKey(data['위도'], data['경도'], 3);
+        final marker = NMarker(
+          id: data['연번'].toString(),
+          position: NLatLng(
+            double.parse(data['위도']),
+            double.parse(data['경도']),
+          ),
+          icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+          size: NSize(40, 50),
+        );
+        await _mapController!.addOverlay(marker);
+
+        final onMarkerInfoWindow = NInfoWindow.onMarker(
+          id: marker.info.id,
+          text: '${data['세부위치']}',
+        );
+
+        marker.setOnTapListener(
+          (NMarker marker) async => {
+            if (await marker.hasOpenInfoWindow())
+              {onMarkerInfoWindow.close()}
+            else
+              {marker.openInfoWindow(onMarkerInfoWindow)}
+          },
+        );
+      }
+      // 클러스터링된 마커 표시
+      for (var cluster in clusters.values) {
+        if (cluster.length > 1) {
+          // 클러스터 대표 마커 생성
+          NMarker clusterMarker = createClusterMarker(cluster);
+          await _mapController!.addOverlay(clusterMarker);
+        } else {
+          // 단일 마커 표시
+          await _mapController!.addOverlay(cluster[0]);
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool isSelectedTrashTong = false;
-
-    void trashTongToggle() {
-      isSelectedTrashTong != isSelectedTrashTong;
-    }
-
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -57,7 +144,14 @@ class _ReadyMapState extends State<ReadyMap> {
           ? Stack(
               children: [
                 NaverMap(
+                  onMapReady: (controller) {
+                    _mapController = controller; // 지도 컨트롤러 초기화
+                    _mapController!
+                        .setLocationTrackingMode(NLocationTrackingMode.follow);
+                    updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
+                  },
                   options: NaverMapViewOptions(
+                    liteModeEnable: true,
                     initialCameraPosition: NCameraPosition(
                       target: NLatLng(latitude, longitude),
                       zoom: 15,
@@ -66,33 +160,6 @@ class _ReadyMapState extends State<ReadyMap> {
                     ),
                     locationButtonEnable: true,
                   ),
-                  onMapReady: (controller) async {
-                    // 지도 준비 완료 시 호출되는 콜백 함수
-                    final marker1 = NMarker(
-                        id: '1',
-                        position: const NLatLng(35.1439276372, 126.8101870702));
-                    marker1.setIcon(
-                        NOverlayImage.fromAssetImage(AppIcons.trash_tong));
-                    marker1.setSize(NSize(40, 50));
-
-                    final marker2 = NMarker(
-                        id: '2',
-                        position: const NLatLng(35.1415385366, 126.7956927019));
-                    marker2.setIcon(
-                        NOverlayImage.fromAssetImage(AppIcons.trash_tong));
-                    marker2.setSize(NSize(40, 50));
-
-                    final onMarkerInfoWindow1 = NInfoWindow.onMarker(
-                        id: marker1.info.id, text: "공항역 버스정류장");
-                    marker1.openInfoWindow(onMarkerInfoWindow1);
-                    final onMarkerInfoWindow2 = NInfoWindow.onMarker(
-                        id: marker2.info.id, text: "송정KT 빌딩 앞 버스정류장");
-                    marker2.openInfoWindow(onMarkerInfoWindow2);
-
-                    if (isSelectedTrashTong = true) {
-                      controller.addOverlayAll({marker1, marker2});
-                    }
-                  },
                 ),
                 Positioned(
                   top: MediaQuery.of(context).size.height * 0.01,
