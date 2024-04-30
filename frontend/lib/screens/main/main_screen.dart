@@ -160,7 +160,7 @@ class _MainScreenState extends State<MainScreen> {
                 const ExpBar(),
                 GestureDetector(
                   onTap: () {
-                    context.push('/ploggingProgress');
+                    context.push('/ploggingReady');
                   },
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.05,
