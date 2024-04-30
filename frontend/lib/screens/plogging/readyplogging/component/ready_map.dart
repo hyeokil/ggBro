@@ -26,6 +26,12 @@ class _ReadyMapState extends State<ReadyMap> {
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
   bool isSelectedTrashTong = false;
+  double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
+  bool _isCameraMoving = false;
+
+  void _onCameraMoveStarted() {
+    _isCameraMoving = true;
+  }
 
   Future<void> getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -35,7 +41,7 @@ class _ReadyMapState extends State<ReadyMap> {
       longitude = position.longitude;
       _isLocationLoaded = true;
     });
-    print('위치요 ${position.latitude}, ${position.longitude}');
+    // print('위치요 ${position.latitude}, ${position.longitude}');
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -58,31 +64,29 @@ class _ReadyMapState extends State<ReadyMap> {
     updateMarkers();
   }
 
-  String getClusterKey(double lat, double lng, double zoomLevel) {
-    // 위치와 줌 레벨에 따라 클러스터 키 생성
-    int latIndex = (lat * zoomLevel).floor();
-    int lngIndex = (lng * zoomLevel).floor();
-    return "$latIndex:$lngIndex";
+  void _onCameraIdle() {
+    if (_mapController == null) return;
+
+    _mapController!.getCameraPosition().then((position) {
+      // 유의미한 변화 확인
+      if ((position.target.latitude - latitude).abs() > 0.0001 ||
+          (position.target.longitude - longitude).abs() > 0.0001 ||
+          (position.zoom - _currentZoom).abs() > 0.5) {
+        setState(() {
+          latitude = position.target.latitude;
+          longitude = position.target.longitude;
+          _currentZoom = position.zoom;
+        });
+        updateMarkers(); // 마커 업데이트
+      }
+    });
   }
 
-  NMarker createClusterMarker(List<NMarker> markers) {
-    // 클러스터 마커 생성 로직
-    // 예를 들어 클러스터의 중심점을 계산하거나, 마커 수를 표시 등
-    double centerLat = 0;
-    double centerLng = 0;
-    for (var marker in markers) {
-      centerLat += marker.position.latitude;
-      centerLng += marker.position.longitude;
-    }
-    centerLat /= markers.length;
-    centerLng /= markers.length;
-
-    return NMarker(
-      id: "cluster_${markers.first}",
-      position: NLatLng(centerLat, centerLng),
-      icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
-      size: NSize(50, 50),
-    );
+  String _getClusterKey(Map<String, dynamic> data) {
+    // 클러스터 키 생성 로직, 예: 위치를 기반으로 그리드 생성
+    int gridLat = (double.parse(data['위도']) * 10).floor();
+    int gridLng = (double.parse(data['경도']) * 10).floor();
+    return "$gridLat:$gridLng";
   }
 
   void updateMarkers() async {
@@ -94,44 +98,80 @@ class _ReadyMapState extends State<ReadyMap> {
 
     if (isSelectedTrashTong) {
       for (var data in jsonData) {
-        String clusterKey = getClusterKey(data['위도'], data['경도'], 3);
-        final marker = NMarker(
-          id: data['연번'].toString(),
-          position: NLatLng(
-            double.parse(data['위도']),
-            double.parse(data['경도']),
-          ),
-          icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
-          size: NSize(40, 50),
-        );
-        await _mapController!.addOverlay(marker);
+        var key = _getClusterKey(data);
 
-        final onMarkerInfoWindow = NInfoWindow.onMarker(
-          id: marker.info.id,
-          text: '${data['세부위치']}',
-        );
-
-        marker.setOnTapListener(
-          (NMarker marker) async => {
-            if (await marker.hasOpenInfoWindow())
-              {onMarkerInfoWindow.close()}
-            else
-              {marker.openInfoWindow(onMarkerInfoWindow)}
-          },
-        );
-      }
-      // 클러스터링된 마커 표시
-      for (var cluster in clusters.values) {
-        if (cluster.length > 1) {
-          // 클러스터 대표 마커 생성
-          NMarker clusterMarker = createClusterMarker(cluster);
-          await _mapController!.addOverlay(clusterMarker);
-        } else {
-          // 단일 마커 표시
-          await _mapController!.addOverlay(cluster[0]);
+        if (!clusters.containsKey(key)) {
+          clusters[key] = [];
         }
+        clusters[key]!.add(
+          NMarker(
+            id: '${data['연번']}_${data['세부위치']}',
+            position: NLatLng(
+              double.parse(data['위도']),
+              double.parse(data['경도']),
+            ),
+            icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+            size: NSize(30, 40),
+          ),
+        );
       }
     }
+    // print("줌 $_currentZoom");
+    if (_currentZoom < 13) {
+      await _mapController!.clearOverlays();
+    }
+    // 클러스터 또는 개별 마커 표시
+    clusters.forEach(
+      (key, markers) {
+        if (_currentZoom < 13 && markers.length > 1) {
+          // 클러스터 표시
+          _displayClusterMarker(markers);
+        } else {
+          // 개별 마커 표시
+          markers.forEach(
+            (marker) async {
+              await _mapController!.addOverlay(marker);
+
+              final onMarkerInfoWindow = NInfoWindow.onMarker(
+                id: marker.info.id,
+                text: '${marker.info.id.split('_')[1]}',
+              );
+
+              marker.setOnTapListener(
+                (NMarker marker) async => {
+                  if (await marker.hasOpenInfoWindow())
+                    {onMarkerInfoWindow.close()}
+                  else
+                    {marker.openInfoWindow(onMarkerInfoWindow)}
+                },
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  void _displayClusterMarker(List<NMarker> markers) {
+    // 클러스터 대표 마커 표시
+    var centerLat = 0.0;
+    var centerLng = 0.0;
+    markers.forEach((marker) {
+      centerLat += marker.position.latitude;
+      centerLng += marker.position.longitude;
+    });
+    centerLat /= markers.length;
+    centerLng /= markers.length;
+
+    NMarker clusterMarker = NMarker(
+      id: "cluster_${markers[0].info.id}",
+      position: NLatLng(centerLat, centerLng),
+      icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+      // 클러스터 아이콘 설정
+      size: NSize(100, 100),
+      caption: NOverlayCaption(text: '${markers.length}', textSize: 20),
+    );
+    _mapController!.addOverlay(clusterMarker);
   }
 
   @override
@@ -150,6 +190,7 @@ class _ReadyMapState extends State<ReadyMap> {
                         .setLocationTrackingMode(NLocationTrackingMode.follow);
                     updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
                   },
+                  onCameraIdle: _onCameraIdle,
                   options: NaverMapViewOptions(
                     liteModeEnable: true,
                     initialCameraPosition: NCameraPosition(
