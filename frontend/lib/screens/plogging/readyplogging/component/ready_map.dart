@@ -179,7 +179,7 @@ class _ReadyMapState extends State<ReadyMap> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white),
       child: _isLocationLoaded
           ? Stack(
               children: [
@@ -254,7 +254,7 @@ class _ReadyMapState extends State<ReadyMap> {
                 )
               ],
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );
