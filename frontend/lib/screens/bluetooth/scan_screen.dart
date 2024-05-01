@@ -18,7 +18,7 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   void startScan() async {
-    await FlutterBluePlus.adapterState.listen((state){
+    FlutterBluePlus.adapterState.listen((state) {
       if (state == BluetoothAdapterState.on) {
         // 블루투스가 켜져 있으면 스캔 시작
         FlutterBluePlus.startScan(timeout: const Duration(seconds: 10));
