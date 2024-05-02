@@ -17,6 +17,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                echo "JWT_ACCESS: ${env.JWT_ACCESS}"
+                echo "DB_URL: ${env.DB_URL}"
+                echo "REDIS_HOST: ${env.REDIS_HOST}"
             }
         }
         stage('Setup Environment') {
