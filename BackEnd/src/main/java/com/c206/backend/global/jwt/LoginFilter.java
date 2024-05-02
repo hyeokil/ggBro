@@ -111,11 +111,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("Authorization", "Bearer " + accessToken);
 
         // Redis에 Refresh 토큰 저장
-        redisService.setValues("refresh "+email,  refreshToken, (long) (24 * 60 * 60 * 1000));
+        redisService.setValues("refresh "+ email,  refreshToken, (long) (24 * 60 * 60 * 1000));
 
         // Cookie에 Access, refresh 토큰 부여
         response.addCookie(createCookie("Authorization", accessToken));
         response.addCookie(createCookie("refresh", refreshToken));
+
+
 
     }
 

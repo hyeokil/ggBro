@@ -31,9 +31,11 @@ public class JwtTokenUtil {
 
     //    사용자 멤버 아이디 반환
     public Long getMemberId(String token) {
-        System.out.println(Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class));
-
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
+    }
+
+    public Long getMemberIdRefresh(String token) {
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
     }
 
 
@@ -43,8 +45,25 @@ public class JwtTokenUtil {
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
     }
 
+    public String getNicknameRefresh(String token) {
+
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
+    }
+
     public String getEmail(String token){
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    }
+
+    public String getEmailRefresh(String token){
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    }
+
+    public String getTokenType(String token){
+        return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("tokenType", String.class);
+    }
+
+    public String getTokenTypeRefresh(String token){
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("tokenType", String.class);
     }
 
     //    토큰 만료 여부 체크하기
@@ -52,6 +71,14 @@ public class JwtTokenUtil {
 
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
+
+    //    토큰 만료 여부 체크하기
+    public Boolean isExpiredRefresh(String token) {
+
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    }
+
+
 
     //    JWT 토큰발급
     public String createAccessJwt(Long memberId, String email, String nickname, Long expiredMs) {

@@ -8,6 +8,8 @@ import com.c206.backend.global.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,7 +85,7 @@ public class MemberController {
 //            System.out.println(customUserDetails.getId());
 //            System.out.println(customUserDetails.getEmail());
 //            System.out.println(customUserDetails.getNickname());
-            memberService.emailDupCheck(email);
+            System.out.println(memberService.emailDupCheck(email));
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
