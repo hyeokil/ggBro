@@ -5,12 +5,12 @@ pipeline {
         REPO = "s10-final/S10P31C206"
         DOCKERHUB_REGISTRY = "kimhyeokil/back"
         DOCKERHUB_CREDENTIALS = credentials('Docker-hub')
-        DB_URL = "${env.DB_URL}"
-        DB_NAME = "${env.DB_NAME}"
-        DB_PASSWORD = "${env.DB_PASSWORD}"
-        REDIS_HOST="${env.REDIS_HOST}"
-        JWT_ACCESS="${env.JWT_ACCESS}"
-        JWT_REFRESH="${env.JWT_REFRESH}"
+//         DB_URL = "${env.DB_URL}"
+//         DB_NAME = "${env.DB_NAME}"
+//         DB_PASSWORD = "${env.DB_PASSWORD}"
+//         REDIS_HOST="${env.REDIS_HOST}"
+//         JWT_ACCESS="${env.JWT_ACCESS}"
+//         JWT_REFRESH="${env.JWT_REFRESH}"
 
     }
     stages {
@@ -81,12 +81,6 @@ pipeline {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'Docker-hub', usernameVariable: 'DOCKER_USER_ID', passwordVariable: 'DOCKER_USER_PASSWORD']]) {
                         try {
                         sh "docker run -d --name back -p 9003:8080 \
-                        -e DB_URL=${env.DB_URL} \
-                        -e DB_NAME=${env.DB_NAME} \
-                        -e DB_PASSWORD=${env.DB_PASSWORD} \
-                        -e REDIS_HOST=${env.REDIS_HOST} \
-                        -e JWT_ACCESS=${env.JWT_ACCESS} \
-                        -e JWT_REFRESH=${env.JWT_REFRESH} \
                         ${DOCKERHUB_REGISTRY}"
 //                             sh "docker-compose -f ${env.WORKSPACE}/docker-compose.yml up -d"
 
