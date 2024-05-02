@@ -1,9 +1,9 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/theme_data.dart';
+import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +22,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MainProvider()),
+        ChangeNotifierProvider(create: (_) => AuthModel()),
       ],
       child: const MyApp(),
     ),
@@ -32,11 +33,9 @@ Future<void> _initialize() async {
   String naverMapId = dotenv.get('NAVER_MAP_ID');
   WidgetsFlutterBinding.ensureInitialized();
   await NaverMapSdk.instance.initialize(
-      clientId: '$naverMapId',     // 클라이언트 ID 설정
-      onAuthFailed: (e) => log("네이버맵 인증오류 : $e", name: "onAuthFailed")
-  );
+      clientId: '$naverMapId', // 클라이언트 ID 설정
+      onAuthFailed: (e) => log("네이버맵 인증오류 : $e", name: "onAuthFailed"));
 }
-
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -46,11 +45,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   // 앱 시작 시 권한 받기
   Future<void> requestPermissions() async {
     await [
       Permission.location,
+      Permission.bluetooth,
     ].request();
   }
 

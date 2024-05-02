@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
+import 'package:frontend/screens/main/dialog/change_partner_dialog.dart';
+import 'package:frontend/screens/main/openbox/open_box_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class Partner extends StatefulWidget {
   const Partner({super.key});
@@ -10,9 +14,26 @@ class Partner extends StatefulWidget {
 class _PartnerState extends State<Partner> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.32,
-      decoration: BoxDecoration(color: Colors.white),
+    return GestureDetector(
+      onTap: () {
+        // showDialog(
+        //   context: context,
+        //   builder: (BuildContext context) {
+        //     return const ChangePartnerDialog();
+        //   },
+        // );
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const OpenBoxDialog();
+          },
+        );
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.height * 0.95,
+        height: MediaQuery.of(context).size.height * 0.32,
+        child: Image.asset(AppIcons.meka_sudal),
+      ),
     );
   }
 }

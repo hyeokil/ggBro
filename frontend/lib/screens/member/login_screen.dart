@@ -18,14 +18,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validatePassword(String? value) {
     final passwordRegex = RegExp(
-      r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$',
+      r'^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,15}$',
       caseSensitive: true,
       multiLine: false,
     );
     if (value == null || value.isEmpty) {
       return '비밀번호를 입력해주세요.';
     } else if (!passwordRegex.hasMatch(value)) {
-      return '글자, 숫자, 특수 기호가 포함된 8 ~ 15자를 입력해주세요.';
+      return '문자, 숫자, 특수 문자가 포함된 8 ~ 15자를 입력해주세요.';
     }
     return null;
   }
@@ -51,13 +51,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
+                        context.go('/intro');
                         if (_formKey.currentState!.validate()) {
                           // 유효성 검사를 통과한 경우 로그인 로직을 실행합니다.
                           String email = _email.text;
                           String password = _password.text;
                           print('이메일 $email 비밀번호 $password');
                           // 여기에 로그인 로직을 구현합니다.
-                          context.go('/intro');
                         }
                       },
                       style: const ButtonStyle(),

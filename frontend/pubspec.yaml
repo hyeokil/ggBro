@@ -44,6 +44,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   geolocator: ^11.0.0
   permission_handler: ^11.3.1
+  flutter_blue_plus: ^1.32.4
+  http: ^1.2.1
 
 flutter_icons:
   android: true
@@ -77,6 +79,7 @@ flutter:
      - assets/fonts/
      - assets/icons/
      - assets/config/
+     - assets/data/trash_tong_data.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

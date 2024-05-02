@@ -10,6 +10,9 @@ spring:
     username : ssafy
     password : ssafy
   jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    generate-ddl: true
     hibernate:
       ddl-auto: create-drop                # ddl 자동 작성 여부
     properties:
@@ -19,15 +22,39 @@ spring:
         jdbc:
           batch_size: 100              #   insert/update 쿼리를 원하는 개수만큼 모아서 DB에 날릴 수 있는 옵션
         default_batch_fetch_size: 100
+
   data:
     redis:
       host: localhost # 젠킨스 환경변수 추가
       port: 6379
+  springdoc:
+    api-docs:
+      enabled: true
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
+      configUrl: /v3/api-docs/swagger-config
+  jwt:
+    access: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+    refresh: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+    expired-min:
+      refresh-expiration: 14*60*60*1000
+      access-expiration: 14*60*60*1000
+
+#server:
+#  servlet:
+#    context-path: /api/v1
+
   sql:
     init:
       mode: always
       data-locations:
-#        - 'classpath:/data_achievement.sql'
+#        - 'classpath:/data_member.sql'
+#        - 'classpath:/data_member_info.sql'
+        - 'classpath:/data_pet.sql'
+#        - 'classpath:/data_member_pet.sql'
+        - 'classpath:/data_achievement.sql'
+#        - 'classpath:/data_member_achievement.sql'
 
 # 젠킨스 환경변수 추가
 jwt:
