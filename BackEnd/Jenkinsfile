@@ -20,6 +20,9 @@ pipeline {
                 echo "JWT_ACCESS: ${env.JWT_ACCESS}"
                 echo "DB_URL: ${env.DB_URL}"
                 echo "REDIS_HOST: ${env.REDIS_HOST}"
+                echo "JWT_REFRESH: ${env.JWT_REFRESH}"
+                echo "DB_NAME: ${env.DB_NAME}"
+
             }
         }
         stage('Setup Environment') {
