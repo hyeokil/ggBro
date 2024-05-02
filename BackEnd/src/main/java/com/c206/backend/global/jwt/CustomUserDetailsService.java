@@ -27,6 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if(member.isPresent()){
             if(member.get().getId() != null){
                 //UserDetails에 담아서 return하면 AuthenticationManager가 검증 함
+                System.out.println(member.get().getId());
                 System.out.println(member.get().getEmail());
                 System.out.println(member.get().getNickname());
                 return new CustomUserDetails(member.get());

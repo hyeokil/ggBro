@@ -48,12 +48,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        Long memberId = jwtTokenUtil.getMemberId(token);
         String email = jwtTokenUtil.getEmail(token);
         String nickname = jwtTokenUtil.getNickname(token);
 
         //...
         //userEntity를 생성하여 값 set
         Member member = Member.builder()
+                .id(memberId)
                 .email(email)
                 .nickname(nickname)
                 .build();
@@ -62,6 +64,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
         System.out.println("여기는 JwtTokenFilter");
+        System.out.println("여기의 멤버 아이디는 "+ customUserDetails.getId());
         System.out.println("여기의 이메일은 "+ customUserDetails.getEmail());
         System.out.println("여기의 닉네임은 "+ customUserDetails.getNickname());
 

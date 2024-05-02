@@ -29,6 +29,13 @@ public class JwtTokenUtil {
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
+    //    사용자 멤버 아이디 반환
+    public Long getMemberId(String token) {
+        System.out.println(Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class));
+
+        return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
+    }
+
 
     //    사용자 닉네임 반환
     public String getNickname(String token) {
@@ -47,10 +54,11 @@ public class JwtTokenUtil {
     }
 
     //    JWT 토큰발급
-    public String createAccessJwt(String email, String nickname, Long expiredMs) {
+    public String createAccessJwt(Long memberId, String email, String nickname, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("tokenType", "access")
+                .claim("memberId", memberId)
                 .claim("email", email)
                 .claim("nickname", nickname)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -59,10 +67,11 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public String createRefreshJwt(String email, String nickname, Long expiredMs) {
+    public String createRefreshJwt(Long memberId, String email, String nickname, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("tokenType", "refresh")
+                .claim("memberId", memberId)
                 .claim("email", email)
                 .claim("nickname", nickname)
                 .issuedAt(new Date(System.currentTimeMillis()))

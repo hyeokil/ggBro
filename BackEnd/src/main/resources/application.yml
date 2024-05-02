@@ -30,8 +30,8 @@ spring:
     access: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
     refresh: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
     expired-min:
-      refresh-expiration: 14d
-      access-expiration: 14d
+      refresh-expiration: 14*60*60
+      access-expiration: 14*60*60
 
 #server:
 #  servlet:
