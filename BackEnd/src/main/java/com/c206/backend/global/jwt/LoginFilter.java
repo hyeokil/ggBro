@@ -1,9 +1,11 @@
 package com.c206.backend.global.jwt;
 
+import com.c206.backend.domain.member.service.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,16 +26,25 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private CustomUserDetailsService customUserDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    private final RedisService redisService;
+
     @Value("${spring.jwt.expired-min.access-expiration}")
     private Long AccessTokenExpireTime;
     @Value("${spring.jwt.expired-min.refresh-expiration}")
     private Long RefreshTokenExpireTime;
 
+    static Long accessTokenEXTime;
+    static Long refreshTokenEXTime;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
+    public LoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, RedisService redisService) {
 
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.redisService = redisService;
+
+        accessTokenEXTime = AccessTokenExpireTime;
+        refreshTokenEXTime = RefreshTokenExpireTime;
 
         setFilterProcessesUrl("/api/v1/member/signin");
     }
@@ -90,16 +101,24 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("토큰에서 확인할 수 있는 정보들"+" "+memberId+" "+email+" "+nickname);
 
         String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, (long) (14*60*60*1000));
-//        String accessToken = jwtTokenUtil.createAccessJwt(email, nickname, AccessTokenExpireTime);
+//        String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, accessTokenEXTime);
         System.out.println("액세스 토큰은 이렇게 생겼다. "+ accessToken);
+
         String refreshToken = jwtTokenUtil.createRefreshJwt(memberId, email, nickname, (long) (14*60*60*1000));
-//        String refreshToken = jwtTokenUtil.createRefreshJwt(email, nickname, RefreshTokenExpireTime);
+//        String refreshToken = jwtTokenUtil.createRefreshJwt(memberId, email, nickname, refreshTokenEXTime);
         System.out.println("리프레쉬 토큰은 이렇게 생겼다. "+ refreshToken);
 
+        // 헤더에 Access토큰 부여
         response.addHeader("Authorization", "Bearer " + accessToken);
 
+        // Redis에 Refresh 토큰 저장
+        redisService.setValues("refresh "+ email,  refreshToken, (long) (24 * 60 * 60 * 1000));
+
+        // Cookie에 Access, refresh 토큰 부여
         response.addCookie(createCookie("Authorization", accessToken));
         response.addCookie(createCookie("refresh", refreshToken));
+
+
 
     }
 
