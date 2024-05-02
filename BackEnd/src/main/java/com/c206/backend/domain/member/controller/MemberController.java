@@ -3,6 +3,7 @@ package com.c206.backend.domain.member.controller;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
 import com.c206.backend.domain.member.service.MemberService;
+import com.c206.backend.global.common.dto.Message;
 import com.c206.backend.global.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,10 +51,10 @@ public class MemberController {
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입을 진행합니다." )
-    public ResponseEntity<?> memberSignUp(@RequestBody @Valid @Parameter SignUpRequestDto signUpRequestDto, Errors error){
+    public ResponseEntity<Message<?>> memberSignUp(@RequestBody @Valid @Parameter SignUpRequestDto signUpRequestDto, Errors error){
         if (error.hasErrors()) {
             // 바인딩 결과에 에러가 있으면 에러 메시지를 반환
-            return ResponseEntity.badRequest().body(error.getAllErrors());
+            return ResponseEntity.badRequest().body((Message.success(error.getAllErrors().toString())));
         }
         try {
             System.out.println(signUpRequestDto.getEmail());
@@ -62,9 +63,9 @@ public class MemberController {
 
             //펫 자동생성
             //업적 자동생성
-            //퀘스트 자동생성
+            //회원정보 자동생성
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().body(Message.success());
         }catch (Exception e)
         {
             e.printStackTrace();
