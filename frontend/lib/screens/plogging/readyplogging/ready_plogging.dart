@@ -63,7 +63,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                 bottom: MediaQuery.of(context).size.height * 0.03,
                 child: GestureDetector(
                   onTap: () {
-                    context.go('/bluetooth');
+                    context.push('/bluetooth');
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,

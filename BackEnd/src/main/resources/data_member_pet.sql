@@ -1,0 +1,33 @@
+INSERT INTO `member_pet` (
+                      `member_id`,
+                      `pet_id`,
+                      `exp`,
+                      `nickname`,
+                      `active`,
+                      `normal`,
+                      `plastic`,
+                      `can`,
+                      `glass`
+)
+VALUES (
+        1,
+        1,
+        0,
+        '수달',
+        false,
+        0,
+        0,
+        0,
+        0
+)
+     ,(
+    2,
+    1,
+    0,
+    '수달',
+    false,
+    0,
+    0,
+    0,
+    0
+);

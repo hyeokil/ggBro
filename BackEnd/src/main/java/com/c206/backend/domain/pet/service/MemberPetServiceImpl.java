@@ -43,10 +43,15 @@ public class MemberPetServiceImpl implements MemberPetService {
         for (Pet pet:pets) {
             petIdSet.add(pet.getId());
         }
+        System.out.println(petIdSet);
         for (MemberPet memberPet : memberPets) {
             petIdSet.remove(memberPet.getPet().getId());
         }
+        System.out.println(petIdSet);
         List<Long> petIdList = new ArrayList<>(petIdSet);
+        if (petIdList.isEmpty()) {
+            throw new PetException(PetError.PET_OWNERSHIP_COMPLETE);
+        }
         Long randomPetId = petIdList.get(new Random().nextInt(petIdList.size()));
         Pet pet = petRepository.findById(randomPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_PET));
@@ -125,6 +130,7 @@ public class MemberPetServiceImpl implements MemberPetService {
         }
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberError.NOT_FOUND_MEMBER));
+
         MemberInfo newMemberInfo= MemberInfo.builder()
                 .member(member)
                 .profilePetId(memberInfo.getProfilePetId())

@@ -1,13 +1,11 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
-    url: jdbc:mysql://localhost:3306/ggbro?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
-    username : ssafy
-    password : ssafy
   jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    generate-ddl: true
     hibernate:
-#      ddl-auto: create-drop                # ddl 자동 작성 여부
-      ddl-auto: update                # ddl 자동 작성 여부
+      ddl-auto: create-drop                # ddl 자동 작성 여부
+    #      ddl-auto: update                # ddl 자동 작성 여부
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -15,6 +13,12 @@ spring:
         jdbc:
           batch_size: 100              #   insert/update 쿼리를 원하는 개수만큼 모아서 DB에 날릴 수 있는 옵션
         default_batch_fetch_size: 100
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
+    url: jdbc:mysql://localhost:3306/ggbro?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
+    username : ssafy
+    password : ssafy
+
   data:
     redis:
       host: localhost
@@ -41,6 +45,11 @@ spring:
     init:
       mode: always
       data-locations:
-#        - 'classpath:/data_achievement.sql'
+#        - 'classpath:/data_member.sql'
+#        - 'classpath:/data_member_info.sql'
+        - 'classpath:/data_pet.sql'
+#        - 'classpath:/data_member_pet.sql'
+        - 'classpath:/data_achievement.sql'
+#        - 'classpath:/data_member_achievement.sql'
 
 
