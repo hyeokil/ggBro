@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:go_router/go_router.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -17,15 +18,18 @@ class _ScanScreenState extends State<ScanScreen> {
     startScan();
   }
 
-  void startScan() async {
-    FlutterBluePlus.adapterState.listen((state) {
+  void startScan() {
+    var subscription = FlutterBluePlus.adapterState.listen((state) async {
       if (state == BluetoothAdapterState.on) {
         // 블루투스가 켜져 있으면 스캔 시작
         FlutterBluePlus.startScan(timeout: const Duration(seconds: 10));
       } else {
         print("블루투스가 꺼져 있습니다.");
+        await FlutterBluePlus.turnOn();
+        print("블루투스가 켜졌습니다.");
       }
     });
+    // subscription.cancel();
     // 스캔 결과 처리
     FlutterBluePlus.scanResults.listen((results) {
       setState(() {
@@ -44,8 +48,17 @@ class _ScanScreenState extends State<ScanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Text('스캔스크린'),
+    return SafeArea(
+      child: Scaffold(
+        body: Column(children: [
+          ElevatedButton(
+              onPressed: () {
+                context.push('/ploggingProgress');
+              },
+              child: const Text("시작하러 가기")),
+          const Text('스캔스크린'),
+        ]),
+      ),
     );
   }
 }
