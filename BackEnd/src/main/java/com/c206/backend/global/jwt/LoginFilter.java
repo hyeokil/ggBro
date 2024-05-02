@@ -89,9 +89,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         System.out.println("토큰에서 확인할 수 있는 정보들"+" "+memberId+" "+email+" "+nickname);
 
-        String accessToken = jwtTokenUtil.createAccessJwt(email, nickname, AccessTokenExpireTime);
+        String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, (long) (14*60*60));
+//        String accessToken = jwtTokenUtil.createAccessJwt(email, nickname, AccessTokenExpireTime);
         System.out.println("액세스 토큰은 이렇게 생겼다. "+ accessToken);
-        String refreshToken = jwtTokenUtil.createRefreshJwt(email, nickname, RefreshTokenExpireTime);
+        String refreshToken = jwtTokenUtil.createRefreshJwt(memberId, email, nickname, (long) (14*60*60));
+//        String refreshToken = jwtTokenUtil.createRefreshJwt(email, nickname, RefreshTokenExpireTime);
         System.out.println("리프레쉬 토큰은 이렇게 생겼다. "+ refreshToken);
 
         response.addHeader("Authorization", "Bearer " + accessToken);
