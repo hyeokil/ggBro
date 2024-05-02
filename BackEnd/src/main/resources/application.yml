@@ -1,6 +1,11 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
+    # 젠킨스 환경변수 추가
     url: jdbc:mysql://localhost:3306/ggbro?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
     username : ssafy
     password : ssafy
@@ -16,7 +21,7 @@ spring:
         default_batch_fetch_size: 100
   data:
     redis:
-      host: localhost
+      host: localhost # 젠킨스 환경변수 추가
       port: 6379
   sql:
     init:
@@ -24,9 +29,20 @@ spring:
       data-locations:
 #        - 'classpath:/data_achievement.sql'
 
-
+# 젠킨스 환경변수 추가
 jwt:
   access-key: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
   refresh-key: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
   refresh-expiration: 14d
   access-expiration: 14d
+
+# AWS
+aws:
+  access-key-id: AKIA2UC27RTFNQDD7ICX  # 젠킨스 환경변수 추가
+  secret-access-key: LQBplWSgcSQLGpItWNexqfz9RbkpghrMkN/flM9h  # 젠킨스 환경변수 추가
+  s3:
+    bucket: ggbro # 젠킨스 환경변수 추가
+
+# FLASK
+flask:
+  server-url: http://k10c206.p.ssafy.io:5000/predict # 젠킨스 환경변수 추가
