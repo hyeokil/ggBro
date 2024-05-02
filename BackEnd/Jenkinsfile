@@ -9,8 +9,8 @@ pipeline {
         DB_NAME = "${env.DB_NAME}"
         DB_PASSWORD = "${env.DB_PASSWORD}"
         REDIS_HOST="${env.REDIS_HOST}"
-        JWT_ACCESS="${JWT_ACCESS}"
-        JWT_REFRESH="${JWT_REFRESH}"
+        JWT_ACCESS="${env.JWT_ACCESS}"
+        JWT_REFRESH="${env.JWT_REFRESH}"
 
     }
     stages {
