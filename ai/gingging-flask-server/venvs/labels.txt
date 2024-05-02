@@ -1,4 +1,0 @@
-0 glass
-1 metal
-2 plastic
-3 trash
