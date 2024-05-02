@@ -15,13 +15,13 @@ spring:
         default_batch_fetch_size: 100
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
-    url: jdbc:mysql://localhost:3306/ggbro?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
-    username : ssafy
-    password : ssafy
+    url: ${DB_URL}       # 데이터베이스 URL
+    username : ${DB_NAME}
+    password : ${DB_PASSWORD}
 
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
   springdoc:
     api-docs:
@@ -31,8 +31,8 @@ spring:
       path: /swagger-ui.html
       configUrl: /v3/api-docs/swagger-config
   jwt:
-    access: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-    refresh: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+    access: ${JWT_ACCESS}
+    refresh: ${JWT_REFRESH}
     expired-min:
       refresh-expiration: 14*60*60
       access-expiration: 14*60*60
