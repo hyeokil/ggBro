@@ -1,5 +1,6 @@
 package com.c206.backend.domain.pet.service;
 
+import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 
@@ -15,5 +16,9 @@ public interface MemberPetService {
 
     // 펫 구출하기 (회원 펫 생성)
     Boolean rescuePet(Long memberId);
+
+    //회원가입 시 펫 1개 기본 지급해 주기
+    void provideBasePet(Member member);
+
 
 }

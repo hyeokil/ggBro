@@ -142,4 +142,22 @@ public class MemberPetServiceImpl implements MemberPetService {
             return false;
         }
     }
+
+    @Override
+    public void provideBasePet(Member member) {
+        Pet pet = petRepository.findById(1L).orElseThrow(()
+            -> new PetException(PetError.NOT_FOUND_PET));
+        MemberPet newMemberPet = MemberPet.builder()
+                .member(member)
+                .pet(pet)
+                .exp(0)
+                .nickname(pet.getName())
+                .active(false)
+                .normal(0)
+                .plastic(0)
+                .can(0)
+                .glass(0)
+                .build();
+        memberPetRepository.save(newMemberPet);
+    }
 }

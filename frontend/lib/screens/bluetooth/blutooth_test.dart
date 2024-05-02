@@ -38,7 +38,7 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   Widget build(BuildContext context) {
     Widget screen = _adapterState == BluetoothAdapterState.on
         ? const ScanScreen()
-        : BluetoothOffScreen(adapterState: _adapterState);
+        : const ScanScreen();
 
     return MaterialApp(
       color: Colors.lightBlue,
