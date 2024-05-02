@@ -103,7 +103,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, (long) (14*60*60*1000));
 //        String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, accessTokenEXTime);
         System.out.println("액세스 토큰은 이렇게 생겼다. "+ accessToken);
-        
+
         String refreshToken = jwtTokenUtil.createRefreshJwt(memberId, email, nickname, (long) (14*60*60*1000));
 //        String refreshToken = jwtTokenUtil.createRefreshJwt(memberId, email, nickname, refreshTokenEXTime);
         System.out.println("리프레쉬 토큰은 이렇게 생겼다. "+ refreshToken);
