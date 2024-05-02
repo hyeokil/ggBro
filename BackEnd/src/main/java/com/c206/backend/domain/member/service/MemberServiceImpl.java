@@ -101,7 +101,7 @@ public class MemberServiceImpl implements MemberService{
                         .member(member)
                         .achievement(achievement)
                         .progress(0)
-                        .goalMultiply(0)
+                        .goalMultiply(1)
                         .build();
                 memberAchievementRepository.save(newMemberAchievement);
             }
