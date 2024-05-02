@@ -81,6 +81,12 @@ pipeline {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'Docker-hub', usernameVariable: 'DOCKER_USER_ID', passwordVariable: 'DOCKER_USER_PASSWORD']]) {
                         try {
                         sh "docker run -d --name back -p 9003:8080 \
+                        -e DB_URL=${env.DB_URL} \
+                        -e DB_NAME=${env.DB_NAME} \
+                        -e DB_PASSWORD=${env.DB_PASSWORD} \
+                        -e REDIS_HOST=${env.REDIS_HOST} \
+                        -e JWT_ACCESS=${env.JWT_ACCESS} \
+                        -e JWT_REFRESH=${env.JWT_REFRESH} \
                         ${DOCKERHUB_REGISTRY}"
 //                             sh "docker-compose -f ${env.WORKSPACE}/docker-compose.yml up -d"
 

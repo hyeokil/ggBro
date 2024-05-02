@@ -34,8 +34,8 @@ spring:
     access: ${JWT_ACCESS}
     refresh: ${JWT_REFRESH}
     expired-min:
-      refresh-expiration: 14*60*60
-      access-expiration: 14*60*60
+      refresh-expiration: 14*60*60*1000
+      access-expiration: 14*60*60*1000
 
 #server:
 #  servlet:
