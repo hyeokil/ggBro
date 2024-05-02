@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
+import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/progress_map.dart';
+import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart';
 import 'package:go_router/go_router.dart';
 
 class ProgressPlogging extends StatefulWidget {
@@ -40,13 +43,20 @@ class _ProgressPloggingState extends State<ProgressPlogging> {
                 bottom: MediaQuery.of(context).size.height * 0.03,
                 child: const CustomBackButton(),
               ),
-              GestureDetector(
-                onTap: () {
-                  context.push('/ploggingProgress');
-                },
-                child: Positioned(
-                  right: MediaQuery.of(context).size.width * 0.03,
-                  bottom: MediaQuery.of(context).size.height * 0.03,
+              Positioned(
+                right: MediaQuery.of(context).size.width * 0.03,
+                bottom: MediaQuery.of(context).size.height * 0.03,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const FinishPloggingDialog();
+                      },
+                    ).then(
+                      (value) => context.go('/main'),
+                    );
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: MediaQuery.of(context).size.height * 0.05,
@@ -70,7 +80,7 @@ class _ProgressPloggingState extends State<ProgressPlogging> {
                           left: MediaQuery.of(context).size.width * 0.015,
                           child: Container(
                             child: const Icon(
-                              Icons.close,
+                              Icons.directions_run_sharp,
                               size: 30,
                               color: Colors.white,
                             ),
@@ -78,7 +88,7 @@ class _ProgressPloggingState extends State<ProgressPlogging> {
                         ),
                         Center(
                           child: Text(
-                            '종 료',
+                            '   시작하기',
                             style: CustomFontStyle.getTextStyle(
                                 context, CustomFontStyle.yeonSung80_white),
                           ),

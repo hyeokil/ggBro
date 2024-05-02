@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -179,7 +180,16 @@ class _ReadyMapState extends State<ReadyMap> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
-      decoration: const BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(
+        border: Border.all(width: 3, color: Colors.white),
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.basicgray.withOpacity(0.5),
+              offset: const Offset(0, 4),
+              blurRadius: 1,
+              spreadRadius: 1)
+        ],
+      ),
       child: _isLocationLoaded
           ? Stack(
               children: [
