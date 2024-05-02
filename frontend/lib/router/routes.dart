@@ -160,7 +160,7 @@ final GoRouter globalRouter = GoRouter(
       name: 'bluetooth',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const ScanScreen(),
+        child: ScanScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
