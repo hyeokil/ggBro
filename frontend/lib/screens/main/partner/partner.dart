@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
+import 'package:frontend/screens/main/dialog/change_partner_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class Partner extends StatefulWidget {
@@ -13,11 +15,17 @@ class _PartnerState extends State<Partner> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.push('/bluetooth');
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const ChangePartnerDialog();
+          },
+        );
       },
       child: Container(
+        width: MediaQuery.of(context).size.height * 0.95,
         height: MediaQuery.of(context).size.height * 0.32,
-        decoration: BoxDecoration(color: Colors.white),
+        child: Image.asset(AppIcons.meka_sudal),
       ),
     );
   }
