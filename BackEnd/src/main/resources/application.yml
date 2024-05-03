@@ -5,7 +5,7 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: create-drop                # ddl 자동 작성 여부
-    #      ddl-auto: update                # ddl 자동 작성 여부
+#          ddl-auto: update                # ddl 자동 작성 여부
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -51,5 +51,6 @@ spring:
 #        - 'classpath:/data_member_pet.sql'
         - 'classpath:/data_achievement.sql'
 #        - 'classpath:/data_member_achievement.sql'
+#        - 'classpath:/data_quest.sql'
 
 

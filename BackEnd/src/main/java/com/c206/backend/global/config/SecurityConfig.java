@@ -1,5 +1,6 @@
 package com.c206.backend.global.config;
 
+import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.global.jwt.LoginFilter;
 import com.c206.backend.global.jwt.JwtTokenFilter;
 import com.c206.backend.global.jwt.JwtTokenUtil;
@@ -23,10 +24,13 @@ public class SecurityConfig {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtTokenUtil jwtTokenUtil) {
+    private final RedisService redisService;
+
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JwtTokenUtil jwtTokenUtil, RedisService redisService) {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.redisService = redisService;
     }
 
     @Bean
@@ -64,7 +68,7 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenFilter(jwtTokenUtil), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtTokenUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtTokenUtil, redisService), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .sessionManagement((session) -> session

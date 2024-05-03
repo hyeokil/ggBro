@@ -10,55 +10,82 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
-  List<ScanResult> devicesList = [];
-
-  @override
-  void initState() {
-    super.initState();
-    startScan();
-  }
-
-  void startScan() {
-    var subscription = FlutterBluePlus.adapterState.listen((state) async {
-      if (state == BluetoothAdapterState.on) {
-        // 블루투스가 켜져 있으면 스캔 시작
-        FlutterBluePlus.startScan(timeout: const Duration(seconds: 10));
-      } else {
-        print("블루투스가 꺼져 있습니다.");
-        await FlutterBluePlus.turnOn();
-        print("블루투스가 켜졌습니다.");
-      }
-    });
-    // subscription.cancel();
-    // 스캔 결과 처리
-    FlutterBluePlus.scanResults.listen((results) {
-      setState(() {
-        devicesList = results;
-        print('결과 출력 $devicesList');
-      });
-      for (ScanResult result in results) {
-        print('${result.device.advName} found! rssi: ${result.rssi}');
-      }
-    });
-
-    // 스캔 종료
-    Future.delayed(const Duration(seconds: 10))
-        .then((_) => FlutterBluePlus.stopScan());
-  }
+  // FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  bool isScanning = false;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(children: [
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('블루투스 기기 스캔'),
+      ),
+      body: Column(
+        children: <Widget>[
           ElevatedButton(
-              onPressed: () {
-                context.push('/ploggingProgress');
-              },
-              child: const Text("시작하러 가기")),
-          const Text('스캔스크린'),
-        ]),
+            onPressed: () => isScanning ? null : startScan(),
+            child: Text(isScanning ? '스캔 중...' : '스캔 시작'),
+          ),
+          StreamBuilder<List<ScanResult>>(
+            stream: FlutterBluePlus.onScanResults,
+            initialData: [],
+            builder: (c, snapshot) => Container(
+              color: Colors.yellow,
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: ListView(
+                children: snapshot.data!
+                    .map((r) => r.device.advName.isNotEmpty ? ListTile(
+                          title: Text(r.device.advName),
+                          subtitle: Text(r.device.remoteId.toString()),
+                          onTap: () => connectToDevice(r.device),
+                        ): Container())
+                    .toList(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  void startScan() {
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 10)).then(
+      (value) => setState(() => isScanning = false),
+    );
+    setState(() => isScanning = true);
+
+    FlutterBluePlus.scanResults.listen((results) {
+      // 스캔 결과를 사용해 UI 업데이트
+      for (ScanResult result in results) {
+        if (result.device.advName.isNotEmpty) {
+          print('${result.device.advName} found! rssi: ${result.rssi}');
+        }
+      }
+    });
+
+    // FlutterBluePlus.stopScan().then((_) {
+    //   setState(() => isScanning = false);
+    // });
+  }
+
+  void connectToDevice(BluetoothDevice device) async {
+    await device.connect();
+    print('연결됨: ${device.advName}');
+    // 연결된 기기로 추가 작업 수행
+  }
+}
+
+@override
+Widget build(BuildContext context) {
+  return SafeArea(
+    child: Scaffold(
+      body: Column(children: [
+        ElevatedButton(
+            onPressed: () {
+              context.push('/ploggingProgress');
+            },
+            child: const Text("시작하러 가기")),
+        const Text('스캔스크린'),
+      ]),
+    ),
+  );
 }

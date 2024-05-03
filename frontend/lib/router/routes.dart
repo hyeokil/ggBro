@@ -18,23 +18,72 @@ import 'package:go_router/go_router.dart';
 final GoRouter globalRouter = GoRouter(
   routes: [
     GoRoute(
-        path: RoutePath.singUp,
-        name: 'singup',
-        builder: (context, state) => const SignUpScreen()),
+      path: RoutePath.signUp,
+      name: 'signUp',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const SignUpScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
     GoRoute(
       path: RoutePath.login,
       name: 'login',
-      builder: (context, state) => const LoginScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const LoginScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.intro,
       name: 'intro',
-      builder: (context, state) => const IntroScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const IntroScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.main,
       name: 'main',
-      builder: (context, state) => const MainScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const MainScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.ranking,
@@ -160,7 +209,7 @@ final GoRouter globalRouter = GoRouter(
       name: 'bluetooth',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const ScanScreen(),
+        child: ScanScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/screens/member/component/custom_input.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -37,7 +39,7 @@ class _SignUpState extends State<SignUpScreen> {
     if (value == null || value.isEmpty) {
       return '비밀번호를 입력해주세요.';
     } else if (!passwordRegex.hasMatch(value)) {
-      return '글자, 숫자, 특수 기호가 포함된 8 ~ 15자를 입력해주세요.';
+      return '문자, 숫자, 특수 문자가 포함된 8 ~ 15자를 입력해주세요.';
     }
     if (_password.text != _passwordCheck.text) {
       return '비밀번호가 일치하지 않습니다.';
@@ -76,20 +78,23 @@ class _SignUpState extends State<SignUpScreen> {
                       child: const Text("뒤로가기")),
                   ElevatedButton(
                       onPressed: () {
+                        final auth = Provider.of<AuthModel>(context, listen: false);
                         if (_formKey.currentState!.validate()) {
                           // 유효성 검사를 통과한 경우 회원가입 로직을 실행합니다.
                           String email = _email.text;
                           String password = _password.text;
-                          Fluttertoast.showToast(
-                              msg: "회원가입 성공",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.TOP,
-                              timeInSecForIosWeb: 2,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 20.0);
-                          print('이메일 $email 비밀번호 $password');
+                          String nickName = _nickname.text;
+                          // Fluttertoast.showToast(
+                          //     msg: "회원가입 성공",
+                          //     toastLength: Toast.LENGTH_SHORT,
+                          //     gravity: ToastGravity.TOP,
+                          //     timeInSecForIosWeb: 2,
+                          //     backgroundColor: Colors.green,
+                          //     textColor: Colors.white,
+                          //     fontSize: 20.0);
+                          print('이메일 $email 비밀번호 $password 닉네임 $nickName');
                           // 여기에 회원가입 로직을 구현합니다.
+                          auth.signUp(email, password, nickName);
                         }
                       },
                       child: const Text("회원가입"))

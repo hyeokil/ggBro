@@ -23,13 +23,19 @@ import com.c206.backend.global.jwt.CustomUserDetailsService;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
 import com.c206.backend.domain.member.repository.MemberRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
@@ -37,19 +43,17 @@ public class MemberServiceImpl implements MemberService{
     private final AchievementRepository achievementRepository;
     private final MemberAchievementRepository memberAchievementRepository;
     private final MemberPetService memberPetService;
-    private final MemberAchievementService memberAchievement;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    public MemberServiceImpl(MemberRepository memberRepository, MemberInfoRepository memberInfoRepository, AchievementRepository achievementRepository, MemberAchievementRepository memberAchievementRepository, MemberPetService memberPetService, MemberAchievementService memberAchievement, MemberAchievementService memberAchievement1, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.memberRepository = memberRepository;
-        this.memberInfoRepository = memberInfoRepository;
-        this.achievementRepository = achievementRepository;
-        this.memberAchievementRepository = memberAchievementRepository;
-        this.memberPetService = memberPetService;
-        this.memberAchievement = memberAchievement1;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+//    public MemberServiceImpl(MemberRepository memberRepository, MemberInfoRepository memberInfoRepository, AchievementRepository achievementRepository, MemberAchievementRepository memberAchievementRepository, MemberPetService memberPetService, MemberAchievementService memberAchievement1, BCryptPasswordEncoder bCryptPasswordEncoder) {
+//        this.memberRepository = memberRepository;
+//        this.memberInfoRepository = memberInfoRepository;
+//        this.achievementRepository = achievementRepository;
+//        this.memberAchievementRepository = memberAchievementRepository;
+//        this.memberPetService = memberPetService;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//    }
 
     @Override
     public Boolean signUpProcess(SignUpRequestDto signupDto) {
@@ -114,15 +118,15 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Boolean signInProcess(SignInRequestDto signInDto) {
 
-        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(memberRepository);
-
-        System.out.println("여기는 MemberServiceImpl");
-        if(bCryptPasswordEncoder.matches(signInDto.getPassword(), customUserDetailsService.loadUserByUsername(signInDto.getUsername()).getPassword())){
-
-            customUserDetailsService.loadUserByUsername(signInDto.getUsername());
-
-            return true;
-        }
+//        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(memberRepository);
+//
+//        System.out.println("여기는 MemberServiceImpl");
+//        if(bCryptPasswordEncoder.matches(signInDto.getPassword(), customUserDetailsService.loadUserByUsername(signInDto.getEmail()).getPassword())){
+//
+//            customUserDetailsService.loadUserByUsername(signInDto.getEmail());
+//
+//            return true;
+//        }
         return false;
     }
 
