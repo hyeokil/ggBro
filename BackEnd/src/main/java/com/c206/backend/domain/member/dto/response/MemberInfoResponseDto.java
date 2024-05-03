@@ -22,4 +22,5 @@ public class MemberInfoResponseDto {
     private int level;
 
     private int currency;
+
 }
