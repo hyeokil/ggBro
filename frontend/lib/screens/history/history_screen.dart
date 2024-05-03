@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
 import 'package:frontend/screens/history/component/history_list.dart';
 
@@ -30,27 +31,36 @@ class _RankingState extends State<HistoryScreen> {
               ], // 그라데이션 색상 배열
             ),
           ), // 전
-          child: Column(
+          child: Stack(
             children: [
-              TopBar(),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      HistoryList(),
-                      HistoryList(),
-                      HistoryList(),
-                      HistoryList(),
-                      HistoryList(),
-                      HistoryList(),
-                      HistoryList(),
-                      HistoryList(),
-                    ],
-                  ),
-                ),
-              )
+              Column(
+                children: [
+                  TopBar(),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.82,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          HistoryList(),
+                          HistoryList(),
+                          HistoryList(),
+                          HistoryList(),
+                          HistoryList(),
+                          HistoryList(),
+                          HistoryList(),
+                          HistoryList(),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Positioned(
+                left: MediaQuery.of(context).size.width * 0.03,
+                bottom: MediaQuery.of(context).size.height * 0.02,
+                child: CustomBackButton(),
+              ),
             ],
           ),
         ),

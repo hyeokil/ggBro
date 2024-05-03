@@ -1,6 +1,6 @@
 INSERT INTO `quest` (
-                      `goal_max`,
-                      `goal_min`
+                      `goal_min`,
+                      `goal_max`
 )
 VALUES (
         1,

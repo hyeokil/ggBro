@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
-                bottom: MediaQuery.of(context).size.height * 0.03,
+                bottom: MediaQuery.of(context).size.height * 0.02,
                 child: CustomBackButton(),
               ),
             ],

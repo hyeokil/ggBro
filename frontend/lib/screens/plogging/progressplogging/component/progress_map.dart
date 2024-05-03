@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 
 class ProgressMap extends StatefulWidget {
   const ProgressMap({super.key});
@@ -93,7 +91,6 @@ class _ProgressMapState extends State<ProgressMap> {
     if (isSelectedTrashTong) {
       for (var data in jsonData) {
         var key = _getClusterKey(data);
-
         if (!clusters.containsKey(key)) {
           clusters[key] = [];
         }
@@ -122,25 +119,22 @@ class _ProgressMapState extends State<ProgressMap> {
           _displayClusterMarker(markers);
         } else {
           // 개별 마커 표시
-          markers.forEach(
-            (marker) async {
-              await _mapController!.addOverlay(marker);
+          for (final marker in markers) {
+            _mapController!.addOverlay(marker);
+            final onMarkerInfoWindow = NInfoWindow.onMarker(
+              id: marker.info.id,
+              text: marker.info.id.split('_')[1],
+            );
 
-              final onMarkerInfoWindow = NInfoWindow.onMarker(
-                id: marker.info.id,
-                text: marker.info.id.split('_')[1],
-              );
-
-              marker.setOnTapListener(
-                (NMarker marker) async => {
-                  if (await marker.hasOpenInfoWindow())
-                    {onMarkerInfoWindow.close()}
-                  else
-                    {marker.openInfoWindow(onMarkerInfoWindow)}
-                },
-              );
-            },
-          );
+            marker.setOnTapListener(
+              (NMarker marker) async => {
+                if (await marker.hasOpenInfoWindow())
+                  {onMarkerInfoWindow.close()}
+                else
+                  {marker.openInfoWindow(onMarkerInfoWindow)}
+              },
+            );
+          }
         }
       },
     );
@@ -178,6 +172,9 @@ class _ProgressMapState extends State<ProgressMap> {
               NaverMap(
                 onMapReady: (controller) {
                   _mapController = controller; // 지도 컨트롤러 초기화
+                  final locationOverlay = _mapController?.getLocationOverlay();
+                  locationOverlay?.setIcon(const NOverlayImage.fromAssetImage(
+                      AppIcons.intro_animal_1));
                   _mapController!
                       .setLocationTrackingMode(NLocationTrackingMode.follow);
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
@@ -187,38 +184,80 @@ class _ProgressMapState extends State<ProgressMap> {
                   scaleBarEnable: false,
                   logoAlign: NLogoAlign.leftTop,
                   logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                  logoClickEnable: false,
                   initialCameraPosition: NCameraPosition(
                       target: NLatLng(latitude, longitude),
                       zoom: 15,
                       bearing: 0,
-                      tilt: 0),
+                      tilt: 45),
                 ),
               ),
               Positioned(
-                  top: MediaQuery.of(context).size.height * 0.93,
+                  top: MediaQuery.of(context).size.height * 0.75,
                   right: 0,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    child: Row(
+                  child: Container(
+                    // color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.15,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: Column(
                       children: [
                         Flexible(
                           flex: 1,
                           child: Center(
                             child: GestureDetector(
                               onTap: () {
-                                showModalBottomSheet(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3,
-                                      );
-                                    });
+                                trashTongToggle();
                               },
-                              child: Image.asset(AppIcons.trash_tong),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Center(
+                                    child: Image.asset(
+                                  AppIcons.trash_tong,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  width:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                )),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: const Center(
+                                  child: Icon(Icons.my_location),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -227,20 +266,34 @@ class _ProgressMapState extends State<ProgressMap> {
                           child: Center(
                             child: GestureDetector(
                               onTap: () {
-                                trashTongToggle();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const FinishPloggingDialog();
+                                  },
+                                ).then(
+                                  (value) => context.go('/main'),
+                                );
                               },
-                              child: Image.asset(AppIcons.trash_tong),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                trashTongToggle();
-                              },
-                              child: Image.asset(AppIcons.trash_tong),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: const Center(
+                                  child: Icon(Icons.close),
+                                ),
+                              ),
                             ),
                           ),
                         ),

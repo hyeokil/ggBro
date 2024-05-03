@@ -9,7 +9,6 @@ import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
 import 'provider/main_provider.dart';
 import 'provider/user_provider.dart';
 
@@ -20,6 +19,8 @@ void main() async {
 
   // 지도 초기화
   await _initialize();
+
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
 
   runApp(
     MultiProvider(
