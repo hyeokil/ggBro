@@ -1,6 +1,8 @@
 package com.c206.backend.domain.quest.service;
 
 import com.c206.backend.domain.member.entity.Member;
+import com.c206.backend.domain.member.entity.MemberInfo;
+import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.entity.Pet;
@@ -8,6 +10,8 @@ import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.quest.dto.response.MemberQuestListResponseDto;
 import com.c206.backend.domain.quest.entity.MemberQuest;
 import com.c206.backend.domain.quest.entity.Quest;
+import com.c206.backend.domain.quest.exception.MemberQuestError;
+import com.c206.backend.domain.quest.exception.MemberQuestException;
 import com.c206.backend.domain.quest.repository.MemberQuestRepository;
 import com.c206.backend.domain.quest.repository.QuestRepository;
 import jakarta.transaction.Transactional;
@@ -29,22 +33,51 @@ public class QuestServiceImpl implements QuestService{
     private final QuestRepository questRepository;
     private final MemberQuestRepository memberQuestRepository;
     private final MemberPetRepository memberPetRepository;
+    private final MemberInfoRepository memberInfoRepository;
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<MemberQuestListResponseDto> getQuestList(Long memberId) {
         List<MemberQuest> findedQuestList = memberQuestRepository.findByMemberId(memberId);
         List<MemberQuestListResponseDto> resList = new ArrayList<>();
+
         for(MemberQuest findedQuest : findedQuestList){
-            MemberQuestListResponseDto resItem = MemberQuestListResponseDto.builder()
-                    .goal(findedQuest.getGoal())
-                    .progress(findedQuest.getProgress())
-                    .is_done(findedQuest.isDone())
-                    .member_id(findedQuest.getMember())
-                    .quest_id(findedQuest.getQuest())
-                    .build();
+            MemberQuestListResponseDto resItem = new MemberQuestListResponseDto(
+                    findedQuest.getMemberPet().getNickname(),
+                    findedQuest.getId(),
+                    findedQuest.getQuest().getId(),
+                    findedQuest.getGoal(),
+                    findedQuest.getProgress(),
+                    findedQuest.isDone()
+            );
             resList.add(resItem);
         }
         return resList;
+    }
+
+    @Override
+    public void getQuestReward(Long memberId, Long memberQuestId) {
+
+        // 퀘스트 없을때
+        MemberQuest findedMemberQuest = memberQuestRepository.findById(memberQuestId).orElseThrow(()
+        -> new MemberQuestException(MemberQuestError.NOT_FOUND_MEMBER_QUEST));
+
+        // 호출한 퀘스트가 사용자의 것이 아닐때
+        if(memberId != findedMemberQuest.getMember().getId()){
+            throw new MemberQuestException(MemberQuestError.NOT_MATCH_QUEST);
+        }
+
+        // 퀘스트 진행상황이 목표에 도달하지 못했을 때
+        if(findedMemberQuest.getGoal() > findedMemberQuest.getProgress()){
+            throw new MemberQuestException((MemberQuestError.QUEST_NOT_COMPLETED));
+        }
+
+        int reward = 100 * findedMemberQuest.getGoal();
+        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberQuestId);
+        MemberInfo newMemberInfo = MemberInfo.builder()
+                
+                .build();
+
+
     }
 
     @Override
