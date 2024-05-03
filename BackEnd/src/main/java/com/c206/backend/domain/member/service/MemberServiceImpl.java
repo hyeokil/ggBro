@@ -45,16 +45,6 @@ public class MemberServiceImpl implements MemberService{
     private final MemberPetService memberPetService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
-//    public MemberServiceImpl(MemberRepository memberRepository, MemberInfoRepository memberInfoRepository, AchievementRepository achievementRepository, MemberAchievementRepository memberAchievementRepository, MemberPetService memberPetService, MemberAchievementService memberAchievement1, BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        this.memberRepository = memberRepository;
-//        this.memberInfoRepository = memberInfoRepository;
-//        this.achievementRepository = achievementRepository;
-//        this.memberAchievementRepository = memberAchievementRepository;
-//        this.memberPetService = memberPetService;
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-//    }
-
     @Override
     public Boolean signUpProcess(SignUpRequestDto signupDto) {
 
@@ -118,15 +108,6 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Boolean signInProcess(SignInRequestDto signInDto) {
 
-//        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(memberRepository);
-//
-//        System.out.println("여기는 MemberServiceImpl");
-//        if(bCryptPasswordEncoder.matches(signInDto.getPassword(), customUserDetailsService.loadUserByUsername(signInDto.getEmail()).getPassword())){
-//
-//            customUserDetailsService.loadUserByUsername(signInDto.getEmail());
-//
-//            return true;
-//        }
         return false;
     }
 

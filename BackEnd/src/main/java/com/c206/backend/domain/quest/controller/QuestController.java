@@ -31,6 +31,5 @@ public class QuestController {
 
         List<Quest> questList = new ArrayList<>();
         return ResponseEntity.ok().body(Message.success(questList));
-
     }
 }
