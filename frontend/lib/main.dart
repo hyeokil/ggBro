@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/theme_data.dart';
@@ -38,14 +39,14 @@ void main() async {
 Future<void> _initialize() async {
   String naverMapId = dotenv.get('NAVER_MAP_ID');
   WidgetsFlutterBinding.ensureInitialized();
+  print('네이버 맵 인증 시작');
   await NaverMapSdk.instance.initialize(
-      clientId: '$naverMapId', // 클라이언트 ID 설정
+      clientId: naverMapId, // 클라이언트 ID 설정
       onAuthFailed: (e) => log("네이버맵 인증오류 : $e", name: "onAuthFailed"));
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
