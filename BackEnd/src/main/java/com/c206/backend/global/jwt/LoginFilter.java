@@ -1,6 +1,7 @@
 package com.c206.backend.global.jwt;
 
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
+import com.c206.backend.domain.member.dto.response.MemberInfoResponseDto;
 import com.c206.backend.domain.member.service.RedisService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +32,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    private CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final RedisService redisService;
@@ -43,10 +45,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     static Long accessTokenEXTime;
     static Long refreshTokenEXTime;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, RedisService redisService) {
+    public LoginFilter(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, CustomUserDetailsService customUserDetailsService, RedisService redisService) {
 
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.customUserDetailsService = customUserDetailsService;
         this.redisService = redisService;
 
         accessTokenEXTime = AccessTokenExpireTime;
@@ -83,6 +86,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //            System.out.println("비밀번호 체크 성공~");
 //        }else{
 //            System.out.println("비밀번호 체크 실패...");
+//            throw new RuntimeException();
 //        }
 
         //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
@@ -98,23 +102,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-
-        System.out.println("로그인성공핸냐?");
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         //UserDetailsS
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         Long memberId = customUserDetails.getId();
         String email = customUserDetails.getEmail();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-
-//        String role = auth.getAuthority();
         String nickname = customUserDetails.getNickname();
+        Long memberInfoId = customUserDetails.getProfilePetId();
+        int level = customUserDetails.getLevel();
+        int currency = customUserDetails.getCurrency();
+        String password = customUserDetails.getPassword();
 
-
-        System.out.println("토큰에서 확인할 수 있는 정보들"+" "+memberId+" "+email+" "+nickname);
+        System.out.println("토큰에서 확인할 수 있는 정보들"+" "+memberId+" "+email+" "+nickname+" "+memberInfoId+" "+level+" "+currency);
 
         String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, (long) (14*60*60*1000));
 //        String accessToken = jwtTokenUtil.createAccessJwt(memberId, email, nickname, accessTokenEXTime);
@@ -130,11 +130,31 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // Redis에 Refresh 토큰 저장
         redisService.setValues("refresh "+ email,  refreshToken, (long) (24 * 60 * 60 * 1000));
 
+
         // Cookie에 Access, refresh 토큰 부여
         response.addCookie(createCookie("Authorization", accessToken));
         response.addCookie(createCookie("refresh", refreshToken));
 
+        MemberInfoResponseDto memberInfoResponseDto = MemberInfoResponseDto.builder()
+                .nickname(nickname)
+                .profilePetId(memberInfoId)
+                .level(level)
+                .currency(currency)
+                .build();
 
+        ResponseData responseData = ResponseData.builder()
+                .jwtAccess(accessToken)
+                .jwtRefresh(refreshToken)
+                .memberInfoResponseDto(memberInfoResponseDto)
+                .result(true)
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse = objectMapper.writeValueAsString(responseData);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonResponse);
+        response.getWriter().flush();
 
     }
 
@@ -153,5 +173,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         cookie.setHttpOnly(false);
 
         return cookie;
+    }
+
+
+    @Getter
+    @Builder
+    public static class ResponseData{
+        private String jwtAccess;
+        private String jwtRefresh;
+        private MemberInfoResponseDto memberInfoResponseDto;
+        private boolean result;
     }
 }

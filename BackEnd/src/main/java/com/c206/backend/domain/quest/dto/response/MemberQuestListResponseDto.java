@@ -16,4 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberQuestListResponseDto {
 
     private int goal;
+
+    private int progress;
+
+    private boolean is_done;
+
+    private Long member_id;
 }

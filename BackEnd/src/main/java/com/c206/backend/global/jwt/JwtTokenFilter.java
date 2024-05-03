@@ -1,5 +1,6 @@
 package com.c206.backend.global.jwt;
 
+import com.c206.backend.domain.member.dto.response.MemberInfoResponseDto;
 import com.c206.backend.domain.member.entity.Member;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,7 +55,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         //...
         //userEntity를 생성하여 값 set
-        Member member = Member.builder()
+//        Member member = Member.builder()
+//                .id(memberId)
+//                .email(email)
+//                .nickname(nickname)
+//                .build();
+
+        MemberInfoResponseDto member = MemberInfoResponseDto.builder()
                 .id(memberId)
                 .email(email)
                 .nickname(nickname)
