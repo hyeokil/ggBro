@@ -21,6 +21,7 @@ class CustomInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // width: MediaQuery.of(context).size.width * 0.8,
       width: MediaQuery.of(context).size.width * 0.8,
       margin: const EdgeInsets.only(bottom: 20),
       child: TextFormField(

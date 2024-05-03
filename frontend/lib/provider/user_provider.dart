@@ -5,6 +5,7 @@ class UserProvider with ChangeNotifier {
   String _accessToken = '';
   String _refreshToken = '';
   String _nickName = '';
+  late int _userId;
   late int _profileImage;
   late int _level;
   late int _currency;
@@ -26,6 +27,11 @@ class UserProvider with ChangeNotifier {
 
   void setNickName(String nickName) {
     _nickName = nickName;
+    notifyListeners();
+  }
+
+  void setUserId(int userId) {
+    _userId = userId;
     notifyListeners();
   }
 
@@ -70,5 +76,9 @@ class UserProvider with ChangeNotifier {
 
   int getCurrency() {
     return _currency;
+  }
+
+  int getUserId() {
+    return _userId;
   }
 }
