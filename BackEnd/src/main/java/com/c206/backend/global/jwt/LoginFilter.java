@@ -135,7 +135,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.addCookie(createCookie("Authorization", accessToken));
         response.addCookie(createCookie("refresh", refreshToken));
 
-        MemberInfoResponseDto memberInfoResponseDto = MemberInfoResponseDto.builder()
+        ResponseUserInfoData responseUserInfoData = ResponseUserInfoData.builder()
+                .id(memberId)
                 .nickname(nickname)
                 .profilePetId(memberInfoId)
                 .level(level)
@@ -145,7 +146,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         ResponseData responseData = ResponseData.builder()
                 .jwtAccess(accessToken)
                 .jwtRefresh(refreshToken)
-                .memberInfoResponseDto(memberInfoResponseDto)
+                .responseUserInfoData(responseUserInfoData)
                 .result(true)
                 .build();
 
@@ -175,13 +176,22 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         return cookie;
     }
 
-
-    @Getter
     @Builder
+    @Getter
     public static class ResponseData{
         private String jwtAccess;
         private String jwtRefresh;
-        private MemberInfoResponseDto memberInfoResponseDto;
+        private ResponseUserInfoData responseUserInfoData;
         private boolean result;
+    }
+
+    @Builder
+    @Getter
+    public static class ResponseUserInfoData{
+        private Long id;
+        private String nickname;
+        private Long profilePetId;
+        private int level;
+        private int currency;
     }
 }

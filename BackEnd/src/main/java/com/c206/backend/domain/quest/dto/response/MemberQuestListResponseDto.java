@@ -1,5 +1,8 @@
 package com.c206.backend.domain.quest.dto.response;
 
+import com.c206.backend.domain.member.entity.Member;
+import com.c206.backend.domain.pet.entity.Pet;
+import com.c206.backend.domain.quest.entity.Quest;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
@@ -21,5 +24,9 @@ public class MemberQuestListResponseDto {
 
     private boolean is_done;
 
-    private Long member_id;
+    private Member member_id;
+
+    private Quest quest_id;
+
+    private Pet pet_id;
 }
