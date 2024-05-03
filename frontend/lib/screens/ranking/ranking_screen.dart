@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
 import 'package:frontend/screens/ranking/component/ranking_bar.dart';
 import 'package:frontend/screens/ranking/component/ranking_lists.dart';
@@ -33,66 +34,75 @@ class _RankingState extends State<RankingScreen> {
               ], // 그라데이션 색상 배열
             ),
           ),
-          child: Column(
+          child: Stack(
             children: [
-              TopBar(),
-              Container(
-                color: Colors.transparent,
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.width * 0.75,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      child: Column(
-                        children: [
-                          RankingNameBar(),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
+              Column(
+                children: [
+                  TopBar(),
+                  Container(
+                    color: Colors.transparent,
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    height: MediaQuery.of(context).size.width * 0.75,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          child: Column(
+                            children: [
+                              RankingNameBar(),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              RankingBar(
+                                heightSize: 0.2,
+                                exp: 700,
+                              ),
+                            ],
                           ),
-                          RankingBar(
-                            heightSize: 0.2,
-                            exp: 700,
+                          left: MediaQuery.of(context).size.width * 0.295,
+                        ),
+                        Positioned(
+                          child: Column(
+                            children: [
+                              RankingNameBar(),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              RankingBar(
+                                heightSize: 0.12,
+                                exp: 600,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      left: MediaQuery.of(context).size.width * 0.295,
+                          top: MediaQuery.of(context).size.height * 0.08,
+                          left: MediaQuery.of(context).size.width * 0.005,
+                        ),
+                        Positioned(
+                          child: Column(
+                            children: [
+                              RankingNameBar(),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              RankingBar(
+                                heightSize: 0.08,
+                                exp: 500,
+                              ),
+                            ],
+                          ),
+                          right: MediaQuery.of(context).size.width * 0.005,
+                          top: MediaQuery.of(context).size.height * 0.12,
+                        ),
+                      ],
                     ),
-                    Positioned(
-                      child: Column(
-                        children: [
-                          RankingNameBar(),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
-                          RankingBar(
-                            heightSize: 0.12,
-                            exp: 600,
-                          ),
-                        ],
-                      ),
-                      top: MediaQuery.of(context).size.height * 0.08,
-                      left: MediaQuery.of(context).size.width * 0.005,
-                    ),
-                    Positioned(
-                      child: Column(
-                        children: [
-                          RankingNameBar(),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
-                          RankingBar(
-                            heightSize: 0.08,
-                            exp: 500,
-                          ),
-                        ],
-                      ),
-                      right: MediaQuery.of(context).size.width * 0.005,
-                      top: MediaQuery.of(context).size.height * 0.12,
-                    ),
-                  ],
-                ),
+                  ),
+                  RankingLists(),
+                ],
               ),
-              RankingLists(),
+              Positioned(
+                left: MediaQuery.of(context).size.width * 0.03,
+                bottom: MediaQuery.of(context).size.height * 0.02,
+                child: CustomBackButton(),
+              ),
             ],
           ),
         ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/provider/main_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class CustomBackButton extends StatefulWidget {
   const CustomBackButton({super.key});
@@ -11,10 +13,24 @@ class CustomBackButton extends StatefulWidget {
 }
 
 class _CustomBackButtonState extends State<CustomBackButton> {
+  late MainProvider mainProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    mainProvider = Provider.of<MainProvider>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        if (mainProvider.isMenuSelected == 'rescue') {
+          mainProvider.menuSelected('profile');
+        } else if (mainProvider.isMenuSelected == 'profile') {
+          mainProvider.menuSelected('main');
+        }
+
         context.pop();
       },
       child: Container(
