@@ -5,14 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class SignInRequestDto {
     @NotBlank(message = "이메일은 필수 입력값입니다.")
-    private String username;
+    private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력값입니다.")
 //    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$",

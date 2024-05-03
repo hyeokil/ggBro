@@ -118,15 +118,15 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Boolean signInProcess(SignInRequestDto signInDto) {
 
-        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(memberRepository);
-
-        System.out.println("여기는 MemberServiceImpl");
-        if(bCryptPasswordEncoder.matches(signInDto.getPassword(), customUserDetailsService.loadUserByUsername(signInDto.getUsername()).getPassword())){
-
-            customUserDetailsService.loadUserByUsername(signInDto.getUsername());
-
-            return true;
-        }
+//        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService(memberRepository);
+//
+//        System.out.println("여기는 MemberServiceImpl");
+//        if(bCryptPasswordEncoder.matches(signInDto.getPassword(), customUserDetailsService.loadUserByUsername(signInDto.getEmail()).getPassword())){
+//
+//            customUserDetailsService.loadUserByUsername(signInDto.getEmail());
+//
+//            return true;
+//        }
         return false;
     }
 
