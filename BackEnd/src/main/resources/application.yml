@@ -17,6 +17,7 @@ spring:
       ddl-auto: create-drop                # ddl 자동 작성 여부
     properties:
       hibernate:
+        dialect: org.hibernate.spatial.dialect.mysql.MySQLSpatialDialect
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
         show_sql: true               # 하이버네이트가 실행한 SQL을 출력
         jdbc:
@@ -49,24 +50,17 @@ spring:
     init:
       mode: always
       data-locations:
-#        - 'classpath:/data_member.sql'
-#        - 'classpath:/data_member_info.sql'
-        - 'classpath:/data_pet.sql'
-#        - 'classpath:/data_member_pet.sql'
-        - 'classpath:/data_achievement.sql'
-#        - 'classpath:/data_member_achievement.sql'
+        - 'classpath:/sql/data_pet.sql'
+        - 'classpath:/sql/data_achievement.sql'
+        - 'classpath:/sql/create_spatial_index.sql'
 
-# 젠킨스 환경변수 추가
-jwt:
-  access-key: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refresh-key: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refresh-expiration: 14d
-  access-expiration: 14d
+
 
 # AWS
 aws:
   access-key-id: AKIA2UC27RTFNQDD7ICX  # 젠킨스 환경변수 추가
   secret-access-key: LQBplWSgcSQLGpItWNexqfz9RbkpghrMkN/flM9h  # 젠킨스 환경변수 추가
+  region: ap-northeast-2 # 젠킨스 환경변수 추가
   s3:
     bucket: ggbro # 젠킨스 환경변수 추가
 

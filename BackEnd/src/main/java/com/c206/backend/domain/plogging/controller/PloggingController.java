@@ -1,20 +1,17 @@
 package com.c206.backend.domain.plogging.controller;
 
+import com.c206.backend.domain.plogging.dto.request.CreateTrashRequestDto;
+import com.c206.backend.domain.plogging.dto.response.CreateTrashResponseDto;
 import com.c206.backend.domain.plogging.service.PloggingService;
+import com.c206.backend.domain.plogging.service.TrashService;
 import com.c206.backend.global.common.dto.Message;
 import com.c206.backend.global.jwt.CustomUserDetails;
-import io.lettuce.core.dynamic.annotation.Param;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PloggingController {
 
     private final PloggingService ploggingService;
+    private final TrashService trashService;
 
 
     @PostMapping("/start/{memberPetId}")
@@ -36,4 +34,11 @@ public class PloggingController {
     }
 
 
+    @PostMapping("/trash/{ploggingId}")
+    public ResponseEntity<Message<CreateTrashResponseDto>> createTrash(
+            @PathVariable("ploggingId") Long ploggingId,
+            @RequestBody CreateTrashRequestDto createTrashRequestDto) {
+        CreateTrashResponseDto createTrashResponseDto = trashService.createTrash(ploggingId,createTrashRequestDto);
+        return ResponseEntity.ok().body(Message.success(createTrashResponseDto));
+    }
 }

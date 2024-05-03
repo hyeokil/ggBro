@@ -1,4 +1,4 @@
-package com.c206.backend.domain.plogging.service;
+package com.c206.backend.domain.plogging.service.Impl;
 
 
 import com.c206.backend.domain.member.entity.Member;
@@ -11,6 +11,7 @@ import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.plogging.entity.Plogging;
 import com.c206.backend.domain.plogging.repository.PloggingRepository;
+import com.c206.backend.domain.plogging.service.PloggingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
