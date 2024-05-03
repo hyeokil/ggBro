@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/theme_data.dart';
@@ -19,6 +20,8 @@ void main() async {
 
   // 지도 초기화
   await _initialize();
+
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
 
   runApp(
     MultiProvider(
