@@ -3,7 +3,7 @@ class RoutePath {
   static const String login = '/login';
 
   //  회원가입 페이지
-  static const String singUp = '/signUp';
+  static const String signUp = '/signUp';
 
   //  인트로 페이지
   static const String intro = '/intro';
