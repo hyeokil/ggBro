@@ -61,8 +61,8 @@ class _MenuState extends State<Menu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  height: 35,
-                  width: 35,
+                  height: MediaQuery.of(context).size.height * 0.04,
+                  width: MediaQuery.of(context).size.height * 0.04,
                   child: widget.icon,
                 ),
                 Text(
