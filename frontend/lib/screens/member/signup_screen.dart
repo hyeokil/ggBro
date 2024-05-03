@@ -77,8 +77,9 @@ class _SignUpState extends State<SignUpScreen> {
                       },
                       child: const Text("뒤로가기")),
                   ElevatedButton(
-                      onPressed: () {
-                        final auth = Provider.of<AuthModel>(context, listen: false);
+                      onPressed: () async {
+                        final auth =
+                            Provider.of<AuthModel>(context, listen: false);
                         if (_formKey.currentState!.validate()) {
                           // 유효성 검사를 통과한 경우 회원가입 로직을 실행합니다.
                           String email = _email.text;
@@ -92,9 +93,13 @@ class _SignUpState extends State<SignUpScreen> {
                           //     backgroundColor: Colors.green,
                           //     textColor: Colors.white,
                           //     fontSize: 20.0);
-                          print('이메일 $email 비밀번호 $password 닉네임 $nickName');
+                          // print('이메일 $email 비밀번호 $password 닉네임 $nickName');
                           // 여기에 회원가입 로직을 구현합니다.
-                          auth.signUp(email, password, nickName);
+                          AuthStatus loginStatus =
+                              await auth.signUp(email, password, nickName);
+                          if (loginStatus == AuthStatus.loginSuccess) {
+                            context.go('/intro');
+                          }
                         }
                       },
                       child: const Text("회원가입"))
@@ -110,6 +115,7 @@ class _SignUpState extends State<SignUpScreen> {
 
 class EmailField extends StatelessWidget {
   final TextEditingController controller;
+
   const EmailField({super.key, required this.controller});
 
   @override
@@ -141,6 +147,7 @@ class EmailField extends StatelessWidget {
 
 class NicknameField extends StatelessWidget {
   final TextEditingController controller;
+
   const NicknameField({super.key, required this.controller});
 
   @override
@@ -157,11 +164,13 @@ class NicknameField extends StatelessWidget {
 class PasswordField extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
+
   const PasswordField({
     super.key,
     required this.controller,
     this.validator,
   });
+
   @override
   Widget build(BuildContext context) {
     return CustomInput(
@@ -178,6 +187,7 @@ class PasswordField extends StatelessWidget {
 class PasswordCheckField extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
+
   const PasswordCheckField({
     super.key,
     required this.controller,
