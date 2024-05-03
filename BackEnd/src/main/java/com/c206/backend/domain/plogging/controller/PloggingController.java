@@ -2,11 +2,14 @@ package com.c206.backend.domain.plogging.controller;
 
 import com.c206.backend.domain.plogging.service.PloggingService;
 import com.c206.backend.global.common.dto.Message;
+import com.c206.backend.global.jwt.CustomUserDetails;
 import io.lettuce.core.dynamic.annotation.Param;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +26,11 @@ public class PloggingController {
 
 
     @PostMapping("/start/{memberPetId}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<Long>> createPlogging(
             @PathVariable("memberPetId") Long memberPetId,
-            @AuthenticationPrincipal Long memberId) {
+            @Parameter(hidden = true) Authentication authentication) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = customUserDetails.getId();
         Long ploggingId = ploggingService.createPlogging(memberPetId, memberId);
         return ResponseEntity.ok().body(Message.success(ploggingId));
     }
