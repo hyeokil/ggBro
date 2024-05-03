@@ -33,7 +33,7 @@ public class MemberController {
     }
 
 
-    @PostMapping(value = "/signin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/signin")
     @Operation(summary = "로그인을 진행합니다.")
     public ResponseEntity<?> loginP(@RequestBody @Valid @Parameter SignInRequestDto signInRequestDto // HashMap<String, Object> map
     ){

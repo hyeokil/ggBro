@@ -11,5 +11,4 @@ import java.util.Optional;
 @Repository
 public interface QuestRepository extends JpaRepository<Quest, Long> {
 
-    List<Quest> findByMemberId(Long memberId);
 }

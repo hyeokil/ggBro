@@ -1,6 +1,7 @@
 package com.c206.backend.domain.quest.service;
 
 import com.c206.backend.domain.quest.entity.Quest;
+import com.c206.backend.domain.quest.repository.MemberQuestRepository;
 import com.c206.backend.domain.quest.repository.QuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,10 @@ import java.util.Optional;
 public class QuestServiceImpl implements QuestService{
 
     private final QuestRepository questRepository;
+    private final MemberQuestRepository memberQuestRepository;
     @Override
     public List<Quest> getQuestList(Long memberId) {
-        List<Quest> findedQuestList = questRepository.findByMemberId(memberId);
+        List<Quest> findedQuestList = memberQuestRepository.findByMemberId(memberId);
         return findedQuestList;
     }
 }

@@ -1,10 +1,14 @@
 package com.c206.backend.global.jwt;
 
+import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.service.RedisService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +19,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -54,13 +60,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         System.out.println("여기는 attempAuthentication - LoginFilter");
 
-        System.out.println(request.toString());
+
+        SignInRequestDto signInRequestDto = null;
+        try {
+            signInRequestDto = new ObjectMapper().readValue(request.getReader(), SignInRequestDto.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         //클라이언트 요청에서 username, password 추출
-        String email = obtainUsername(request);
-        String password = obtainPassword(request);
+//        String email = obtainUsername(request);
+//        String password = obtainPassword(request);
+
+        String email = signInRequestDto.getEmail();
+        String password = signInRequestDto.getPassword();
         System.out.println("여기의 이메일은 "+ email);
         System.out.println("여기의 패스워드는 "+ password);
+
 
 //        CustomUserDetails customUserDetails = customUserDetailsService.loadUserByUsername(email);
 //        if (customUserDetails != null && bCryptPasswordEncoder.matches(password, customUserDetails.getPassword())) {
