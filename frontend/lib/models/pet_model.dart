@@ -25,10 +25,35 @@ class PetModel with ChangeNotifier {
 
     if (response.statusCode == 200) {
       pets = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
-      print(pets);
+      // print(pets);
       return "Success";
     } else {
       return "fail";
     }
+  }
+
+  Map<String, dynamic> pet = {};
+
+  Future<String> getPetDetail(String accessToken, int memberPetId) async {
+    var url = Uri.https(address, "/api/v1/pet/$memberPetId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      pet = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      print(pet);
+      notifyListeners();
+      return "Success";
+    } else {
+      return "fail";
+    }
+  }
+
+  Map<String, dynamic> getPet () {
+    return pet;
   }
 }
