@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
 import 'package:frontend/screens/component/topbar/setting.dart';
@@ -41,7 +42,7 @@ class _TopBarState extends State<TopBar> {
               }
               selectedMenu('profile');
             },
-            child: ProfileImage(),
+            child: ProfileImage(image: Image.asset(AppIcons.earth_1),),
           ),
           GgingBar(),
           Setting(),

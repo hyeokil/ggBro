@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
@@ -99,11 +100,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  ProfileImage(),
+                  ProfileImage(image: Image.asset(AppIcons.intro_animal_1),),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  ProfileImage(),
+                  ProfileImage(image: Image.asset(AppIcons.intro_animal_2),),
                 ],
               ),
               Positioned(

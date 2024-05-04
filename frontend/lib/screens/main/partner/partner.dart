@@ -8,29 +8,34 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class Partner extends StatefulWidget {
-  const Partner({super.key});
+  final Image image;
+
+  const Partner({
+    super.key,
+    required this.image,
+  });
 
   @override
   State<Partner> createState() => _PartnerState();
 }
 
 class _PartnerState extends State<Partner> {
-  // late UserProvider userProvider;
-  // late String accessToken;
+  late UserProvider userProvider;
+  late String accessToken;
 
   @override
   void initState() {
     super.initState();
-    // userProvider = Provider.of<UserProvider>(context, listen: false);
-    // accessToken = userProvider.getAccessToken();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // final pet = Provider.of<PetModel>(context, listen: false);
-        // pet.getPets(accessToken);
+      onTap: () async {
+        final pet = Provider.of<PetModel>(context, listen: false);
+        await pet.getPets(accessToken);
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -47,7 +52,7 @@ class _PartnerState extends State<Partner> {
       child: Container(
         width: MediaQuery.of(context).size.height * 0.95,
         height: MediaQuery.of(context).size.height * 0.32,
-        child: Image.asset(AppIcons.meka_sudal),
+        child: widget.image,
       ),
     );
   }
