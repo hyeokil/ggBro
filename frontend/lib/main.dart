@@ -5,8 +5,10 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/theme_data.dart';
+import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/models/rescue_model.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +37,12 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) =>
                 PetModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                RescueModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                AchievementModel(Provider.of<UserProvider>(context, listen: false))),
         // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),
