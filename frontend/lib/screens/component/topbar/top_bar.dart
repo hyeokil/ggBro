@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
 import 'package:frontend/screens/component/topbar/setting.dart';
 import 'package:frontend/screens/component/topbar/gging_bar.dart';
@@ -17,11 +18,13 @@ class TopBar extends StatefulWidget {
 
 class _TopBarState extends State<TopBar> {
   late MainProvider mainProvider;
+  late UserProvider userProvider;
 
   @override
   void initState() {
     super.initState();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
   }
 
   void selectedMenu(String selected) {
