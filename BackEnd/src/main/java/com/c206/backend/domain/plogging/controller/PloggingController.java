@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -24,6 +28,7 @@ public class PloggingController {
 
 
     @PostMapping("/start/{memberPetId}")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<Long>> createPlogging(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication) {
