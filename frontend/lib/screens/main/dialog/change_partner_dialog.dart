@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class ChangePartnerDialog extends StatefulWidget {
   const ChangePartnerDialog({super.key});
@@ -11,6 +15,18 @@ class ChangePartnerDialog extends StatefulWidget {
 }
 
 class _ChangePartnerDialogState extends State<ChangePartnerDialog> {
+  late PetModel petModel;
+  late UserProvider userProvider;
+  late String accessToken;
+
+  @override
+  void initState() {
+    super.initState();
+    petModel = Provider.of<PetModel>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -75,6 +91,53 @@ class _ChangePartnerDialogState extends State<ChangePartnerDialog> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.02,
           ),
+          Container(
+            height: 10, // 명시적 높이 설정
+            child: Column(
+              children: [
+                Expanded(
+                  child: FutureBuilder<String>(
+                    future: petModel.getPets(accessToken),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text("오류가 발생했습니다."));
+                      } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                        return GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            crossAxisSpacing: 4,
+                            mainAxisSpacing: 4,
+                          ),
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            var pet = snapshot.data![index];
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.basicgray,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('pet')  // 예를 들어 pet 객체에 imageUrl이 있다고 가정
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return Center(child: Text("데이터가 없습니다."));
+                      }
+                    },
+                  )
+                )
+              ],
+            ),
+          )
         ],
       ),
       // actions: <Widget>[

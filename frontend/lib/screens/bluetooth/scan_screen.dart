@@ -68,7 +68,7 @@ class _ScanScreenState extends State<ScanScreen> {
       });
       for (ScanResult result in results) {
         if (result.device.advName.isNotEmpty) {
-          print('${result.device.advName} found! rssi: ${result.rssi}');
+          print('${result.device.advName} found! rssi: ${result.advertisementData.serviceUuids}');
         }
       }
     });
