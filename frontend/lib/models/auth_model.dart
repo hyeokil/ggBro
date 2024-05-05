@@ -66,9 +66,9 @@ class AuthModel with ChangeNotifier {
       int userId =
           json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
               ['id'];
-      int profile =
-          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
-              ['profilePetId'];
+      // int profile =
+      //     json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+      //         ['profilePetId'];
       int level =
           json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
               ['level'];
@@ -81,7 +81,7 @@ class AuthModel with ChangeNotifier {
       userProvider.setRefreshToken(refreshToken);
       userProvider.setNickName(nickName);
       userProvider.setUserId(userId);
-      userProvider.setProfileImage(profile);
+      // userProvider.setProfileImage(profile);
       userProvider.setLevel(level);
       userProvider.setCurrency(currency);
 

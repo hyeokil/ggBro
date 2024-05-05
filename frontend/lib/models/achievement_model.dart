@@ -26,9 +26,35 @@ class AchievementModel with ChangeNotifier {
     if (response.statusCode == 200) {
       achievements = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       print(achievements);
+      notifyListeners();
       return "Success";
     } else {
       return "fail";
     }
   }
+
+  int goal = 0;
+
+  Future<String> completeAchievement(String accessToken, int memberAchievementId) async {
+    var url = Uri.https(address, "/api/v1/achievement/$memberAchievementId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+
+    final response = await http.post(url, headers: headers);
+    print(json.decode(utf8.decode(response.bodyBytes))["dataBody"]);
+
+    if (response.statusCode == 200) {
+      goal = json.decode(utf8.decode(response.bodyBytes))["dataBody"]["goal"];
+      return "Success";
+    } else {
+      return "fail";
+    }
+  }
+
+  List getAchievement () {
+    return achievements;
+  }
+
 }
