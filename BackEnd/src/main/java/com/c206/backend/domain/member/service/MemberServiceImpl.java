@@ -79,7 +79,7 @@ public class MemberServiceImpl implements MemberService{
             //회원-정보 테이블에 기본사항 지정하기
             MemberInfo newMemberInfo= MemberInfo.builder()
                     .member(member)
-                    .profilePetId(null)
+                    .profilePetId(0L)
                     .exp(0)
                     .currency(0)
                     .build();
