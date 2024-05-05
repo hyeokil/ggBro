@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -62,7 +63,7 @@ public class QuestServiceImpl implements QuestService{
         -> new MemberQuestException(MemberQuestError.NOT_FOUND_MEMBER_QUEST));
 
         // 호출한 퀘스트가 사용자의 것이 아닐때
-        if(memberId != findedMemberQuest.getMember().getId()){
+        if(!Objects.equals(memberId, findedMemberQuest.getMember().getId())){
             throw new MemberQuestException(MemberQuestError.NOT_MATCH_QUEST);
         }
 
@@ -71,13 +72,42 @@ public class QuestServiceImpl implements QuestService{
             throw new MemberQuestException((MemberQuestError.QUEST_NOT_COMPLETED));
         }
 
-        int reward = 100 * findedMemberQuest.getGoal();
-        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberQuestId);
-        MemberInfo newMemberInfo = MemberInfo.builder()
-                
+        // isdone = true로 설정해서 새로 MemberQuest에 넣어주기
+        MemberQuest completedMemberQuest = MemberQuest.builder()
+                .goal(findedMemberQuest.getGoal())
+                .isDone(true)
+                .progress(findedMemberQuest.getProgress())
+                .member(findedMemberQuest.getMember())
+                .memberPet(findedMemberQuest.getMemberPet())
+                .id(findedMemberQuest.getId())
+                .quest(findedMemberQuest.getQuest())
                 .build();
 
+        memberQuestRepository.save(completedMemberQuest);
 
+
+        // 퀘스트의 횟수와 가중치에 맞게 보상 설정
+        int reward = 10 * findedMemberQuest.getGoal();
+        if(findedMemberQuest.getQuest().getId() == 1){
+            reward *= 24;
+        }else if(findedMemberQuest.getQuest().getId() == 2){
+            reward *= 4;
+        }else if(findedMemberQuest.getQuest().getId() == 3){
+            reward *= 3;
+        }else if(findedMemberQuest.getQuest().getId() == 4){
+            reward *= 12;
+        }else if(findedMemberQuest.getQuest().getId() == 5){
+            reward *= 8;
+        }
+
+        //유저정보에 보상 저장
+        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberQuestId);
+        MemberInfo newMemberInfo = MemberInfo.builder()
+                .profilePetId(memberInfo.getProfilePetId())
+                .exp(memberInfo.getExp())
+                .currency(memberInfo.getCurrency() + reward)
+                .build();
+        memberInfoRepository.save(newMemberInfo);
     }
 
     @Override

@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> {
     List<MemberQuest> findByMemberId(Long memberId);
 
-    MemberQuest findByMemberQuestId(Long memberQuestId);
+//    MemberQuest findByMemberQuestId(Long memberQuestId);
 }

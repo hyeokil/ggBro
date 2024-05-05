@@ -51,6 +51,8 @@ public class QuestController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
+        questService.getQuestReward(memberId, memberQuestId);
+
 
 
         return ResponseEntity.ok().body(Message.success());
