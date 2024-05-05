@@ -21,7 +21,7 @@ public class CreateTrashResponseDto {
 
     private int value;
 
-    private boolean pet_active;
+    private boolean petActive;
 
     private boolean isRescue;
 

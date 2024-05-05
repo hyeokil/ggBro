@@ -1,19 +1,20 @@
-package com.c206.backend.domain.member.service;
+package com.c206.backend.domain.member.service.Impl;
 
+import com.c206.backend.domain.member.service.RedisService;
+import com.c206.backend.domain.member.service.ReissueService;
 import com.c206.backend.global.jwt.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ReissueServiceImpl implements ReissueService{
+public class ReissueServiceImpl implements ReissueService {
 //    @Value("${access.token.expiration.time}")
 //    private Long accessExpireMs ;
 //    @Value("${refresh.token.expiration.time}")
