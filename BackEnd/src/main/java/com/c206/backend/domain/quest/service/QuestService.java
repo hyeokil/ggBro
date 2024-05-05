@@ -12,6 +12,8 @@ public interface QuestService {
 
     List<MemberQuestListResponseDto> getQuestList(Long memberId);
 
+    void getQuestReward(Long memberId, Long memberQuestId);
+
     void addQuestList(Long memberId);
 
 }
