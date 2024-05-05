@@ -147,11 +147,13 @@ public class QuestServiceImpl implements QuestService{
         MemberPet selectedPet = petList.get(random.nextInt(0,petList.size()));
 
         for(int i=0; i<3; i++){
+
+
             MemberQuest memberQuest = MemberQuest.builder()
                     .member(member)
                     .memberPet(selectedPet)
                     .quest(questInfoList.get(i))
-                    .goal(questInfoList.get(i).getGoalMax()) // 사용자 맞춤으로 계수를 곱하고, 그렇게 나온 Max, Min의 랜덤값으로 지정
+                    .goal(random.nextInt(questInfoList.get(i).getGoalMin(),questInfoList.get(i).getGoalMax())) // 사용자 맞춤으로 계수를 곱하고, 그렇게 나온 Max, Min의 랜덤값으로 지정
                     .progress(0)
                     .isDone(false)
                     .build();
