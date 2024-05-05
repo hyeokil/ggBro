@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
+import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
@@ -23,11 +26,15 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late MainProvider mainProvider;
+  late UserProvider userProvider;
+  late String accessToken;
 
   @override
   void initState() {
     super.initState();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
   }
 
   void selectedMenu(String selected) {
@@ -71,7 +78,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Positioned(
                           bottom: 0,
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              final achievements = Provider.of<AchievementModel>(context, listen: false);
+                              await achievements.getAchievements(accessToken);
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -99,11 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  ProfileImage(),
+                  ProfileImage(image: Image.asset(AppIcons.intro_animal_1),),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  ProfileImage(),
+                  ProfileImage(image: Image.asset(AppIcons.intro_animal_2),),
                 ],
               ),
               Positioned(

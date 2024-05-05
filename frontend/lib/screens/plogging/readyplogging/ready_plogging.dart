@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ReadyPlogging extends StatefulWidget {
   const ReadyPlogging({super.key});
@@ -17,6 +19,13 @@ class ReadyPlogging extends StatefulWidget {
 }
 
 class _ReadyPloggingState extends State<ReadyPlogging> {
+  late PetModel petModel;
+
+  @override
+  void initState() {
+    super.initState();
+    petModel = Provider.of<PetModel>(context, listen: false);
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -50,7 +59,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
                   // color: Colors.black,
-                  child: Partner(),
+                  child: Partner(image: Image.network('${petModel.pet['image']}')),
                 ),
               ),
               Positioned(

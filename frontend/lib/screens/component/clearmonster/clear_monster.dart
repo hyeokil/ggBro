@@ -4,7 +4,12 @@ import 'package:frontend/screens/component/clearmonster/clear_monster_content.da
 import 'package:frontend/screens/component/clearmonster/clear_monster_title.dart';
 
 class ClearMonster extends StatefulWidget {
-  const ClearMonster({super.key});
+  final Map pet;
+
+  const ClearMonster({
+    super.key,
+    required this.pet,
+  });
 
   @override
   State<ClearMonster> createState() => _ClearMonsterState();
@@ -32,10 +37,23 @@ class _ClearMonsterState extends State<ClearMonster> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ClearMonsterTitle(),
-          ClearMonsterContent(color: AppColors.basicpink, content: '플라몽',),
-          ClearMonsterContent(color: AppColors.basicgray, content: '포 캔몽',),
-          ClearMonsterContent(color: AppColors.basicgreen, content: '율몽',),
-          ClearMonsterContent(color: AppColors.basicnavy, content: '미쪼몬',),
+          ClearMonsterContent(
+            color: AppColors.basicpink,
+            content: '플라몽',
+            count: widget.pet['plastic'],
+          ),
+          ClearMonsterContent(
+              color: AppColors.basicgray,
+              content: '포 캔몽',
+              count: widget.pet['can']),
+          ClearMonsterContent(
+              color: AppColors.basicgreen,
+              content: '율몽',
+              count: widget.pet['glass']),
+          ClearMonsterContent(
+              color: AppColors.basicnavy,
+              content: '미쪼몬',
+              count: widget.pet['normal']),
         ],
       ),
     );
