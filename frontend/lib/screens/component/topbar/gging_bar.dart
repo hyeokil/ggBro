@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class GgingBar extends StatefulWidget {
   const GgingBar({super.key});
@@ -12,6 +14,14 @@ class GgingBar extends StatefulWidget {
 }
 
 class _GgingBarState extends State<GgingBar> {
+  late UserProvider userProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -33,7 +43,7 @@ class _GgingBarState extends State<GgingBar> {
           ),
           child: Center(
             child: Text(
-              '2222',
+              '${userProvider.getCurrency()}',
               style: CustomFontStyle.getTextStyle(
                   context, CustomFontStyle.yeonSung90_white),
             ),

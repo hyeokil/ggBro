@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -73,6 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
+                        setState(() {
+                          _email.text = '';
+                          _password.text = '';
+                        });
                         context.push('/signUp');
                       },
                       child: const Text("회원가입"),

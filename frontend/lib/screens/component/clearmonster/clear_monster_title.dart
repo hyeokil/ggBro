@@ -40,9 +40,9 @@ class _ClearMonsterTitleState extends State<ClearMonsterTitle> {
             width: MediaQuery.of(context).size.width * 0.02,
           ),
           Text(
-            '수돌이와 함께 처치한 몬스터',
-            style:
-                CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+            '펫과 함께 처치한 몬스터',
+            style: CustomFontStyle.getTextStyle(
+                context, CustomFontStyle.yeonSung70),
           ),
         ],
       ),
