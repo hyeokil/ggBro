@@ -18,6 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
   String? _validatePassword(String? value) {
     final passwordRegex = RegExp(
       r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$',
@@ -31,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +60,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        // final auth =
-                        //     Provider.of<AuthModel>(context, listen: false);
-                        // if (_formKey.currentState!.validate()) {
-                        //   // 유효성 검사를 통과한 경우 로그인 로직을 실행합니다.
-                        //   String email = _email.text;
-                        //   String password = _password.text;
-                        //   // print('이메일 $email 비밀번호 $password');
-                        //   // 여기에 로그인 로직을 구현합니다.
-                        //   AuthStatus loginStatus =
-                        //       await auth.login(email, password);
-                        //   if (loginStatus == AuthStatus.loginSuccess) {
-                        //   }
-                        // }
-                        context.go('/intro');
+                        final auth =
+                            Provider.of<AuthModel>(context, listen: false);
+                        if (_formKey.currentState!.validate()) {
+                          // 유효성 검사를 통과한 경우 로그인 로직을 실행합니다.
+                          String email = _email.text;
+                          String password = _password.text;
+                          // print('이메일 $email 비밀번호 $password');
+                          // 여기에 로그인 로직을 구현합니다.
+                          AuthStatus loginStatus =
+                              await auth.login(email, password);
+                          if (loginStatus == AuthStatus.loginSuccess) {
+                            context.go('/intro');
+                          }
+                        }
                       },
                       style: const ButtonStyle(),
                       child: const Text("로그인"),

@@ -40,8 +40,8 @@ void main() async {
             create: (context) =>
                 RescueModel(Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
-            create: (context) =>
-                AchievementModel(Provider.of<UserProvider>(context, listen: false))),
+            create: (context) => AchievementModel(
+                Provider.of<UserProvider>(context, listen: false))),
         // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),

@@ -19,21 +19,70 @@ class ProgressMap extends StatefulWidget {
 
 class _ProgressMapState extends State<ProgressMap> {
   late double latitude;
-  late double longitude;
+  late double longitude; // 초기 위도 경도와 현재 위치 위도 경도를 업데이트 해 줄 변수
+  List<NLatLng> _pathPoints = []; // 실시간 경로를 저장할 변수
+  late StreamSubscription<Position> pathStream; // 실시간 경로 받아오는 stream 객체 초기화 위한
+  bool isTrashTotal = false; // 쓰레기 현황 보여줄지 현재 주운 쓰레기 보여 줄지 체크
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
   bool isSelectedTrashTong = false;
   double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정;
 
-  Future<void> getLocation() async {
+  @override
+  void initState() {
+    super.initState();
+    getLocation();
+    realTimePath();
+  }
+
+  // 위젯 제거 될 때 controller 제거, Stream 구독 취소
+  @override
+  void dispose() {
+    pathStream.cancel();
+    _mapController!.dispose();
+    super.dispose();
+  }
+
+  // 현재 위치 조회하는 함수
+  getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
+      _pathPoints.add(NLatLng(position.latitude, position.longitude));
       _isLocationLoaded = true;
     });
-    print('위치요 ${position.latitude}, ${position.longitude}');
+    print('현재 위치 : ${position.latitude}, ${position.longitude}');
+  }
+
+  realTimePath() {
+    // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
+    pathStream = Geolocator.getPositionStream(
+            locationSettings: LocationSettings(distanceFilter: 5))
+        .listen((Position position) {
+      print('경로 : $_pathPoints');
+      setState(() {
+        _pathPoints.add(NLatLng(position.latitude, position.longitude));
+      });
+      int len = _pathPoints.length;
+      print(len);
+      _mapController!.addOverlay(NPathOverlay(
+        id: 'realtime',
+        width: 5,
+        coords: _pathPoints,
+        color: AppColors.basicgreen,
+      ));
+    });
+  }
+
+  // 지도에서 다른 화면을 보다가 현재 위치로 돌아오는 함수
+  void returnCurrentLocation() async {
+    await getLocation();
+    print('현재 위치로 $latitude랑 $longitude');
+    _mapController!.updateCamera(
+        NCameraUpdate.scrollAndZoomTo(target: NLatLng(latitude, longitude))
+          ..setPivot(NPoint(1 / 2, 10 / 11)));
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -42,17 +91,10 @@ class _ProgressMapState extends State<ProgressMap> {
     return jsonDecode(jsonString);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getLocation();
-  }
-
   void trashTongToggle() {
     setState(() {
       isSelectedTrashTong = !isSelectedTrashTong;
     });
-    // print(isSelectedTrashTong);
     updateMarkers();
   }
 
@@ -83,7 +125,7 @@ class _ProgressMapState extends State<ProgressMap> {
 
   void updateMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
-    await _mapController!.clearOverlays();
+    await _mapController!.clearOverlays(type: NOverlayType.marker);
 
     var jsonData = await readJsonData();
     Map<String, List<NMarker>> clusters = {};
@@ -172,9 +214,7 @@ class _ProgressMapState extends State<ProgressMap> {
               NaverMap(
                 onMapReady: (controller) {
                   _mapController = controller; // 지도 컨트롤러 초기화
-                  final locationOverlay = _mapController?.getLocationOverlay();
-                  locationOverlay?.setIcon(const NOverlayImage.fromAssetImage(
-                      AppIcons.intro_animal_1));
+
                   _mapController!
                       .setLocationTrackingMode(NLocationTrackingMode.follow);
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
@@ -192,158 +232,170 @@ class _ProgressMapState extends State<ProgressMap> {
                 ),
               ),
               Positioned(
-                  top: MediaQuery.of(context).size.height * 0.75,
-                  right: 0,
-                  child: Container(
-                    // color: Colors.white,
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    height: MediaQuery.of(context).size.height * 0.25,
-                    child: Column(
-                      children: [
-                        Flexible(
-                          flex: 1,
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                trashTongToggle();
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(40),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: AppColors.basicgray
-                                              .withOpacity(0.2),
-                                          blurRadius: 1,
-                                          spreadRadius: 1)
-                                    ]),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                width:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                child: Center(
-                                    child: Image.asset(
-                                  AppIcons.trash_tong,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  width:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                )),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(40),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: AppColors.basicgray
-                                              .withOpacity(0.2),
-                                          blurRadius: 1,
-                                          spreadRadius: 1)
-                                    ]),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                width:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                child: const Center(
-                                  child: Icon(Icons.my_location),
+                bottom: MediaQuery.of(context).size.height * 0.01,
+                left: 0,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isTrashTotal = !isTrashTotal;
+                    });
+                  },
+                  child: isTrashTotal
+                      ? Container(
+                          width: MediaQuery.of(context).size.width * 0.37,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: AppColors.basicgray.withOpacity(0.2),
+                                    blurRadius: 1,
+                                    spreadRadius: 1)
+                              ]),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  '플라몬 처치 +1',
+                                  style: CustomFontStyle.getTextStyle(
+                                    context,
+                                    CustomFontStyle.yeonSung60,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          flex: 1,
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const FinishPloggingDialog();
-                                  },
-                                ).then(
-                                  (value) => context.go('/main'),
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(40),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: AppColors.basicgray
-                                              .withOpacity(0.2),
-                                          blurRadius: 1,
-                                          spreadRadius: 1)
-                                    ]),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                width:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                child: const Center(
-                                  child: Icon(Icons.close),
+                              ]),
+                        )
+                      : Container(
+                          width: MediaQuery.of(context).size.width * 0.37,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: AppColors.basicgray.withOpacity(0.2),
+                                    blurRadius: 1,
+                                    spreadRadius: 1)
+                              ]),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  '총 처치 현황',
+                                  style: CustomFontStyle.getTextStyle(
+                                    context,
+                                    CustomFontStyle.yeonSung60,
+                                  ),
                                 ),
+                              ]),
+                        ),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.75,
+                right: 0,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: Column(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              trashTongToggle();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(40),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: AppColors.basicgray
+                                            .withOpacity(0.2),
+                                        blurRadius: 1,
+                                        spreadRadius: 1)
+                                  ]),
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              width: MediaQuery.of(context).size.height * 0.06,
+                              child: Center(
+                                  child: Image.asset(
+                                AppIcons.trash_tong,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.05,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.05,
+                              )),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              returnCurrentLocation();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(40),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: AppColors.basicgray
+                                            .withOpacity(0.2),
+                                        blurRadius: 1,
+                                        spreadRadius: 1)
+                                  ]),
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              width: MediaQuery.of(context).size.height * 0.06,
+                              child: const Center(
+                                child: Icon(Icons.my_location),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  )
-
-                  //   GestureDetector(
-                  //     onTap: () {
-                  //       trashTongToggle();
-                  //     },
-                  //     child: Container(
-                  //       width: MediaQuery.of(context).size.width * 0.37,
-                  //       height: MediaQuery.of(context).size.height * 0.06,
-                  //       decoration: BoxDecoration(
-                  //         color: AppColors.white,
-                  //         borderRadius: BorderRadius.circular(30),
-                  //         border: Border.all(width: 3, color: Colors.white),
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: AppColors.basicgray.withOpacity(0.5),
-                  //             offset: const Offset(0, 4),
-                  //             blurRadius: 1,
-                  //             spreadRadius: 1,
-                  //           )
-                  //         ],
-                  //       ),
-
-                  //               width: MediaQuery.of(context).size.width * 0.09,
-                  //               height: MediaQuery.of(context).size.height * 0.04,
-                  //               // color: Colors.black,
-                  //               child: Image.asset(AppIcons.trash_tong),
-                  //             ),
-                  //           ),
-                  //           Positioned(
-                  //             top: MediaQuery.of(context).size.height * 0.01,
-                  //             right: MediaQuery.of(context).size.width * 0.02,
-                  //             child: Text(
-                  //               '쓰레기통 위치 확인',
-                  //               style: CustomFontStyle.getTextStyle(
-                  //                 context,
-                  //                 CustomFontStyle.yeonSung60,
-                  //               ),
-                  //             ),
-                  //           )
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  )
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const FinishPloggingDialog();
+                                },
+                              ).then(
+                                (value) => context.go('/main'),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(40),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: AppColors.basicgray
+                                            .withOpacity(0.2),
+                                        blurRadius: 1,
+                                        spreadRadius: 1)
+                                  ]),
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              width: MediaQuery.of(context).size.height * 0.06,
+                              child: const Center(
+                                child: Icon(Icons.close),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ])
           : const Center(
               child: CircularProgressIndicator(),

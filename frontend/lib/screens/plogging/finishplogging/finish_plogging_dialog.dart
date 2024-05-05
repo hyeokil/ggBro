@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
@@ -79,10 +78,10 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
         ],
       ),
       // actions: <Widget>[
-        // GreenButton(
-        //   "취소",
-        //   onPressed: () => Navigator.of(context).pop(), // 모달 닫기
-        // ),
+      // GreenButton(
+      //   "취소",
+      //   onPressed: () => Navigator.of(context).pop(), // 모달 닫기
+      // ),
       // ],
     );
   }
