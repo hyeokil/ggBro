@@ -19,10 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -105,6 +102,7 @@ public class QuestServiceImpl implements QuestService{
         MemberInfo newMemberInfo = MemberInfo.builder()
                 .profilePetId(memberInfo.getProfilePetId())
                 .exp(memberInfo.getExp())
+                .member(memberInfo.getMember())
                 .currency(memberInfo.getCurrency() + reward)
                 .build();
         memberInfoRepository.save(newMemberInfo);
@@ -114,11 +112,39 @@ public class QuestServiceImpl implements QuestService{
     public void addQuestList(Long memberId) {
         //사용자아이디
         Member member = memberRepository.findById(memberId).get();
+
         // 리스트 중 랜덤하게, 혹은 사용자 맞춤으로 3개 뽑을것
-        List<Quest> questInfoList = questRepository.findAll();
+        Random random = new Random();
+        List<Integer> questIdList = new ArrayList<>();
+
+        while(true){
+            //1~5 랜덤수
+            int questId = random.nextInt(1, 5);
+            // 만약 리스트에 존재하면 통과
+            if(questIdList.contains(questId)){
+                continue;
+            }
+            //아니라면 리스트에 추가
+            questIdList.add(questId);
+            //3개 뽑으면 종료
+            if(questIdList.size() == 3) break;
+        }
+
+        List<Quest> questInfoList = new ArrayList<>();
+        for (Integer i : questIdList) {
+            questInfoList.add(
+                    questRepository.findById(
+                            Long.valueOf(i)
+                    ).get()
+            );
+        }
+
+
+
         // 펫 중 랜덤하게, 혹은 사용자 맞춤으로 1개 뽑을것
         List<MemberPet> petList = memberPetRepository.findByMemberId(memberId);
-        MemberPet selectedPet = petList.get(0);
+        //랜덤으로
+        MemberPet selectedPet = petList.get(random.nextInt(0,petList.size()));
 
         for(int i=0; i<3; i++){
             MemberQuest memberQuest = MemberQuest.builder()
