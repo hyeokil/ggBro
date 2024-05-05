@@ -24,6 +24,7 @@ class _GgingBarState extends State<GgingBar> {
 
   @override
   Widget build(BuildContext context) {
+    final currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
     return Stack(
       children: [
         Container(
@@ -43,7 +44,7 @@ class _GgingBarState extends State<GgingBar> {
           ),
           child: Center(
             child: Text(
-              '${userProvider.getCurrency()}',
+              '$currency',
               style: CustomFontStyle.getTextStyle(
                   context, CustomFontStyle.yeonSung90_white),
             ),

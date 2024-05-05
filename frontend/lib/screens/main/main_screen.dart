@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
