@@ -52,5 +52,6 @@ spring:
         - 'classpath:/data_achievement.sql'
 #        - 'classpath:/data_member_achievement.sql'
         - 'classpath:/data_quest.sql'
+        - 'classpath:/data_notice.sql'
 
 
