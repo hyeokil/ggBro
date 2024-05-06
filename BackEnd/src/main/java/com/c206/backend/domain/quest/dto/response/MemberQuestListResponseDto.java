@@ -18,15 +18,16 @@ import lombok.extern.slf4j.Slf4j;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MemberQuestListResponseDto {
 
+    private String petNickname;
+
+    private Long memberQuestId;
+
+    private Long questId;
+
     private int goal;
 
     private int progress;
 
-    private boolean is_done;
+    private boolean isDone;
 
-    private Member member_id;
-
-    private Quest quest_id;
-
-    private Pet pet_id;
 }

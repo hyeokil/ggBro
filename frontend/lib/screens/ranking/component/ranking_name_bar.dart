@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
 
@@ -22,7 +23,7 @@ class _RankingNameBarState extends State<RankingNameBar> {
       child: Stack(
         children: [
           Positioned(
-            child: ProfileImage(),
+            child: ProfileImage(image: Image.asset(AppIcons.meka_sudal),),
             left: MediaQuery.of(context).size.width * 0.045,
           ),
           Positioned(

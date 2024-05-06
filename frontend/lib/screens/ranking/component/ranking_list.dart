@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
 
@@ -51,7 +52,7 @@ class _RankingListState extends State<RankingList> {
             child: Container(
               height: 45,
               width: 45,
-              child: ProfileImage(),
+              child: ProfileImage(image: Image.asset(AppIcons.intro_animal_3),),
             ),
           ),
           Positioned(

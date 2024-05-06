@@ -4,7 +4,7 @@ INSERT INTO `quest` (
 )
 VALUES (
         1,
-        3
+        2
 )
     ,(
     6,

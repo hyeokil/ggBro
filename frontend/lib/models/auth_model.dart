@@ -26,11 +26,12 @@ class AuthModel with ChangeNotifier {
 
   String address = dotenv.get('ADDRESS');
 
-  Future<AuthStatus> signUp(String email, String password, String nickName) async {
-
+  Future<AuthStatus> signUp(
+      String email, String password, String nickName) async {
     var url = Uri.https(address, "/api/v1/member/signup");
     final headers = {'Content-Type': 'application/json'};
-    final body = jsonEncode({"email": email, "password": password, "nickname": nickName});
+    final body = jsonEncode(
+        {"email": email, "password": password, "nickname": nickName});
 
     final response = await http.post(url, headers: headers, body: body);
 
@@ -45,19 +46,44 @@ class AuthModel with ChangeNotifier {
   }
 
   Future<AuthStatus> login(String email, String password) async {
-
     var url = Uri.https(address, "/api/v1/member/signin");
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({"email": email, "password": password});
 
     final response = await http.post(url, headers: headers, body: body);
-    print('응답 ${response.headers}');
+    print('응답 ${response.body}');
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: '로그인이 완료되었습니다.');
 
-      userProvider.setEmail(email);
+      String accessToken =
+          json.decode(utf8.decode(response.bodyBytes))['jwtAccess'];
+      String refreshToken =
+          json.decode(utf8.decode(response.bodyBytes))['jwtRefresh'];
+      String nickName =
+          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+              ['nickname'];
+      int userId =
+          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+              ['id'];
+      // int profile =
+      //     json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+      //         ['profilePetId'];
+      int level =
+          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+              ['level'];
+      int currency =
+          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+              ['currency'];
 
+      userProvider.setEmail(email);
+      userProvider.setAccessToken(accessToken);
+      userProvider.setRefreshToken(refreshToken);
+      userProvider.setNickName(nickName);
+      userProvider.setUserId(userId);
+      // userProvider.setProfileImage(profile);
+      userProvider.setLevel(level);
+      userProvider.setCurrency(currency);
 
       return AuthStatus.loginSuccess;
     } else {
@@ -65,5 +91,4 @@ class AuthModel with ChangeNotifier {
       return AuthStatus.loginFail;
     }
   }
-
 }

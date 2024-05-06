@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/auth_model.dart';
+import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
 import 'package:frontend/screens/component/menu.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
 import 'package:frontend/screens/main/component/exp_bar.dart';
+import 'package:frontend/screens/main/component/nickname_bar.dart';
 import 'package:frontend/screens/main/dialog/weekly_quest_dialog.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
@@ -24,11 +29,20 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late MainProvider mainProvider;
+  late UserProvider userProvider;
+  late String accessToken;
+  late PetModel petModel;
 
   @override
   void initState() {
     super.initState();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
+    petModel = Provider.of<PetModel>(context, listen: false);
+    petModel.getPetDetail(accessToken, 1).then(
+          (value) => setState(() {}),
+        );
   }
 
   void selectedMenu(String selected) {
@@ -37,6 +51,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pet = Provider.of<PetModel>(context, listen: true).getPet();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -164,14 +180,24 @@ class _MainScreenState extends State<MainScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
-              const Partner(),
+              Partner(
+                image: pet['image'] == null
+                    ? Image.asset(AppIcons.intersect)
+                    : Image.network(
+                        pet['image'],
+                      ),
+              ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const ExpBar(),
+                  pet['active']
+                      ? NickNameBar(
+                          nickName: pet['nickname'],
+                        )
+                      : ExpBar(),
                   GestureDetector(
                     onTap: () {
                       context.push('/ploggingReady');
@@ -220,7 +246,7 @@ class _MainScreenState extends State<MainScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
-              const ClearMonster(),
+              ClearMonster(pet: pet),
             ],
           ),
         ),
