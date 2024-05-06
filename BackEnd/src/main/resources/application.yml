@@ -53,7 +53,7 @@ spring:
         - 'classpath:/sql/data_pet.sql'
         - 'classpath:/sql/data_achievement.sql'
         - 'classpath:/sql/create_spatial_index.sql'
-        - 'classpath:/data_quest.sql'
+        - 'classpath:/sql/data_quest.sql'
 
 
 

@@ -1,14 +1,14 @@
 package com.c206.backend.domain.quest.repository;
 
 import com.c206.backend.domain.quest.entity.MemberQuest;
-import com.c206.backend.domain.quest.entity.Quest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
+@Repository
 public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> {
     List<MemberQuest> findByMemberId(Long memberId);
-
+    MemberQuest findTopByMemberIdAndQuestIdOrderByIdDesc(Long memberId, Long questId);
 //    MemberQuest findByMemberQuestId(Long memberQuestId);
 }
