@@ -19,9 +19,12 @@ class ProgressMap extends StatefulWidget {
 
 class _ProgressMapState extends State<ProgressMap> {
   late double latitude;
-  late double longitude; // 초기 위도 경도와 현재 위치 위도 경도를 업데이트 해 줄 변수
-  List<NLatLng> _pathPoints = []; // 실시간 경로를 저장할 변수
-  late StreamSubscription<Position> pathStream; // 실시간 경로 받아오는 stream 객체 초기화 위한
+  late double longitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
+  double previousLatitude = 0;
+  double previousLongitude = 0; // 직전 위도 경도 변수
+  final List<NLatLng> _pathPoints = []; // 실시간 경로를 저장할 변수
+  late StreamSubscription<Position> pathStream; // 실시간 경로 받아오는 stream 객체 변수
+  late double totalDistance;
   bool isTrashTotal = false; // 쓰레기 현황 보여줄지 현재 주운 쓰레기 보여 줄지 체크
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
@@ -31,6 +34,7 @@ class _ProgressMapState extends State<ProgressMap> {
   @override
   void initState() {
     super.initState();
+    totalDistance = 0;
     getLocation();
     realTimePath();
   }
@@ -59,14 +63,23 @@ class _ProgressMapState extends State<ProgressMap> {
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
-            locationSettings: LocationSettings(distanceFilter: 5))
+            locationSettings: const LocationSettings(distanceFilter: 2))
         .listen((Position position) {
       print('경로 : $_pathPoints');
       setState(() {
-        _pathPoints.add(NLatLng(position.latitude, position.longitude));
+        previousLatitude = _pathPoints.last.latitude;
+        previousLongitude = _pathPoints.last.longitude;
+        latitude = position.latitude;
+        longitude = position.longitude;
+
+        _pathPoints.add(NLatLng(latitude, longitude)); // 받아온 위치 추가하는 부분
+        double distanceInMeters = Geolocator.distanceBetween(
+            previousLatitude, previousLongitude, latitude, longitude);
+        print(
+            '경로 : $previousLatitude, $previousLongitude -> $latitude, $longitude, 거리 : $distanceInMeters');
+        totalDistance += distanceInMeters; // 총거리에 더해주기
+        print('총거리 : $totalDistance');
       });
-      int len = _pathPoints.length;
-      print(len);
       _mapController!.addOverlay(NPathOverlay(
         id: 'realtime',
         width: 5,
@@ -74,7 +87,7 @@ class _ProgressMapState extends State<ProgressMap> {
         color: AppColors.basicgreen,
       ));
     });
-  }
+  } // 실시간으로 경로 받아오는 함수
 
   // 지도에서 다른 화면을 보다가 현재 위치로 돌아오는 함수
   void returnCurrentLocation() async {
@@ -214,21 +227,27 @@ class _ProgressMapState extends State<ProgressMap> {
               NaverMap(
                 onMapReady: (controller) {
                   _mapController = controller; // 지도 컨트롤러 초기화
-
                   _mapController!
                       .setLocationTrackingMode(NLocationTrackingMode.follow);
+                  NCameraPosition(
+                    target: NLatLng(latitude, longitude),
+                    zoom: 15,
+                  );
+                  _mapController!.updateCamera(
+                    NCameraUpdate.withParams(
+                        target: NLatLng(latitude, longitude),
+                        zoom: 15,
+                        bearing: 0,
+                        tilt: 45)
+                      ..setPivot(const NPoint(1 / 2, 10 / 11)),
+                  );
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
                 },
                 onCameraIdle: _onCameraIdle,
-                options: NaverMapViewOptions(
+                options: const NaverMapViewOptions(
                   scaleBarEnable: false,
                   logoAlign: NLogoAlign.leftTop,
-                  logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                  initialCameraPosition: NCameraPosition(
-                      target: NLatLng(latitude, longitude),
-                      zoom: 15,
-                      bearing: 0,
-                      tilt: 45),
+                  logoMargin: EdgeInsets.fromLTRB(10, 10, 0, 0),
                 ),
               ),
               Positioned(
@@ -243,7 +262,6 @@ class _ProgressMapState extends State<ProgressMap> {
                   child: isTrashTotal
                       ? Container(
                           width: MediaQuery.of(context).size.width * 0.37,
-                          height: MediaQuery.of(context).size.height * 0.06,
                           decoration: BoxDecoration(
                               color: AppColors.white,
                               borderRadius: BorderRadius.circular(30),
@@ -253,17 +271,51 @@ class _ProgressMapState extends State<ProgressMap> {
                                     blurRadius: 1,
                                     spreadRadius: 1)
                               ]),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  '플라몬 처치 +1',
-                                  style: CustomFontStyle.getTextStyle(
-                                    context,
-                                    CustomFontStyle.yeonSung60,
-                                  ),
-                                ),
-                              ]),
+                          child: Column(
+                            children: [
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      '총 처치 현황',
+                                      style: CustomFontStyle.getTextStyle(
+                                        context,
+                                        CustomFontStyle.yeonSung60,
+                                      ),
+                                    ),
+                                  ]),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Image.asset(
+                                      AppIcons.trash_tong,
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                    Text(
+                                      '플라몽 처치 : 1',
+                                      style: CustomFontStyle.getTextStyle(
+                                        context,
+                                        CustomFontStyle.yeonSung60,
+                                      ),
+                                    ),
+                                  ]),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      '율몽 처치 : 1',
+                                      style: CustomFontStyle.getTextStyle(
+                                        context,
+                                        CustomFontStyle.yeonSung60,
+                                      ),
+                                    ),
+                                  ]),
+                            ],
+                          ),
                         )
                       : Container(
                           width: MediaQuery.of(context).size.width * 0.37,
@@ -281,7 +333,7 @@ class _ProgressMapState extends State<ProgressMap> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Text(
-                                  '총 처치 현황',
+                                  '플라몬 처치 + 1',
                                   style: CustomFontStyle.getTextStyle(
                                     context,
                                     CustomFontStyle.yeonSung60,
