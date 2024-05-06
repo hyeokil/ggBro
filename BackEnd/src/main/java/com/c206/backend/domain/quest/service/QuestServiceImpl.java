@@ -35,7 +35,8 @@ public class QuestServiceImpl implements QuestService{
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<MemberQuestListResponseDto> getQuestList(Long memberId) {
-        List<MemberQuest> findedQuestList = memberQuestRepository.findByMemberId(memberId);
+//        List<MemberQuest> findedQuestList = memberQuestRepository.findByMemberId(memberId);
+        List<MemberQuest> findedQuestList = memberQuestRepository.findTop3ByMemberIdOrderByCreatedAtDesc(memberId);
         List<MemberQuestListResponseDto> resList = new ArrayList<>();
 
         for(MemberQuest findedQuest : findedQuestList){
