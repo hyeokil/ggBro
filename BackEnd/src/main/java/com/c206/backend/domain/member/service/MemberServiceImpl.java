@@ -19,6 +19,7 @@ import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.pet.repository.PetRepository;
 import com.c206.backend.domain.pet.service.MemberPetService;
 import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
+import com.c206.backend.domain.quest.service.QuestService;
 import com.c206.backend.global.jwt.CustomUserDetailsService;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
@@ -44,6 +45,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberAchievementRepository memberAchievementRepository;
     private final MemberPetService memberPetService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final QuestService questService;
 
     @Override
     public Boolean signUpProcess(SignUpRequestDto signupDto) {
@@ -100,6 +102,10 @@ public class MemberServiceImpl implements MemberService{
                 memberAchievementRepository.save(newMemberAchievement);
             }
             System.out.println("회원업적 지정성공");
+
+            System.out.println("회원퀘스트 지정시작");
+            questService.addQuestList(member.getId());
+            System.out.println("회원퀘스트 지정성공");
 
             return true;
         }
