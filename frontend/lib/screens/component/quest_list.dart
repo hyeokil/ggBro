@@ -4,28 +4,63 @@ import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/quest_model.dart';
+import 'package:frontend/provider/user_provider.dart';
+import 'package:frontend/screens/main/dialog/get_quest_achievement_dialog.dart';
+import 'package:frontend/screens/profile/dialog/get_achievement_dialog.dart';
+import 'package:provider/provider.dart';
 
 class QuestList extends StatefulWidget {
-  final String content;
-  final String compensation;
+  final int goal;
+  final int progress;
+  final int index;
+  final int memberQuestId;
 
   const QuestList({
     super.key,
-    required this.content,
-    required this.compensation,
+    required this.goal,
+    required this.progress,
+    required this.index,
+    required this.memberQuestId,
   });
 
   @override
   State<QuestList> createState() => _QuestListState();
 }
 
-class _QuestListState extends State<QuestList> {
+class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
+  late UserProvider userProvider;
+  late QuestModel questModel;
+  late String accessToken;
+  late int currency;
+
+  AnimationController? _animationController_intersect;
+  Animation<double>? _rotateAnimation_intersect;
+
+  @override
+  void initState() {
+    super.initState();
+
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    questModel = Provider.of<QuestModel>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
+    currency = userProvider.getCurrency();
+
+    _animationController_intersect = AnimationController(
+        duration: const Duration(milliseconds: 10000), vsync: this);
+    _rotateAnimation_intersect = Tween<double>(begin: 1, end: 10)
+        .animate(_animationController_intersect!);
+
+    _animationController_intersect!.repeat(reverse: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Container(
-          padding: EdgeInsets.fromLTRB(10, 10, 50, 10),
+          width: MediaQuery.of(context).size.width * 0.7,
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
           decoration: BoxDecoration(
             color: AppColors.basicgray,
             borderRadius: BorderRadius.circular(15),
@@ -38,38 +73,82 @@ class _QuestListState extends State<QuestList> {
                   spreadRadius: 1)
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.content,
-                style: CustomFontStyle.getTextStyle(
-                    context, CustomFontStyle.yeonSung60_white),
+          child: Text(
+            widget.index == 0
+                ? '플로깅 ${widget.goal}회 하기'
+                : widget.index == 1
+                    ? '플라몽 ${widget.goal}마리 처치 하기'
+                    : widget.index == 2
+                        ? '미쪼몬 ${widget.goal}마리 처치 하기'
+                        : widget.index == 3
+                            ? '율몽 ${widget.goal}마리 처치 하기'
+                            : '포 캔몽 ${widget.goal}마리 처치 하기',
+            style: CustomFontStyle.getTextStyle(
+                context, CustomFontStyle.yeonSung60_white),
+          ),
+        ),
+        widget.goal >= widget.progress
+            ? Positioned(
+                top: MediaQuery.of(context).size.height * 0.015,
+                right: MediaQuery.of(context).size.width * 0.02,
+                child: Container(
+                  child: Text(
+                    '${widget.progress}/${widget.goal}',
+                    style: CustomFontStyle.getTextStyle(
+                        context, CustomFontStyle.yeonSung60_white),
+                  ),
+                ),
+              )
+            : Positioned(
+                right: 0,
+                child: AnimatedBuilder(
+                  animation: _animationController_intersect!,
+                  builder: (context, widget) {
+                    if (_rotateAnimation_intersect != null) {
+                      return Transform.rotate(
+                        angle: _rotateAnimation_intersect!.value,
+                        child: widget,
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                  child: GestureDetector(
+                    onTap: () async {
+                      final quests =
+                          Provider.of<QuestModel>(context, listen: false);
+                      await quests.completeQuest(
+                          accessToken, widget.memberQuestId);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return GetQuestAchievementDialog();
+                        },
+                      );
+                      questModel.getQuests(accessToken);
+                      if (widget.index != 0 && widget.index != 2) {
+                        userProvider.setCurrency(currency + 5000);
+                      }
+                    },
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Image.asset(AppIcons.intersect,
+                          width: MediaQuery.of(context).size.width * 0.11),
+                    ),
+                  ),
+                ),
               ),
-              Text(
-                widget.compensation,
-                style: CustomFontStyle.getTextStyle(
-                    context, CustomFontStyle.yeonSung60_white),
+        if (widget.goal <= widget.progress)
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.0155,
+            right: MediaQuery.of(context).size.width * 0.022,
+            child: IgnorePointer(
+              child: Container(
+                child: Image.asset(AppIcons.gging,
+                    width: MediaQuery.of(context).size.width * 0.06),
               ),
-            ],
+            ),
           ),
-        ),
-        Positioned(
-          right: 0,
-          child: Container(
-            color: Colors.transparent,
-            child: Image.asset(AppIcons.intersect,
-                width: MediaQuery.of(context).size.width * 0.11),
-          ),
-        ),
-        Positioned(
-          top: MediaQuery.of(context).size.height * 0.0155,
-          right: MediaQuery.of(context).size.width * 0.022,
-          child: Container(
-            child: Image.asset(AppIcons.gging,
-                width: MediaQuery.of(context).size.width * 0.06),
-          ),
-        ),
       ],
     );
   }
