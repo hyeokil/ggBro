@@ -25,6 +25,7 @@ import com.c206.backend.domain.plogging.exception.PloggingException;
 import com.c206.backend.domain.plogging.repository.PloggingRepository;
 import com.c206.backend.domain.plogging.repository.TrashRepository;
 import com.c206.backend.domain.plogging.service.TrashService;
+import com.c206.backend.domain.quest.entity.MemberQuest;
 import com.c206.backend.domain.quest.repository.MemberQuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -61,14 +62,17 @@ public class TrashServiceImpl implements TrashService {
     @Value("${aws.s3.bucket}")
     private String bucket;
 
-    private AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
 
     private void  updateMemberAchievement(Long memberId, Long achievementId) {
         memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress();
     }
 
     private void  updateMemberQuest(Long memberId, Long questId) {
-        memberQuestRepository.findTopByMemberIdAndQuestIdOrderByIdDesc(memberId,questId).updateProgress();
+        MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndQuestIdOrderByIdDesc(memberId,questId);
+        if (memberQuest!=null) {
+            memberQuest.updateProgress();
+        }
     }
 
     private String generateFileName(Long ploggingId) {

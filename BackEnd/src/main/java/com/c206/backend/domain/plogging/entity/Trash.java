@@ -27,8 +27,9 @@ public class Trash extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TrashType trashType;
 
-    @Column(columnDefinition = "Point")
+    @Column(columnDefinition = "Point", nullable = false)
     private Point location;
+
 
     private String image;
 }

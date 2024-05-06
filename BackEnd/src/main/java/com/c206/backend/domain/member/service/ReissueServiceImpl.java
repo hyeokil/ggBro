@@ -1,7 +1,5 @@
-package com.c206.backend.domain.member.service.Impl;
+package com.c206.backend.domain.member.service;
 
-import com.c206.backend.domain.member.service.RedisService;
-import com.c206.backend.domain.member.service.ReissueService;
 import com.c206.backend.global.jwt.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
