@@ -39,6 +39,14 @@ class _ScanScreenState extends State<ScanScreen> {
                           onTap: () => connectToDevice(r.device),
                         ): Container())
                     .toList(),
+                    // .map(
+                    //   (r) => ListTile(
+                    //     title: Text(r.device.advName),
+                    //     subtitle: Text(r.device.remoteId.toString()),
+                    //     onTap: () => connectToDevice(r.device),
+                    //   ),
+                    // )
+                    // .toList(),
               ),
             ),
           ),
@@ -47,24 +55,23 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
+  List<ScanResult> scanResults = [];
+
   void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 10)).then(
-      (value) => setState(() => isScanning = false),
-    );
+    FlutterBluePlus.startScan(timeout: Duration(seconds: 10));
     setState(() => isScanning = true);
 
     FlutterBluePlus.scanResults.listen((results) {
-      // 스캔 결과를 사용해 UI 업데이트
+      setState(() {
+        scanResults = results;
+        isScanning = false;
+      });
       for (ScanResult result in results) {
         if (result.device.advName.isNotEmpty) {
-          print('${result.device.advName} found! rssi: ${result.rssi}');
+          print('${result.device.advName} found! rssi: ${result.advertisementData.serviceUuids}');
         }
       }
     });
-
-    // FlutterBluePlus.stopScan().then((_) {
-    //   setState(() => isScanning = false);
-    // });
   }
 
   void connectToDevice(BluetoothDevice device) async {

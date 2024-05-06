@@ -88,7 +88,7 @@ public class TrashServiceImpl implements TrashService {
             case NORMAL -> {exp = 55 ;value=petActive ? 100 : 50;memberPet.addNormal();}
             case PLASTIC -> {exp = 66; value=petActive ? 110 : 60;memberPet.addPlastic();}
             case CAN -> {exp = 111;value=petActive ? 160 : 100;memberPet.addCan();}
-            default -> {exp = 199;value =petActive ? 270 : 200;memberPet.addGlass();}
+            case GLASS -> {exp = 199;value =petActive ? 270 : 200;memberPet.addGlass();}
         };
         int currency = petActive ? 0 : value;
         // notActive 일때 펫 경험치 주기

@@ -1,14 +1,20 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/theme_data.dart';
+import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
+import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/models/rescue_model.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'provider/main_provider.dart';
+import 'provider/user_provider.dart';
 
 void main() async {
   // dotenv 설정
@@ -18,11 +24,26 @@ void main() async {
   // 지도 초기화
   await _initialize();
 
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => MainProvider()),
-        ChangeNotifierProvider(create: (_) => AuthModel()),
+        ChangeNotifierProvider(create: (context) => MainProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(
+            create: (context) =>
+                AuthModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                PetModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                RescueModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                AchievementModel(Provider.of<UserProvider>(context, listen: false))),
+        // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),
     ),
@@ -61,6 +82,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     return MaterialApp(
       home: const MyHomePage(),
       builder: (context, child) {
