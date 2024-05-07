@@ -8,7 +8,9 @@ import 'package:frontend/screens/plogging/finishplogging/component/finish_clear_
 import 'package:go_router/go_router.dart';
 
 class FinishPloggingDialog extends StatefulWidget {
-  const FinishPloggingDialog({super.key});
+  const FinishPloggingDialog({
+    super.key,
+  });
 
   @override
   State<FinishPloggingDialog> createState() => _FinishPloggingDialogState();
@@ -48,7 +50,7 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop();
-                    // context.go('/main');
+                    // GoRouter.of(widget.parentContext).go('/main');
                   },
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.05,
