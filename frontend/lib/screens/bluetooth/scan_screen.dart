@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 class ScanScreen extends StatefulWidget {
@@ -12,6 +15,12 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   // FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
   bool isScanning = false;
+
+  @override
+  void initState() {
+    super.initState();
+    bluetoothSetting();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +52,10 @@ class _ScanScreenState extends State<ScanScreen> {
                         ? ListTile(
                             title: Text(r.device.advName),
                             subtitle: Text(r.device.remoteId.toString()),
-                            onTap: () => connectToDevice(r.device),
-                          )
+                            onTap: () {
+                              connectToDevice(r.device);
+                              Fluttertoast.showToast(msg: '${r.device} 연결됨');
+                            })
                         : Container())
                     .toList(),
                 // .map(
@@ -63,6 +74,25 @@ class _ScanScreenState extends State<ScanScreen> {
     );
   }
 
+  bluetoothSetting() async {
+    if (await FlutterBluePlus.isSupported == false) {
+      Fluttertoast.showToast(msg: '블루투스가 지원되지 않습니다.');
+      return;
+    }
+
+    FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) {
+      if (state == BluetoothAdapterState.on) {
+        Fluttertoast.showToast(msg: '블루투스 켜져있음');
+      } // 블루투스가 켜져있다면 스캔 시작
+      else {
+        if (Platform.isAndroid) {
+          FlutterBluePlus.turnOn();
+          Fluttertoast.showToast(msg: '블루투스 연결 안되있음');
+        }
+      } // 블루투스 꺼져있다면 다시 켜게
+    });
+  }
+
   List<ScanResult> scanResults = [];
 
   void startScan() {
@@ -77,7 +107,8 @@ class _ScanScreenState extends State<ScanScreen> {
       });
       for (ScanResult result in results) {
         if (result.device.advName.isNotEmpty) {
-          print('${result.device.advName} found! rssi: ${result.advertisementData.serviceUuids}');
+          print(
+              '${result.device.advName} found! rssi: ${result.device.readRssi()}');
         }
       }
     });
@@ -88,20 +119,4 @@ class _ScanScreenState extends State<ScanScreen> {
     print('연결됨: ${device.advName}');
     // 연결된 기기로 추가 작업 수행
   }
-}
-
-@override
-Widget build(BuildContext context) {
-  return SafeArea(
-    child: Scaffold(
-      body: Column(children: [
-        ElevatedButton(
-            onPressed: () {
-              context.push('/ploggingProgress');
-            },
-            child: const Text("시작하러 가기")),
-        const Text('스캔스크린'),
-      ]),
-    ),
-  );
 }
