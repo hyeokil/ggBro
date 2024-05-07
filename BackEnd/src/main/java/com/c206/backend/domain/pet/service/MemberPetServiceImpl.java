@@ -138,7 +138,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .currency(memberInfo.getCurrency()-1000)
                 .build();
         memberInfoRepository.save(newMemberInfo);
-        boolean result = Math.random() < 0.1;
+        boolean result = Math.random() < 0.5;
         if (result) {
             List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
             List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
