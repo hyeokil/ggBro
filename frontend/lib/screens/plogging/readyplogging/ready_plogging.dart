@@ -28,6 +28,8 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
   }
   @override
   Widget build(BuildContext context) {
+    final pet = Provider.of<PetModel>(context, listen: true).getPet();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -59,7 +61,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
                   // color: Colors.black,
-                  child: Partner(image: Image.network('${petModel.pet['image']}')),
+                  child: Partner(image: Image.network('${pet['image']}')),
                 ),
               ),
               Positioned(

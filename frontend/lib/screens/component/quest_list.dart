@@ -7,7 +7,6 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/main/dialog/get_quest_achievement_dialog.dart';
-import 'package:frontend/screens/profile/dialog/get_achievement_dialog.dart';
 import 'package:provider/provider.dart';
 
 class QuestList extends StatefulWidget {
@@ -16,6 +15,8 @@ class QuestList extends StatefulWidget {
   final int index;
   final int questId;
   final int memberQuestId;
+  final String petNickName;
+  final bool done;
 
   const QuestList({
     super.key,
@@ -24,6 +25,8 @@ class QuestList extends StatefulWidget {
     required this.index,
     required this.memberQuestId,
     required this.questId,
+    required this.petNickName,
+    required this.done,
   });
 
   @override
@@ -77,7 +80,7 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
           ),
           child: Text(
             widget.questId == 1
-                ? '플로깅 ${widget.goal}회 하기'
+                ? '${widget.petNickName}과(와) 플로깅 ${widget.goal}회 하기'
                 : widget.questId == 2
                     ? '플라몽 ${widget.goal}마리 처치 하기'
                     : widget.questId == 3
@@ -101,56 +104,65 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
                   ),
                 ),
               )
-            : Positioned(
-                right: 0,
-                child: AnimatedBuilder(
-                  animation: _animationController_intersect!,
-                  builder: (context, widget) {
-                    if (_rotateAnimation_intersect != null) {
-                      return Transform.rotate(
-                        angle: _rotateAnimation_intersect!.value,
-                        child: widget,
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                  child: GestureDetector(
-                    onTap: () async {
-                      final quests =
-                          Provider.of<QuestModel>(context, listen: false);
-                      await quests.completeQuest(
-                          accessToken, widget.memberQuestId);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return GetQuestAchievementDialog();
+            : widget.done
+                ? Positioned(
+                    right: MediaQuery.of(context).size.width * 0.03,
+                    top: MediaQuery.of(context).size.height * 0.01,
+                    child: Text(
+                      '완료',
+                      style: CustomFontStyle.getTextStyle(
+                          context, CustomFontStyle.yeonSung60_white),
+                    ),
+                  )
+                : Positioned(
+                    right: 0,
+                    child: AnimatedBuilder(
+                      animation: _animationController_intersect!,
+                      builder: (context, widget) {
+                        if (_rotateAnimation_intersect != null) {
+                          return Transform.rotate(
+                            angle: _rotateAnimation_intersect!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: GestureDetector(
+                        onTap: () async {
+                          final quests =
+                              Provider.of<QuestModel>(context, listen: false);
+                          await quests.completeQuest(
+                              accessToken, widget.memberQuestId);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return GetQuestAchievementDialog();
+                            },
+                          );
+                          questModel.getQuests(accessToken);
                         },
-                      );
-                      questModel.getQuests(accessToken);
-                      // if (widget.index != 0 && widget.index != 2) {
-                      //   userProvider.setCurrency(currency + 5000);
-                      // }
-                    },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Image.asset(AppIcons.intersect,
+                              width: MediaQuery.of(context).size.width * 0.11),
+                        ),
+                      ),
+                    ),
+                  ),
+        if (widget.goal <= widget.progress)
+          widget.done
+              ? Container()
+              : Positioned(
+                  top: MediaQuery.of(context).size.height * 0.0155,
+                  right: MediaQuery.of(context).size.width * 0.022,
+                  child: IgnorePointer(
                     child: Container(
-                      color: Colors.transparent,
-                      child: Image.asset(AppIcons.intersect,
-                          width: MediaQuery.of(context).size.width * 0.11),
+                      child: Image.asset(AppIcons.gging,
+                          width: MediaQuery.of(context).size.width * 0.06),
                     ),
                   ),
                 ),
-              ),
-        if (widget.goal <= widget.progress)
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.0155,
-            right: MediaQuery.of(context).size.width * 0.022,
-            child: IgnorePointer(
-              child: Container(
-                child: Image.asset(AppIcons.gging,
-                    width: MediaQuery.of(context).size.width * 0.06),
-              ),
-            ),
-          ),
       ],
     );
   }
