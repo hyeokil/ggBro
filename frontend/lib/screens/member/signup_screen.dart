@@ -115,7 +115,6 @@ class _SignUpState extends State<SignUpScreen> {
 
 class EmailField extends StatelessWidget {
   final TextEditingController controller;
-
   const EmailField({super.key, required this.controller});
 
   @override

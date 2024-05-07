@@ -18,6 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
   String? _validatePassword(String? value) {
     final passwordRegex = RegExp(
       r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$',
@@ -31,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
