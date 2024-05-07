@@ -1,4 +1,4 @@
-package com.c206.backend.domain.history.dto.response;
+package com.c206.backend.domain.history.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,27 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class HistoryListResponseDto {
+public class RouteDTO {
 
-    private Long ploggingId;
+    private double latitude;
 
-    private LocalDateTime createAt;
+    private double longitude;
 
-    private LocalDateTime updateAt;
-
-    private Long petId;
-
-    private double distance;
-
-    private int trashCount;
-
-    private String image;
-    
 }

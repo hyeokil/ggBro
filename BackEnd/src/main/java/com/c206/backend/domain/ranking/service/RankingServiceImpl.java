@@ -30,7 +30,8 @@ public class RankingServiceImpl implements RankingService {
             RankingListResponseDto rankingItem = new RankingListResponseDto(
                     memberInfoItem.getMember().getNickname(),
                     memberInfoItem.getExp()/1000,
-                    memberInfoItem.getExp()
+                    memberInfoItem.getExp(),
+                    memberInfoItem.getProfilePetId()
             );
 
             rankingLIst.add(rankingItem);
