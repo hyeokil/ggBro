@@ -7,6 +7,7 @@ import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
+import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
@@ -95,7 +96,7 @@ class _ProgressMapState extends State<ProgressMap> {
     print('현재 위치로 $latitude랑 $longitude');
     _mapController!.updateCamera(
         NCameraUpdate.scrollAndZoomTo(target: NLatLng(latitude, longitude))
-          ..setPivot(NPoint(1 / 2, 10 / 11)));
+          ..setPivot(const NPoint(1 / 2, 10 / 11)));
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -418,10 +419,8 @@ class _ProgressMapState extends State<ProgressMap> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return const FinishPloggingDialog();
+                                  return const FinishCheckPloggingDialog();
                                 },
-                              ).then(
-                                (value) => context.go('/main'),
                               );
                             },
                             child: Container(

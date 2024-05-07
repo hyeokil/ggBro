@@ -21,7 +21,6 @@ class _RescueScreenState extends State<RescueScreen> {
   late RescueModel rescueModel;
   late UserProvider userProvider;
   late String accessToken;
-  late int currency;
 
   @override
   void initState() {
@@ -29,11 +28,12 @@ class _RescueScreenState extends State<RescueScreen> {
     rescueModel = Provider.of<RescueModel>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
-    currency = userProvider.getCurrency();
   }
 
   @override
   Widget build(BuildContext context) {
+    final currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,

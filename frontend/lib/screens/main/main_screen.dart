@@ -7,6 +7,7 @@ import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
@@ -77,7 +78,9 @@ class _MainScreenState extends State<MainScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      final quests = Provider.of<QuestModel>(context, listen: false);
+                      await quests.getQuests(accessToken);
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
