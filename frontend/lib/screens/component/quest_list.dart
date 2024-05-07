@@ -14,6 +14,7 @@ class QuestList extends StatefulWidget {
   final int goal;
   final int progress;
   final int index;
+  final int questId;
   final int memberQuestId;
 
   const QuestList({
@@ -22,6 +23,7 @@ class QuestList extends StatefulWidget {
     required this.progress,
     required this.index,
     required this.memberQuestId,
+    required this.questId,
   });
 
   @override
@@ -74,20 +76,20 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
             ],
           ),
           child: Text(
-            widget.index == 0
+            widget.questId == 1
                 ? '플로깅 ${widget.goal}회 하기'
-                : widget.index == 1
+                : widget.questId == 2
                     ? '플라몽 ${widget.goal}마리 처치 하기'
-                    : widget.index == 2
+                    : widget.questId == 3
                         ? '미쪼몬 ${widget.goal}마리 처치 하기'
-                        : widget.index == 3
+                        : widget.questId == 4
                             ? '율몽 ${widget.goal}마리 처치 하기'
                             : '포 캔몽 ${widget.goal}마리 처치 하기',
             style: CustomFontStyle.getTextStyle(
                 context, CustomFontStyle.yeonSung60_white),
           ),
         ),
-        widget.goal >= widget.progress
+        widget.goal > widget.progress
             ? Positioned(
                 top: MediaQuery.of(context).size.height * 0.015,
                 right: MediaQuery.of(context).size.width * 0.02,
@@ -126,9 +128,9 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
                         },
                       );
                       questModel.getQuests(accessToken);
-                      if (widget.index != 0 && widget.index != 2) {
-                        userProvider.setCurrency(currency + 5000);
-                      }
+                      // if (widget.index != 0 && widget.index != 2) {
+                      //   userProvider.setCurrency(currency + 5000);
+                      // }
                     },
                     child: Container(
                       color: Colors.transparent,

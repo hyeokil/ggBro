@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/rescue_model.dart';
+import 'package:provider/provider.dart';
 
 class CheckTrashsDialog extends StatefulWidget {
   const CheckTrashsDialog({super.key});
@@ -17,6 +19,8 @@ class _CheckTrashsDialogState extends State<CheckTrashsDialog>
     with TickerProviderStateMixin {
   bool _isVisible = true; // 상자를 보여줄지 여부를 결정하는 플래그
   bool _isFinish = false;
+  late RescueModel rescueModel;
+  late bool isBox;
 
   AnimationController? _animationController_trashs;
   Animation<double>? _scaleAnimation_trashs;
@@ -28,6 +32,8 @@ class _CheckTrashsDialogState extends State<CheckTrashsDialog>
   @override
   void initState() {
     super.initState();
+    rescueModel = Provider.of<RescueModel>(context, listen: false);
+    isBox = rescueModel.getIsBox();
 
     _animationController_trashs = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
@@ -75,50 +81,51 @@ class _CheckTrashsDialogState extends State<CheckTrashsDialog>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Fluttertoast.showToast(msg: '닉네임을 입력해주세요');
-      },
+    return IgnorePointer(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            AnimatedBuilder(
-              animation: _animationController_intersect!,
-              builder: (context, widget) {
-                if (_rotateAnimation_intersect != null) {
-                  return Transform.rotate(
-                    angle: _rotateAnimation_intersect!.value,
-                    child: widget,
-                  );
-                } else {
-                  return Container();
-                }
-              },
-              child: Container(
-                child: Center(
-                  child: Image.asset(AppIcons.big_intersect),
+            IgnorePointer(
+              child: AnimatedBuilder(
+                animation: _animationController_intersect!,
+                builder: (context, widget) {
+                  if (_rotateAnimation_intersect != null) {
+                    return Transform.rotate(
+                      angle: _rotateAnimation_intersect!.value,
+                      child: widget,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+                child: Container(
+                  child: Center(
+                    child: Image.asset(AppIcons.big_intersect),
+                  ),
                 ),
               ),
             ),
-            AnimatedBuilder(
-              animation: _animationController_box!,
-              builder: (context, widget) {
-                if (_scaleAnimation_box != null) {
-                  return Transform.scale(
-                    scale: _scaleAnimation_box!.value,
-                    child: widget,
-                  );
-                } else {
-                  return Container();
-                }
-              },
-              child: Container(
-                color: Colors.transparent,
-                child: Center(
-                  child: Image.asset(
-                    AppIcons.intro_box,
-                    width: MediaQuery.of(context).size.width * 0.7,
+            IgnorePointer(
+              child: AnimatedBuilder(
+                animation: _animationController_box!,
+                builder: (context, widget) {
+                  if (_scaleAnimation_box != null) {
+                    return Transform.scale(
+                      scale: _scaleAnimation_box!.value,
+                      child: widget,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: Image.asset(
+                      isBox ? AppIcons.intro_box : AppIcons.trashs,
+                      width: MediaQuery.of(context).size.width * 0.7,
+                    ),
                   ),
                 ),
               ),
@@ -130,7 +137,15 @@ class _CheckTrashsDialogState extends State<CheckTrashsDialog>
                   ? Container(
                       height: MediaQuery.of(context).size.height * 0.07,
                       width: MediaQuery.of(context).size.width * 0.9,
-                      child: Text('상자를 획득했습니다!'),
+                      child: Center(
+                        child: isBox
+                            ? Text('쓰레기 더미 속에서 상자를 발견했어요!',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung90_white))
+                            : Text('상자를 발견하지 못했어요 ㅠㅠ',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung90_white)),
+                      ),
                     )
                   : Container(),
             ),

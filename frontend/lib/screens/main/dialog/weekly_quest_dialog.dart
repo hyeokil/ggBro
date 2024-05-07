@@ -95,7 +95,7 @@ class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: MediaQuery.of(context).size.height * 0.21,
             width: MediaQuery.of(context).size.width * 0.7,
             child: ListView.builder(
               scrollDirection: Axis.vertical,
@@ -107,6 +107,7 @@ class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
                     goal: quests[index]['goal'],
                     progress: quests[index]['progress'],
                     index: index,
+                    questId: quests[index]['quest_id'],
                     memberQuestId: quests[index]['member_quest_id'],
                   ),
                 );
