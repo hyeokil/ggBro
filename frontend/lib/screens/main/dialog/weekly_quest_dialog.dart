@@ -109,6 +109,8 @@ class _WeeklyQuestDialogState extends State<WeeklyQuestDialog> {
                     index: index,
                     questId: quests[index]['quest_id'],
                     memberQuestId: quests[index]['member_quest_id'],
+                    petNickName: quests[index]['pet_nickname'],
+                    done: quests[index]['done'],
                   ),
                 );
               },

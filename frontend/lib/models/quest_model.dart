@@ -22,7 +22,7 @@ class QuestModel with ChangeNotifier {
     };
 
     final response = await http.get(url, headers: headers);
-    print(json.decode(utf8.decode(response.bodyBytes))["dataHeader"]);
+    // print(json.decode(utf8.decode(response.bodyBytes))["dataHeader"]);
     if (response.statusCode == 200) {
       quests = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       print(quests);
@@ -33,8 +33,10 @@ class QuestModel with ChangeNotifier {
     }
   }
 
+  late int gging;
+
   Future<String> completeQuest(String accessToken, int memberQuestId) async {
-    var url = Uri.https(address, "/api/v1/achievement/$memberQuestId");
+    var url = Uri.https(address, "/api/v1/quest/$memberQuestId");
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': "Bearer $accessToken"
@@ -43,7 +45,10 @@ class QuestModel with ChangeNotifier {
     final response = await http.post(url, headers: headers);
     print(json.decode(utf8.decode(response.bodyBytes))["dataBody"]);
 
+    int currency = userProvider.getCurrency();
     if (response.statusCode == 200) {
+      gging = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      userProvider.setCurrency(currency + gging);
       return "Success";
     } else {
       return "fail";
@@ -52,6 +57,10 @@ class QuestModel with ChangeNotifier {
 
   List getQuest () {
     return quests;
+  }
+
+  int getGging () {
+    return gging;
   }
 
 }

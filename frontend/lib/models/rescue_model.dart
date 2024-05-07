@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/provider/user_provider.dart';
 
 import "package:http/http.dart" as http;
@@ -22,8 +23,8 @@ class RescueModel with ChangeNotifier {
     };
 
     final response = await http.post(url, headers: headers);
-    var check = json.decode(utf8.decode(response.bodyBytes))["dataHeader"];
-    print('체크 $check');
+    var checkMessage = json.decode(utf8.decode(response.bodyBytes))["dataHeader"]["resultMessage"];
+    print('체크 $checkMessage');
 
     if (response.statusCode == 200) {
       onResult("Success");
@@ -38,7 +39,11 @@ class RescueModel with ChangeNotifier {
       notifyListeners();
       return "Success";
     } else {
-      print('${response.statusCode}');
+      if (checkMessage == "보유 통화 부족") {
+        Fluttertoast.showToast(msg: '낑이 부족합니다!');
+      } else if (checkMessage == "이미 모든 펫을 보유하고 있습니다") {
+        Fluttertoast.showToast(msg: '이미 모든 펫을 보유하고 있습니다!');
+      }
       onResult("fail");
       return "fail";
     }
