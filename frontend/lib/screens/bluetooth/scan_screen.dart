@@ -13,13 +13,19 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
-  // FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
+  List<ScanResult> scanResults = [];
   bool isScanning = false;
 
   @override
   void initState() {
     super.initState();
     bluetoothSetting();
+    initBle();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -51,21 +57,13 @@ class _ScanScreenState extends State<ScanScreen> {
                     .map((r) => r.device.advName.isNotEmpty
                         ? ListTile(
                             title: Text(r.device.advName),
-                            subtitle: Text(r.device.remoteId.toString()),
+                            subtitle: Text(r.device.readRssi().toString()),
+                            trailing: Text(r.device.connectionState.toString()),
                             onTap: () {
                               connectToDevice(r.device);
-                              Fluttertoast.showToast(msg: '${r.device} 연결됨');
                             })
                         : Container())
                     .toList(),
-                // .map(
-                //   (r) => ListTile(
-                //     title: Text(r.device.advName),
-                //     subtitle: Text(r.device.remoteId.toString()),
-                //     onTap: () => connectToDevice(r.device),
-                //   ),
-                // )
-                // .toList(),
               ),
             ),
           ),
@@ -80,42 +78,54 @@ class _ScanScreenState extends State<ScanScreen> {
       return;
     }
 
-    FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) {
+    FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) async {
       if (state == BluetoothAdapterState.on) {
         Fluttertoast.showToast(msg: '블루투스 켜져있음');
       } // 블루투스가 켜져있다면 스캔 시작
       else {
         if (Platform.isAndroid) {
-          FlutterBluePlus.turnOn();
-          Fluttertoast.showToast(msg: '블루투스 연결 안되있음');
+          await FlutterBluePlus.turnOn();
+          Fluttertoast.showToast(msg: '블루투스 연결됨');
         }
       } // 블루투스 꺼져있다면 다시 켜게
     });
   }
 
-  List<ScanResult> scanResults = [];
+  void initBle() {
+    // BLE 스캔 상태 얻기 위한 리스너
+    FlutterBluePlus.isScanning.listen((isScan) {
+      isScanning = isScan;
+      setState(() {});
+    });
+  }
 
   void startScan() {
-    FlutterBluePlus.startScan(timeout: const Duration(seconds: 10)).then(
-      (value) => setState(() => isScanning = false),
-    );
+    if (!isScanning) {
+      scanResults.clear(); // 스캔 중 아니라면 기존 스캔 목록 삭제
 
-    FlutterBluePlus.scanResults.listen((results) {
-      setState(() {
-        scanResults = results;
-        isScanning = false;
-      });
-      for (ScanResult result in results) {
-        if (result.device.advName.isNotEmpty) {
-          print(
-              '${result.device.advName} found! rssi: ${result.device.readRssi()}');
+      FlutterBluePlus.startScan(
+          timeout: const Duration(seconds: 10)); // 새로운 스캔 시작
+
+      var subscription = FlutterBluePlus.scanResults.listen((results) {
+        setState(() {
+          scanResults = results;
+        });
+        for (ScanResult result in results) {
+          if (result.device.advName.isNotEmpty) {
+            print(
+                '${result.device.advName} found! rssi: ${result.device.readRssi()}');
+          }
         }
-      }
-    });
+      });
+      FlutterBluePlus.cancelWhenScanComplete(subscription);
+    } else {
+      FlutterBluePlus.stopScan();
+    }
   }
 
   void connectToDevice(BluetoothDevice device) async {
     await device.connect();
+    Fluttertoast.showToast(msg: '${device.advName} 연결됨');
     print('연결됨: ${device.advName}');
     // 연결된 기기로 추가 작업 수행
   }
