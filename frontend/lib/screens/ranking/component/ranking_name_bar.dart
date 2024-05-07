@@ -7,7 +7,12 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
 
 class RankingNameBar extends StatefulWidget {
-  const RankingNameBar({super.key});
+  final String nickName;
+
+  const RankingNameBar({
+    super.key,
+    required this.nickName,
+  });
 
   @override
   State<RankingNameBar> createState() => _RankingNameBarState();
@@ -23,7 +28,9 @@ class _RankingNameBarState extends State<RankingNameBar> {
       child: Stack(
         children: [
           Positioned(
-            child: ProfileImage(image: Image.asset(AppIcons.meka_sudal),),
+            child: ProfileImage(
+              image: Image.asset(AppIcons.meka_sudal),
+            ),
             left: MediaQuery.of(context).size.width * 0.045,
           ),
           Positioned(
@@ -43,19 +50,12 @@ class _RankingNameBarState extends State<RankingNameBar> {
                       spreadRadius: 1)
                 ],
               ),
-              child: Column(
-                children: [
-                  Text(
-                    '유저입니다 &',
-                    style: CustomFontStyle.getTextStyle(
-                        context, CustomFontStyle.yeonSung55_white),
-                  ),
-                  Text(
-                    '동료입니다',
-                    style: CustomFontStyle.getTextStyle(
-                        context, CustomFontStyle.yeonSung55_white),
-                  ),
-                ],
+              child: Center(
+                child: Text(
+                  '${widget.nickName}',
+                  style: CustomFontStyle.getTextStyle(
+                      context, CustomFontStyle.yeonSung55_white),
+                ),
               ),
             ),
           ),

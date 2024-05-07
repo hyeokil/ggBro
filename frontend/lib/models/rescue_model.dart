@@ -8,14 +8,16 @@ import 'package:frontend/provider/user_provider.dart';
 import "package:http/http.dart" as http;
 
 class RescueModel with ChangeNotifier {
-
   final UserProvider userProvider;
+
   RescueModel(this.userProvider);
+
   String address = dotenv.get('ADDRESS');
 
   late bool isBox;
 
-  Future<String> rescuePet(String accessToken, int currency, Function(String) onResult) async {
+  Future<String> rescuePet(
+      String accessToken, int currency, Function(String) onResult) async {
     var url = Uri.https(address, "/api/v1/pet/rescue");
     final headers = {
       'Content-Type': 'application/json',
@@ -23,7 +25,8 @@ class RescueModel with ChangeNotifier {
     };
 
     final response = await http.post(url, headers: headers);
-    var checkMessage = json.decode(utf8.decode(response.bodyBytes))["dataHeader"]["resultMessage"];
+    var checkMessage = json
+        .decode(utf8.decode(response.bodyBytes))["dataHeader"]["resultMessage"];
     print('체크 $checkMessage');
 
     if (response.statusCode == 200) {
@@ -49,7 +52,7 @@ class RescueModel with ChangeNotifier {
     }
   }
 
-  bool getIsBox () {
+  bool getIsBox() {
     return isBox;
   }
 }

@@ -6,8 +6,10 @@ import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
+import 'package:frontend/models/campaign_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/quest_model.dart';
+import 'package:frontend/models/ranking_model.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
@@ -103,31 +105,11 @@ class _MainScreenState extends State<MainScreen> {
                   //   width: MediaQuery.of(context).size.width * 0.04,
                   // ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      final ranking = Provider.of<RankingModel>(context, listen: false);
+                      await ranking.getRanking(accessToken);
                       context.push('/ranking');
                       selectedMenu('ranking');
-                      // Navigator.push(
-                      //   context,
-                      //   PageRouteBuilder(
-                      //     pageBuilder: (context, animation, secondaryAnimation) =>
-                      //         RankingScreen(),
-                      //     transitionsBuilder:
-                      //         (context, animation, secondaryAnimation, child) {
-                      //       var begin = Offset(1.0, 0.0);
-                      //       var end = Offset.zero;
-                      //       var curve = Curves.ease;
-                      //
-                      //       var tween = Tween(begin: begin, end: end)
-                      //           .chain(CurveTween(curve: curve));
-                      //
-                      //       return SlideTransition(
-                      //         position: animation.drive(tween),
-                      //         child: child,
-                      //       );
-                      //     },
-                      //   ),
-                      // );
-                      // selectedMenu('ranking');
                     },
                     child: Menu(
                       color: AppColors.basicgray,
@@ -163,7 +145,9 @@ class _MainScreenState extends State<MainScreen> {
                   //   width: MediaQuery.of(context).size.width * 0.04,
                   // ),
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      final campaign = Provider.of<CampaignModel>(context, listen: false);
+                      await campaign.getCampaigns(accessToken);
                       context.push('/campaign');
                       selectedMenu('campaign');
                     },

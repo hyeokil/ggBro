@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/campaign_model.dart';
 import 'package:frontend/screens/campaign/component/campaign_list.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
+import 'package:provider/provider.dart';
 
 class CampaignScreen extends StatefulWidget {
   const CampaignScreen({super.key});
@@ -15,6 +17,8 @@ class CampaignScreen extends StatefulWidget {
 class _RankingState extends State<CampaignScreen> {
   @override
   Widget build(BuildContext context) {
+    final campaign = Provider.of<CampaignModel>(context, listen: true).getCampaign();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -64,6 +68,22 @@ class _RankingState extends State<CampaignScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
+                  // Container(
+                  //   height: MediaQuery.of(context).size.height * 0.42,
+                  //   // color: Colors.yellow,
+                  //   child: ListView.builder(
+                  //     scrollDirection: Axis.vertical,
+                  //     itemCount: campaign.length,
+                  //     itemBuilder: (BuildContext context, int index) {
+                  //       return Container(
+                  //         // margin: EdgeInsets.only(bottom: 5),
+                  //         child: CampaignList(
+                  //           title: campaign[index]['title'],
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   Container(
                     height: MediaQuery.of(context).size.height * 0.73,
                     child: SingleChildScrollView(

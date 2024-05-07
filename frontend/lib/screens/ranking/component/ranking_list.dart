@@ -48,7 +48,7 @@ class _RankingListState extends State<RankingList> {
             ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width * 0.12,
+            left: MediaQuery.of(context).size.width * 0.15,
             child: Container(
               height: 45,
               width: 45,
@@ -56,7 +56,7 @@ class _RankingListState extends State<RankingList> {
             ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width * 0.3,
+            left: MediaQuery.of(context).size.width * 0.28,
             child: Container(
               alignment: Alignment.centerLeft,
               height: MediaQuery.of(context).size.height * 0.06,
