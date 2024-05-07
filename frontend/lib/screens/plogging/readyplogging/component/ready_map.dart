@@ -1,13 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
@@ -110,8 +105,8 @@ class _ReadyMapState extends State<ReadyMap> {
               double.parse(data['위도']),
               double.parse(data['경도']),
             ),
-            icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
-            size: NSize(30, 40),
+            icon: const NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+            size: const NSize(30, 40),
           ),
         );
       }
@@ -134,7 +129,7 @@ class _ReadyMapState extends State<ReadyMap> {
 
               final onMarkerInfoWindow = NInfoWindow.onMarker(
                 id: marker.info.id,
-                text: '${marker.info.id.split('_')[1]}',
+                text: marker.info.id.split('_')[1],
               );
 
               marker.setOnTapListener(
@@ -156,19 +151,19 @@ class _ReadyMapState extends State<ReadyMap> {
     // 클러스터 대표 마커 표시
     var centerLat = 0.0;
     var centerLng = 0.0;
-    markers.forEach((marker) {
+    for (var marker in markers) {
       centerLat += marker.position.latitude;
       centerLng += marker.position.longitude;
-    });
+    }
     centerLat /= markers.length;
     centerLng /= markers.length;
 
     NMarker clusterMarker = NMarker(
       id: "cluster_${markers[0].info.id}",
       position: NLatLng(centerLat, centerLng),
-      icon: NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+      icon: const NOverlayImage.fromAssetImage(AppIcons.trash_tong),
       // 클러스터 아이콘 설정
-      size: NSize(100, 100),
+      size: const NSize(100, 100),
       caption: NOverlayCaption(text: '${markers.length}', textSize: 20),
     );
     _mapController!.addOverlay(clusterMarker);
@@ -179,7 +174,16 @@ class _ReadyMapState extends State<ReadyMap> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
-      decoration: BoxDecoration(color: Colors.white),
+      decoration: BoxDecoration(
+        border: Border.all(width: 3, color: Colors.white),
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.basicgray.withOpacity(0.5),
+              offset: const Offset(0, 4),
+              blurRadius: 1,
+              spreadRadius: 1)
+        ],
+      ),
       child: _isLocationLoaded
           ? Stack(
               children: [
@@ -229,7 +233,7 @@ class _ReadyMapState extends State<ReadyMap> {
                         children: [
                           Positioned(
                             top: MediaQuery.of(context).size.height * 0.004,
-                            child: Container(
+                            child: SizedBox(
                               width: MediaQuery.of(context).size.width * 0.09,
                               height: MediaQuery.of(context).size.height * 0.04,
                               // color: Colors.black,
@@ -254,7 +258,7 @@ class _ReadyMapState extends State<ReadyMap> {
                 )
               ],
             )
-          : Center(
+          : const Center(
               child: CircularProgressIndicator(),
             ),
     );

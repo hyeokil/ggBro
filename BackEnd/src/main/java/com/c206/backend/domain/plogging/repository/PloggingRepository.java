@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface PloggingRepository extends JpaRepository<Plogging,Long> {
     List<Plogging> findByMemberPetId(Long memberPetId);
+
+    List<Plogging> findByMemberId(Long memberId);
 }

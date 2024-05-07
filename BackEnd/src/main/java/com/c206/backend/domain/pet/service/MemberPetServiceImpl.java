@@ -43,10 +43,15 @@ public class MemberPetServiceImpl implements MemberPetService {
         for (Pet pet:pets) {
             petIdSet.add(pet.getId());
         }
+        System.out.println(petIdSet);
         for (MemberPet memberPet : memberPets) {
             petIdSet.remove(memberPet.getPet().getId());
         }
+        System.out.println(petIdSet);
         List<Long> petIdList = new ArrayList<>(petIdSet);
+        if (petIdList.isEmpty()) {
+            throw new PetException(PetError.PET_OWNERSHIP_COMPLETE);
+        }
         Long randomPetId = petIdList.get(new Random().nextInt(petIdList.size()));
         Pet pet = petRepository.findById(randomPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_PET));
@@ -125,6 +130,7 @@ public class MemberPetServiceImpl implements MemberPetService {
         }
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberError.NOT_FOUND_MEMBER));
+
         MemberInfo newMemberInfo= MemberInfo.builder()
                 .member(member)
                 .profilePetId(memberInfo.getProfilePetId())
@@ -132,7 +138,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .currency(memberInfo.getCurrency()-1000)
                 .build();
         memberInfoRepository.save(newMemberInfo);
-        boolean result = Math.random() < 0.1;
+        boolean result = Math.random() < 0.5;
         if (result) {
             List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
             List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
@@ -141,5 +147,23 @@ public class MemberPetServiceImpl implements MemberPetService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void provideBasePet(Member member) {
+        Pet pet = petRepository.findById(1L).orElseThrow(()
+            -> new PetException(PetError.NOT_FOUND_PET));
+        MemberPet newMemberPet = MemberPet.builder()
+                .member(member)
+                .pet(pet)
+                .exp(0)
+                .nickname(pet.getName())
+                .active(false)
+                .normal(0)
+                .plastic(0)
+                .can(0)
+                .glass(0)
+                .build();
+        memberPetRepository.save(newMemberPet);
     }
 }

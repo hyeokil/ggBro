@@ -23,7 +23,7 @@ class _dialogState extends State<IntroDialogHelping> {
           Stack(
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(3, 3, 3, 3),
+                margin: const EdgeInsets.fromLTRB(3, 3, 3, 3),
                 height: MediaQuery.of(context).size.height * 0.04,
                 width: MediaQuery.of(context).size.width * 0.65,
                 decoration: BoxDecoration(
@@ -46,14 +46,14 @@ class _dialogState extends State<IntroDialogHelping> {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: Color(0xFFEEEBF5),
+                    color: const Color(0xFFEEEBF5),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
               ),
-              Positioned(
+              const Positioned(
                 right: 0,
-                child: Container(
+                child: SizedBox(
                   height: 40,
                   width: 40,
                   child: Icon(

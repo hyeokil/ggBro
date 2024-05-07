@@ -29,6 +29,15 @@ public class JwtTokenUtil {
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
+    //    사용자 멤버 아이디 반환
+    public Long getMemberId(String token) {
+        return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
+    }
+
+    public Long getMemberIdRefresh(String token) {
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
+    }
+
 
     //    사용자 닉네임 반환
     public String getNickname(String token) {
@@ -36,8 +45,25 @@ public class JwtTokenUtil {
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
     }
 
+    public String getNicknameRefresh(String token) {
+
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("nickname", String.class);
+    }
+
     public String getEmail(String token){
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    }
+
+    public String getEmailRefresh(String token){
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    }
+
+    public String getTokenType(String token){
+        return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().get("tokenType", String.class);
+    }
+
+    public String getTokenTypeRefresh(String token){
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().get("tokenType", String.class);
     }
 
     //    토큰 만료 여부 체크하기
@@ -46,11 +72,20 @@ public class JwtTokenUtil {
         return Jwts.parser().verifyWith(accessKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
+    //    토큰 만료 여부 체크하기
+    public Boolean isExpiredRefresh(String token) {
+
+        return Jwts.parser().verifyWith(refreshKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    }
+
+
+
     //    JWT 토큰발급
-    public String createAccessJwt(String email, String nickname, Long expiredMs) {
+    public String createAccessJwt(Long memberId, String email, String nickname, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("tokenType", "access")
+                .claim("memberId", memberId)
                 .claim("email", email)
                 .claim("nickname", nickname)
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -59,10 +94,11 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public String createRefreshJwt(String email, String nickname, Long expiredMs) {
+    public String createRefreshJwt(Long memberId, String email, String nickname, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("tokenType", "refresh")
+                .claim("memberId", memberId)
                 .claim("email", email)
                 .claim("nickname", nickname)
                 .issuedAt(new Date(System.currentTimeMillis()))

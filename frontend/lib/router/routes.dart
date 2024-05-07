@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/router/router_path.dart';
 import 'package:frontend/screens/bluetooth/blutooth_test.dart';
+import 'package:frontend/screens/bluetooth/scan_screen.dart';
 import 'package:frontend/screens/campaign/campaign_screen.dart';
 import 'package:frontend/screens/history/history_screen.dart';
 import 'package:frontend/screens/intro/intro_screen.dart';
 import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
+import 'package:frontend/screens/plogging/progressplogging/progress_plogging.dart';
 import 'package:frontend/screens/plogging/readyplogging/ready_plogging.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
@@ -16,30 +18,79 @@ import 'package:go_router/go_router.dart';
 final GoRouter globalRouter = GoRouter(
   routes: [
     GoRoute(
-        path: RoutePath.singUp,
-        name: 'singup',
-        builder: (context, state) => const SignUpScreen()),
+      path: RoutePath.signUp,
+      name: 'signUp',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const SignUpScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
     GoRoute(
       path: RoutePath.login,
       name: 'login',
-      builder: (context, state) => const LoginScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const LoginScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.intro,
       name: 'intro',
-      builder: (context, state) => const IntroScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const IntroScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.main,
       name: 'main',
-      builder: (context, state) => const MainScreen(),
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const MainScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
     ),
     GoRoute(
       path: RoutePath.ranking,
       name: 'ranking',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: RankingScreen(),
+        child: const RankingScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -56,7 +107,7 @@ final GoRouter globalRouter = GoRouter(
       name: 'history',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: HistoryScreen(),
+        child: const HistoryScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -73,7 +124,7 @@ final GoRouter globalRouter = GoRouter(
       name: 'campaign',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: CampaignScreen(),
+        child: const CampaignScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -90,7 +141,7 @@ final GoRouter globalRouter = GoRouter(
       name: 'ploggingReady',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: ReadyPlogging(),
+        child: const ReadyPlogging(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -107,7 +158,7 @@ final GoRouter globalRouter = GoRouter(
       name: 'profile',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: ProfileScreen(),
+        child: const ProfileScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -124,7 +175,24 @@ final GoRouter globalRouter = GoRouter(
       name: 'rescue',
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: RescueScreen(),
+        child: const RescueScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
+    GoRoute(
+      path: RoutePath.ploggingProgress,
+      name: 'ploggingProgress',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ProgressPlogging(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(

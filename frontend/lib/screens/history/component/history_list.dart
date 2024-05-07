@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
 import 'package:frontend/screens/history/dialog/history_detail_dialog.dart';
@@ -64,7 +65,7 @@ class _HistoryListState extends State<HistoryList> {
                       Container(
                         height: 55,
                         width: 55,
-                        child: ProfileImage(), // 같이 간 펫
+                        child: ProfileImage(image: Image.asset(AppIcons.meka_sudal),), // 같이 간 펫
                       ),
                       Positioned(
                         left: MediaQuery.of(context).size.width * 0.19,

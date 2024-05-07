@@ -9,7 +9,10 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:frontend/screens/bluetooth/blutooth_off_screen.dart';
 import 'package:frontend/screens/bluetooth/scan_screen.dart';
 
-
+//
+// This widget shows BluetoothOffScreen or
+// ScanScreen depending on the adapter state
+//
 class FlutterBlueApp extends StatefulWidget {
   const FlutterBlueApp({Key? key}) : super(key: key);
 

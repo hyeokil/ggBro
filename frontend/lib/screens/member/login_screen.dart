@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
   String? _validatePassword(String? value) {
     final passwordRegex = RegExp(
       r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$',
@@ -25,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (value == null || value.isEmpty) {
       return '비밀번호를 입력해주세요.';
     } else if (!passwordRegex.hasMatch(value)) {
-      return '글자, 숫자, 특수 기호가 포함된 8 ~ 15자를 입력해주세요.';
+      return '문자, 숫자, 특수 문자가 포함된 8 ~ 15자를 입력해주세요.';
     }
     return null;
   }
@@ -50,14 +59,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        final auth =
+                            Provider.of<AuthModel>(context, listen: false);
                         if (_formKey.currentState!.validate()) {
                           // 유효성 검사를 통과한 경우 로그인 로직을 실행합니다.
                           String email = _email.text;
                           String password = _password.text;
-                          print('이메일 $email 비밀번호 $password');
+                          // print('이메일 $email 비밀번호 $password');
                           // 여기에 로그인 로직을 구현합니다.
-                          context.go('/intro');
+                          AuthStatus loginStatus =
+                              await auth.login(email, password);
+                          if (loginStatus == AuthStatus.loginSuccess) {
+                            context.go('/intro');
+                          }
                         }
                       },
                       style: const ButtonStyle(),
@@ -65,6 +80,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
+                        setState(() {
+                          _email.text = '';
+                          _password.text = '';
+                        });
                         context.push('/signUp');
                       },
                       child: const Text("회원가입"),

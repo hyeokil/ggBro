@@ -1,5 +1,6 @@
 package com.c206.backend.global.jwt;
 
+import com.c206.backend.domain.member.dto.response.MemberInfoResponseDto;
 import com.c206.backend.domain.member.entity.Member;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -48,12 +49,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        Long memberId = jwtTokenUtil.getMemberId(token);
         String email = jwtTokenUtil.getEmail(token);
         String nickname = jwtTokenUtil.getNickname(token);
 
         //...
         //userEntity를 생성하여 값 set
-        Member member = Member.builder()
+//        Member member = Member.builder()
+//                .id(memberId)
+//                .email(email)
+//                .nickname(nickname)
+//                .build();
+
+        MemberInfoResponseDto member = MemberInfoResponseDto.builder()
+                .id(memberId)
                 .email(email)
                 .nickname(nickname)
                 .build();
@@ -61,9 +70,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         //UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
-        System.out.println("여기는 JwtTokenFilter");
-        System.out.println("여기의 이메일은 "+ customUserDetails.getEmail());
-        System.out.println("여기의 닉네임은 "+ customUserDetails.getNickname());
+//        System.out.println("여기는 JwtTokenFilter");
+//        System.out.println("여기의 멤버 아이디는 "+ customUserDetails.getId());
+//        System.out.println("여기의 이메일은 "+ customUserDetails.getEmail());
+//        System.out.println("여기의 닉네임은 "+ customUserDetails.getNickname());
 
         //스프링 시큐리티 인증 토큰 생성
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails,null, customUserDetails.getAuthorities());
