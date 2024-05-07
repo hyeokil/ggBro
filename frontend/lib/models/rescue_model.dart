@@ -15,7 +15,7 @@ class RescueModel with ChangeNotifier {
   late bool isBox;
 
   Future<String> rescuePet(String accessToken, int currency, Function(String) onResult) async {
-    var url = Uri.https(address, "/api/v1/pet/resque");
+    var url = Uri.https(address, "/api/v1/pet/rescue");
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': "Bearer $accessToken"
@@ -29,12 +29,22 @@ class RescueModel with ChangeNotifier {
       onResult("Success");
       var check = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       print('응답 $check');
+      if (check) {
+        isBox = true;
+      } else {
+        isBox = false;
+      }
       userProvider.setCurrency(currency - 1000);
+      notifyListeners();
       return "Success";
     } else {
       print('${response.statusCode}');
       onResult("fail");
       return "fail";
     }
+  }
+
+  bool getIsBox () {
+    return isBox;
   }
 }

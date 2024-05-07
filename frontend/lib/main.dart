@@ -8,6 +8,7 @@ import 'package:frontend/core/theme/theme_data.dart';
 import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/rescue_model.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -43,6 +44,9 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) =>
                 AchievementModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                QuestModel(Provider.of<UserProvider>(context, listen: false))),
         // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),
