@@ -1,4 +1,4 @@
-package com.c206.backend.domain.ranking.dto.response;
+package com.c206.backend.domain.history.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -21,5 +21,11 @@ public class HistoryListResponseDto {
     private String updateAt;
 
     private Long petId;
+
+    private double distance;
+
+    private int trashCount;
+
+    private String image;
     
 }
