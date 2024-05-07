@@ -157,6 +157,7 @@ public class TrashServiceImpl implements TrashService {
                 updateMemberAchievement(memberId, 7L);
                 updateMemberQuest(memberId,4L);}
         };
+
         int currency = petActive ? 0 : value;
         // notActive 일때 펫 경험치 주기
         if (!petActive) {
