@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,9 +18,9 @@ public class HistoryListResponseDto {
 
     private Long ploggingId;
 
-    private String createAt;
+    private LocalDateTime createAt;
 
-    private String updateAt;
+    private LocalDateTime updateAt;
 
     private Long petId;
 

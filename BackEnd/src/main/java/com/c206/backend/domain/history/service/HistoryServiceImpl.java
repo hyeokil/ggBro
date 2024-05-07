@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -19,9 +20,25 @@ public class HistoryServiceImpl implements HistoryService{
     private final PloggingRepository ploggingRepository;
 
     @Override
-    public List<HistoryListResponseDto> historyList() {
+    public List<HistoryListResponseDto> historyList(Long memberId) {
 
+        List<Plogging> ploggingList = ploggingRepository.findByMemberId(memberId);
 
-        return null;
+        List<HistoryListResponseDto> historyList = new ArrayList<>();
+
+        for(Plogging plogItem : ploggingList){
+            HistoryListResponseDto historyListResponseDto = new HistoryListResponseDto(
+                    plogItem.getId(),
+                    plogItem.getCreatedAt(),
+                    plogItem.getUpdatedAt(),
+                    plogItem.getMemberPet().getId(),
+                    12.1,
+                    33,
+                    "testImage"
+            );
+            historyList.add(historyListResponseDto);
+        }
+
+        return historyList;
     }
 }
