@@ -54,7 +54,7 @@ public class QuestServiceImpl implements QuestService{
     }
 
     @Override
-    public void getQuestReward(Long memberId, Long memberQuestId) {
+    public int getQuestReward(Long memberId, Long memberQuestId) {
 
         // 퀘스트 없을때
         MemberQuest findedMemberQuest = memberQuestRepository.findById(memberQuestId).orElseThrow(()
@@ -71,17 +71,10 @@ public class QuestServiceImpl implements QuestService{
         }
 
         // isdone = true로 설정해서 새로 MemberQuest에 넣어주기
-        MemberQuest completedMemberQuest = MemberQuest.builder()
-                .goal(findedMemberQuest.getGoal())
-                .isDone(true)
-                .progress(findedMemberQuest.getProgress())
-                .member(findedMemberQuest.getMember())
-                .memberPet(findedMemberQuest.getMemberPet())
-                .id(findedMemberQuest.getId())
-                .quest(findedMemberQuest.getQuest())
-                .build();
 
-        memberQuestRepository.save(completedMemberQuest);
+
+        findedMemberQuest.updateIsDone();
+        memberQuestRepository.save(findedMemberQuest);
 
 
         // 퀘스트의 횟수와 가중치에 맞게 보상 설정
@@ -107,6 +100,8 @@ public class QuestServiceImpl implements QuestService{
                 .currency(memberInfo.getCurrency() + reward)
                 .build();
         memberInfoRepository.save(newMemberInfo);
+
+        return reward;
     }
 
     @Override

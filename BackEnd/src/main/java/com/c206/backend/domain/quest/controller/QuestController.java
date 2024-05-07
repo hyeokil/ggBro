@@ -48,10 +48,9 @@ public class QuestController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
-        questService.getQuestReward(memberId, memberQuestId);
+        int reward = questService.getQuestReward(memberId, memberQuestId);
 
-
-        return ResponseEntity.ok().body(Message.success());
+        return ResponseEntity.ok().body(Message.success(reward));
     }
 
     @PostMapping(value = "addquest")
