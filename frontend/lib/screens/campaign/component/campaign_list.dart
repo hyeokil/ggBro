@@ -5,12 +5,10 @@ import 'package:frontend/screens/campaign/dialog/campaign_detail_dialog.dart';
 
 class CampaignList extends StatefulWidget {
   final String title;
-  final String period;
 
   const CampaignList({
     super.key,
     required this.title,
-    required this.period,
   });
 
   @override
@@ -75,14 +73,14 @@ class _CampaignListState extends State<CampaignList> {
                                 context, CustomFontStyle.yeonSung90_white),
                           ),
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '${widget.period}',
-                            style: CustomFontStyle.getTextStyle(
-                                context, CustomFontStyle.yeonSung55_white),
-                          ),
-                        ),
+                        // Container(
+                        //   alignment: Alignment.centerLeft,
+                        //   child: Text(
+                        //     '${widget.period}',
+                        //     style: CustomFontStyle.getTextStyle(
+                        //         context, CustomFontStyle.yeonSung55_white),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

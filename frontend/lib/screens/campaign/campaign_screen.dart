@@ -68,68 +68,68 @@ class _RankingState extends State<CampaignScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  // Container(
-                  //   height: MediaQuery.of(context).size.height * 0.42,
-                  //   // color: Colors.yellow,
-                  //   child: ListView.builder(
-                  //     scrollDirection: Axis.vertical,
-                  //     itemCount: campaign.length,
-                  //     itemBuilder: (BuildContext context, int index) {
-                  //       return Container(
-                  //         // margin: EdgeInsets.only(bottom: 5),
-                  //         child: CampaignList(
-                  //           title: campaign[index]['title'],
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.73,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                    height: MediaQuery.of(context).size.height * 0.42,
+                    // color: Colors.yellow,
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: campaign.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          // margin: EdgeInsets.only(bottom: 5),
+                          child: CampaignList(
+                            title: campaign[index]['title'],
                           ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                          CampaignList(
-                            title: '아따 제목이랑께랑 까랑',
-                            period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  )
+                  ),
+                  // Container(
+                  //   height: MediaQuery.of(context).size.height * 0.73,
+                  //   child: SingleChildScrollView(
+                  //     child: Column(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //         CampaignList(
+                  //           title: '아따 제목이랑께랑 까랑',
+                  //           period: '2024 / 04 / 09 ~ 2024 / 05 / 20',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // )
                 ],
               ),
               Positioned(
