@@ -25,6 +25,7 @@ public class HistoryController {
     public ResponseEntity<Message<?>> historyList(@Parameter(hidden = true)Authentication authentication){
 
 
+
         return ResponseEntity.ok().body(Message.success());
     }
 }
