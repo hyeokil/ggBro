@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface HistoryService {
 
-    List<HistoryListResponseDto> historyList();
+    List<HistoryListResponseDto> historyList(Long memberId);
 }

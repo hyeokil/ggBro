@@ -218,6 +218,15 @@ class _ProgressMapState extends State<ProgressMap> {
     _mapController!.addOverlay(clusterMarker);
   }
 
+  void showFinishPloggingDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FinishPloggingDialog();
+      },
+    ).then((value) => context.go('/main'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -419,7 +428,7 @@ class _ProgressMapState extends State<ProgressMap> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return const FinishCheckPloggingDialog();
+                                  return FinishCheckPloggingDialog(onConfirm: showFinishPloggingDialog,);
                                 },
                               );
                             },
