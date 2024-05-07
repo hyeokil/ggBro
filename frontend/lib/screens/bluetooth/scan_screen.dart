@@ -17,7 +17,7 @@ class _ScanScreenState extends State<ScanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('블루투스 기기 스캔'),
+        title: const Text('블루투스 기기 스캔'),
       ),
       body: Column(
         children: <Widget>[
@@ -25,28 +25,36 @@ class _ScanScreenState extends State<ScanScreen> {
             onPressed: () => isScanning ? null : startScan(),
             child: Text(isScanning ? '스캔 중...' : '스캔 시작'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              context.push('/ploggingProgress');
+            },
+            child: const Text("플로깅 출발"),
+          ),
           StreamBuilder<List<ScanResult>>(
             stream: FlutterBluePlus.onScanResults,
-            initialData: [],
+            initialData: const [],
             builder: (c, snapshot) => Container(
               color: Colors.yellow,
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView(
                 children: snapshot.data!
-                    .map((r) => r.device.advName.isNotEmpty ? ListTile(
-                          title: Text(r.device.advName),
-                          subtitle: Text(r.device.remoteId.toString()),
-                          onTap: () => connectToDevice(r.device),
-                        ): Container())
+                    .map((r) => r.device.advName.isNotEmpty
+                        ? ListTile(
+                            title: Text(r.device.advName),
+                            subtitle: Text(r.device.remoteId.toString()),
+                            onTap: () => connectToDevice(r.device),
+                          )
+                        : Container())
                     .toList(),
-                    // .map(
-                    //   (r) => ListTile(
-                    //     title: Text(r.device.advName),
-                    //     subtitle: Text(r.device.remoteId.toString()),
-                    //     onTap: () => connectToDevice(r.device),
-                    //   ),
-                    // )
-                    // .toList(),
+                // .map(
+                //   (r) => ListTile(
+                //     title: Text(r.device.advName),
+                //     subtitle: Text(r.device.remoteId.toString()),
+                //     onTap: () => connectToDevice(r.device),
+                //   ),
+                // )
+                // .toList(),
               ),
             ),
           ),
@@ -58,8 +66,9 @@ class _ScanScreenState extends State<ScanScreen> {
   List<ScanResult> scanResults = [];
 
   void startScan() {
-    FlutterBluePlus.startScan(timeout: Duration(seconds: 10));
-    setState(() => isScanning = true);
+    FlutterBluePlus.startScan(timeout: const Duration(seconds: 10)).then(
+      (value) => setState(() => isScanning = false),
+    );
 
     FlutterBluePlus.scanResults.listen((results) {
       setState(() {
