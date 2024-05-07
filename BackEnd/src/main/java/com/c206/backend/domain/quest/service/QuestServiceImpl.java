@@ -92,7 +92,7 @@ public class QuestServiceImpl implements QuestService{
         }
 
         //유저정보에 보상 저장
-        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberQuestId);
+        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberId);
         MemberInfo newMemberInfo = MemberInfo.builder()
                 .profilePetId(memberInfo.getProfilePetId())
                 .exp(memberInfo.getExp())
