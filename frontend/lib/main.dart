@@ -117,6 +117,8 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: globalRouter,
+      // routeInformationParser: globalRouter.routeInformationParser,
+      // routerDelegate: globalRouter.routerDelegate,
       theme: CustomThemeData.themeData,
     );
   }
