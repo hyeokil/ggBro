@@ -35,28 +35,31 @@ class _RankingListState extends State<RankingList> {
       ),
       child: Stack(
         children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.06,
-            width: MediaQuery.of(context).size.width * 0.07,
-            // color: Colors.red,
-            child: Center(
-              child: Text(
-                '${widget.rank}',
-                style: CustomFontStyle.getTextStyle(
-                    context, CustomFontStyle.yeonSung80),
+          Positioned(
+            left: MediaQuery.of(context).size.width * 0.015,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.06,
+              width: MediaQuery.of(context).size.width * 0.07,
+              // color: Colors.red,
+              child: Center(
+                child: Text(
+                  '${widget.rank}',
+                  style: CustomFontStyle.getTextStyle(
+                      context, CustomFontStyle.yeonSung80),
+                ),
               ),
             ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width * 0.12,
+            left: MediaQuery.of(context).size.width * 0.18,
             child: Container(
-              height: 45,
+              height: MediaQuery.of(context).size.width * 0.105,
               width: 45,
               child: ProfileImage(image: Image.asset(AppIcons.intro_animal_3),),
             ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width * 0.3,
+            left: MediaQuery.of(context).size.width * 0.31,
             child: Container(
               alignment: Alignment.centerLeft,
               height: MediaQuery.of(context).size.height * 0.06,

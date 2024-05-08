@@ -225,7 +225,7 @@ class _ProgressMapState extends State<ProgressMap> {
       builder: (BuildContext context) {
         return const FinishPloggingDialog();
       },
-    ).then((value) => context.go('/main'));
+    ).then((value) => context.pushReplacement('/main'));
   }
 
   @override

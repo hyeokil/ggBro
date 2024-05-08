@@ -1,11 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/models/ranking_model.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
 import 'package:frontend/screens/ranking/component/ranking_bar.dart';
 import 'package:frontend/screens/ranking/component/ranking_lists.dart';
 import 'package:frontend/screens/ranking/component/ranking_name_bar.dart';
+import 'package:provider/provider.dart';
 
 class RankingScreen extends StatefulWidget {
   const RankingScreen({super.key});
@@ -15,8 +17,27 @@ class RankingScreen extends StatefulWidget {
 }
 
 class _RankingState extends State<RankingScreen> {
+  late UserProvider userProvider;
+  late String accessToken;
+
+  @override
+  void initState() {
+    super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final people = Provider.of<RankingModel>(context, listen: true).getPeople();
+    late List rankings = [];
+
+    if (people.length >= 3) {
+      for (int i = 3; i < people.length; i++) {
+        rankings.add(people[i]);
+      }
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -48,13 +69,16 @@ class _RankingState extends State<RankingScreen> {
                         Positioned(
                           child: Column(
                             children: [
-                              RankingNameBar(),
+                              RankingNameBar(
+                                nickName: people[0]["nickname"],
+                              ),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.02,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02,
                               ),
                               RankingBar(
                                 heightSize: 0.2,
-                                exp: 700,
+                                exp: people[0]["exp"],
                               ),
                             ],
                           ),
@@ -63,13 +87,16 @@ class _RankingState extends State<RankingScreen> {
                         Positioned(
                           child: Column(
                             children: [
-                              RankingNameBar(),
+                              RankingNameBar(
+                                nickName: people.length >= 2 ? people[1]["nickname"] : '',
+                              ),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.02,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02,
                               ),
                               RankingBar(
                                 heightSize: 0.12,
-                                exp: 600,
+                                exp: people.length >= 2 ? people[1]["exp"] : 0,
                               ),
                             ],
                           ),
@@ -79,13 +106,16 @@ class _RankingState extends State<RankingScreen> {
                         Positioned(
                           child: Column(
                             children: [
-                              RankingNameBar(),
+                              RankingNameBar(
+                                nickName: people.length >= 3 ? people[2]["nickname"] : '',
+                              ),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.02,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02,
                               ),
                               RankingBar(
                                 heightSize: 0.08,
-                                exp: 500,
+                                exp: people.length >= 3 ? people[2]["exp"] : 0,
                               ),
                             ],
                           ),
@@ -95,7 +125,9 @@ class _RankingState extends State<RankingScreen> {
                       ],
                     ),
                   ),
-                  RankingLists(),
+                  RankingLists(
+                    people: rankings,
+                  ),
                 ],
               ),
               Positioned(

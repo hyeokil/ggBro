@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ProfilePet extends StatefulWidget {
-  const ProfilePet({super.key});
+  final int profilePetImage;
+
+  const ProfilePet({
+    super.key,
+    required this.profilePetImage,
+  });
 
   @override
   State<ProfilePet> createState() => _ProfilePetState();
