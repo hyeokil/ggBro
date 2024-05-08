@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -13,8 +16,13 @@ class ScanScreen extends StatefulWidget {
 }
 
 class _ScanScreenState extends State<ScanScreen> {
+  String base64String = '';
   List<ScanResult> scanResults = [];
+  late BluetoothCharacteristic _notifyChar;
+  late BluetoothDevice connectDevice;
+  late StreamSubscription<List<int>> subscription;
   bool isScanning = false;
+  bool isDisconnect = false;
 
   @override
   void initState() {
@@ -34,31 +42,37 @@ class _ScanScreenState extends State<ScanScreen> {
       appBar: AppBar(
         title: const Text('블루투스 기기 스캔'),
       ),
-      body: Column(
-        children: <Widget>[
-          ElevatedButton(
-            onPressed: () => isScanning ? null : startScan(),
-            child: Text(isScanning ? '스캔 중...' : '스캔 시작'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.push('/ploggingProgress');
-            },
-            child: const Text("플로깅 출발"),
-          ),
-          StreamBuilder<List<ScanResult>>(
-            stream: FlutterBluePlus.onScanResults,
-            initialData: const [],
-            builder: (c, snapshot) => Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () => isScanning ? null : startScan(),
+              child: Text(isScanning ? '스캔 중...' : '스캔 시작'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.push('/ploggingProgress');
+              },
+              child: const Text("플로깅 출발"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                cancelDisconnected();
+              },
+              child: const Text("연결해제"),
+            ),
+            Container(
               color: Colors.yellow,
               height: MediaQuery.of(context).size.height * 0.5,
               child: ListView(
-                children: snapshot.data!
+                children: scanResults
                     .map((r) => r.device.advName.isNotEmpty
                         ? ListTile(
                             title: Text(r.device.advName),
-                            subtitle: Text(r.device.readRssi().toString()),
-                            trailing: Text(r.device.connectionState.toString()),
+                            subtitle: Text(r.device.remoteId.toString()),
+                            trailing: Text(r.device.isConnected
+                                ? 'Connected'
+                                : 'DisConnected'),
                             onTap: () {
                               connectToDevice(r.device);
                             })
@@ -66,8 +80,12 @@ class _ScanScreenState extends State<ScanScreen> {
                     .toList(),
               ),
             ),
-          ),
-        ],
+            base64String.isNotEmpty
+                //     ? Text('문자열 길이 : ${base64String.length}')
+                ? Image.memory(base64.decode(base64String))
+                : Text('문자열 길이 : ${base64String.length}')
+          ],
+        ),
       ),
     );
   }
@@ -112,8 +130,7 @@ class _ScanScreenState extends State<ScanScreen> {
         });
         for (ScanResult result in results) {
           if (result.device.advName.isNotEmpty) {
-            print(
-                '${result.device.advName} found! rssi: ${result.device.readRssi()}');
+            print('${result.device.advName} found! rssi: ${result.rssi}');
           }
         }
       });
@@ -124,9 +141,71 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   void connectToDevice(BluetoothDevice device) async {
-    await device.connect();
-    Fluttertoast.showToast(msg: '${device.advName} 연결됨');
-    print('연결됨: ${device.advName}');
+    try {
+      await device.connect();
+    } catch (e) {
+      print('connect 에러 : $e');
+    }
+    if (device.isConnected) {
+      Fluttertoast.showToast(msg: '${device.advName} 연결됨');
+      print('연결됨: ${device.advName}');
+      findServiceAndCharacteristics(device);
+    } else {
+      Fluttertoast.showToast(msg: '연결실패');
+    }
     // 연결된 기기로 추가 작업 수행
+  }
+
+  void cancelDisconnected() {
+    print('연결 취소, $connectDevice, $subscription');
+    if (FlutterBluePlus.connectedDevices.isNotEmpty) {
+      connectDevice.disconnect();
+      connectDevice.cancelWhenDisconnected(subscription);
+    }
+    setState(() {});
+  }
+
+  String bytesToHex(Uint8List bytes) {
+    return bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
+  }
+
+  Set<String> imageResult = {};
+
+  void findServiceAndCharacteristics(BluetoothDevice device) async {
+    List<BluetoothService> services = await device.discoverServices();
+    for (BluetoothService service in services) {
+      if (service.uuid == Guid('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid ==
+              Guid('6E400003-B5A3-F393-E0A9-E50E24DCCA9E')) {
+            _notifyChar = characteristic;
+            await _notifyChar.setNotifyValue(true);
+
+            subscription = _notifyChar.onValueReceived.listen((event) {
+              // print('Received: $event');
+              if (String.fromCharCodes(event) == '0') {
+                if (imageResult.isNotEmpty) {
+                  base64String = imageResult.join('');
+                  print('최종 결과물 : $base64String');
+                  imageResult.clear();
+                  setState(() {});
+                }
+                return;
+              }
+              var result = '';
+              event.toList().forEach((element) {
+                result += String.fromCharCode(element);
+              });
+              print('결과물 : $result, 길이 ${result.length}');
+              imageResult.add(result.split('|')[1]);
+            });
+            connectDevice = device;
+
+            setState(() {});
+          }
+        }
+      }
+    }
   }
 }
