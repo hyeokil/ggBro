@@ -16,7 +16,9 @@ import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.pet.repository.PetRepository;
 import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
 import com.c206.backend.domain.plogging.dto.request.CreateTrashRequestDto;
+import com.c206.backend.domain.plogging.dto.request.GetTrashRequestDto;
 import com.c206.backend.domain.plogging.dto.response.CreateTrashResponseDto;
+import com.c206.backend.domain.plogging.dto.response.GetTrashResponseDto;
 import com.c206.backend.domain.plogging.entity.Plogging;
 import com.c206.backend.domain.plogging.entity.Trash;
 import com.c206.backend.domain.plogging.entity.enums.TrashType;
@@ -188,5 +190,29 @@ public class TrashServiceImpl implements TrashService {
             petActive,
             result
             );
+    }
+
+
+    @Override
+    public GetTrashResponseDto getTrashList(GetTrashRequestDto getTrashRequestDto) {
+        List<Object[]> results = trashRepository.countTrashByTypeWithinDistance(
+                getTrashRequestDto.getLatitude(),
+                getTrashRequestDto.getLongitude(),
+                getTrashRequestDto.getRadius());
+        int normal=0,plastic = 0,can=0,glass=0;
+        for (Object[] result : results) {
+            int count = ((Number) result[1]).intValue();
+            switch ((String) result[0]) {
+                case "NORMAL" -> normal = count;
+                case "PLASTIC" -> plastic = count;
+                case "CAN" -> can = count;
+                case "GLASS" -> glass = count;
+            }
+        }
+        return new GetTrashResponseDto(
+                normal,
+                plastic,
+                can,
+                glass);
     }
 }
