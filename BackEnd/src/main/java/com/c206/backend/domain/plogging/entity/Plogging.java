@@ -29,5 +29,14 @@ public class Plogging extends BaseEntity {
 
     private String time;
 
+    private int distance;
+
+    public void updateTime(String time) {
+        this.time = time;
+    }
+
+    public void updateDistance(int distance) {
+        this.distance = distance;
+    }
 
 }

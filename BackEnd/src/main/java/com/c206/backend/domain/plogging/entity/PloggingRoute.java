@@ -20,7 +20,7 @@ public class PloggingRoute {
     @JoinColumn(name = "plogging_id")
     private Plogging plogging;
 
-    private Double latitude;
+    private double latitude;
 
-    private Double longitude;
+    private double longitude;
 }

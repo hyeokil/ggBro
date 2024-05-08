@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class MemberAchievementExceptionHandler {
     @ExceptionHandler(MemberAchievementException.class)
-    public ResponseEntity<Message<Void>> memberException(MemberAchievementException e) {
+    public ResponseEntity<Message<Void>> memberAchievementException(MemberAchievementException e) {
         log.error("{} is occurred", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(Message.fail(null, e.getErrorMessage()));
     }
