@@ -15,13 +15,13 @@ spring:
         default_batch_fetch_size: 100
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
-    url: jdbc:mysql://localhost:3306/ggbro?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true     # 데이터베이스 URL
+    url: jdbc:mysql://k10c206.p.ssafy.io:3306/ggbro?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true     # 데이터베이스 URL
     username : ssafy
     password : ssafy
 
   data:
     redis:
-      host: localhost
+      host: k10c206.p.ssafy.io
       port: 6379
   springdoc:
     api-docs:
