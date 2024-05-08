@@ -94,7 +94,9 @@ public class MemberPetController {
     public ResponseEntity<Message<List<PetListResponseDto>>> petList(
             @Parameter(hidden = true) Authentication authentication
     ){
-        List<PetListResponseDto> petList = memberPetService.getPetList();
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = customUserDetails.getId();
+        List<PetListResponseDto> petList = memberPetService.getPetList(memberId);
 
         return ResponseEntity.ok().body(Message.success(petList));
     }
