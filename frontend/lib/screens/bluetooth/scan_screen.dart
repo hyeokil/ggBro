@@ -186,8 +186,7 @@ class _ScanScreenState extends State<ScanScreen> {
               // print('Received: $event');
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
-                  base64String = imageResult.join('');
-                  print('최종 결과물 : $base64String');
+                  base64String = imageResult.join(''); // 블루투스로 받아오는 데이터
                   imageResult.clear();
                   setState(() {});
                 }
