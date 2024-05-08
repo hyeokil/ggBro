@@ -74,6 +74,8 @@ class _MyAppState extends State<MyApp> {
     await [
       Permission.location,
       Permission.bluetooth,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
     ].request();
   }
 

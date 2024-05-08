@@ -220,9 +220,10 @@ class _ProgressMapState extends State<ProgressMap> {
 
   void showFinishPloggingDialog() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return FinishPloggingDialog();
+        return const FinishPloggingDialog();
       },
     ).then((value) => context.go('/main'));
   }
@@ -428,7 +429,9 @@ class _ProgressMapState extends State<ProgressMap> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return FinishCheckPloggingDialog(onConfirm: showFinishPloggingDialog,);
+                                  return FinishCheckPloggingDialog(
+                                    onConfirm: showFinishPloggingDialog,
+                                  );
                                 },
                               );
                             },

@@ -22,7 +22,7 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
     return AlertDialog(
       backgroundColor: Colors.white,
       content: Column(
-        mainAxisSize: MainAxisSize.min, // 컬럼이 전체 다 자치 안하게
+        mainAxisSize: MainAxisSize.min, // 컬럼이 전체 다 차지 안하게
         children: [
           SizedBox(
             // color: Colors.black,
@@ -50,7 +50,6 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop();
-                    // GoRouter.of(widget.parentContext).go('/main');
                   },
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.05,

@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/constant/app_colors.dart';
-import 'package:frontend/core/theme/custom/custom_font_style.dart';
-import 'package:frontend/screens/main/main_screen.dart';
-import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
-import 'package:go_router/go_router.dart';
 
 class FinishCheckPloggingDialog extends StatefulWidget {
   final Function onConfirm;
@@ -23,17 +18,27 @@ class _FinishCheckPloggingDialogState extends State<FinishCheckPloggingDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: Colors.white,
-      content: Row(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('취소')),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.onConfirm();
-              },
-              child: const Text('확인'))
+          const Text(
+            '원정을 종료하시겠습니까?',
+            style: TextStyle(fontSize: 20),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('취소')),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    widget.onConfirm();
+                  },
+                  child: const Text('확인'))
+            ],
+          ),
         ],
       ),
     );
