@@ -192,16 +192,40 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public List<PetListResponseDto> getPetList() {
+    public List<PetListResponseDto> getPetList(Long memberId) {
         List<Pet> petList = petRepository.findAll();
-        List<PetListResponseDto> petListRes = new ArrayList<>();
 
+        List<MemberPet> memberPet = memberPetRepository.findByMemberId(memberId);
+
+        List<Long> memberPetHave = new ArrayList<>();
+        List<Long> memberPetActive = new ArrayList<>();
+
+        for(MemberPet petItem : memberPet){
+            memberPetHave.add(petItem.getId());
+            if(petItem.isActive()){
+                memberPetActive.add(petItem.getId());
+            }
+        }
+
+
+        List<PetListResponseDto> petListRes = new ArrayList<>();
         for(Pet petItem : petList){
+
+            boolean isHave = false, isActive = false;
+            if(memberPetHave.contains(petItem.getId())){
+                isHave = true;
+            }
+            if(memberPetActive.contains(petItem.getId())){
+                isActive = true;
+            }
+
             PetListResponseDto petListResponseDto = new PetListResponseDto(
                     petItem.getId(),
                     petItem.getImage(),
                     petItem.getName(),
-                    petItem.getPetType()
+                    petItem.getPetType(),
+                    isHave,
+                    isActive
             );
 
             petListRes.add(petListResponseDto);

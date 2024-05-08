@@ -23,4 +23,8 @@ public class PetListResponseDto {
 
     private PetType petType;
 
+    private boolean isHave;
+
+    private boolean isActive;
+
 }
