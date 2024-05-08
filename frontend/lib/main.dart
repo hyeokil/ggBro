@@ -7,12 +7,15 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/theme_data.dart';
 import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
+import 'package:frontend/models/campaign_model.dart';
+import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/models/quest_model.dart';
+import 'package:frontend/models/ranking_model.dart';
 import 'package:frontend/models/rescue_model.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
 import 'provider/main_provider.dart';
 import 'provider/user_provider.dart';
 
@@ -41,8 +44,20 @@ void main() async {
             create: (context) =>
                 RescueModel(Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
+            create: (context) => AchievementModel(
+                Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
             create: (context) =>
-                AchievementModel(Provider.of<UserProvider>(context, listen: false))),
+                QuestModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                RankingModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                CampaignModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                MemberModel(Provider.of<UserProvider>(context, listen: false))),
         // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),
@@ -53,14 +68,14 @@ void main() async {
 Future<void> _initialize() async {
   String naverMapId = dotenv.get('NAVER_MAP_ID');
   WidgetsFlutterBinding.ensureInitialized();
+  print('네이버 맵 인증 시작');
   await NaverMapSdk.instance.initialize(
-      clientId: '$naverMapId', // 클라이언트 ID 설정
+      clientId: naverMapId, // 클라이언트 ID 설정
       onAuthFailed: (e) => log("네이버맵 인증오류 : $e", name: "onAuthFailed"));
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -71,6 +86,8 @@ class _MyAppState extends State<MyApp> {
     await [
       Permission.location,
       Permission.bluetooth,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
     ].request();
   }
 
@@ -114,6 +131,8 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: globalRouter,
+      // routeInformationParser: globalRouter.routeInformationParser,
+      // routerDelegate: globalRouter.routerDelegate,
       theme: CustomThemeData.themeData,
     );
   }

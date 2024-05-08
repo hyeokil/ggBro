@@ -34,6 +34,8 @@ class AuthModel with ChangeNotifier {
         {"email": email, "password": password, "nickname": nickName});
 
     final response = await http.post(url, headers: headers, body: body);
+    print(json.decode(utf8.decode(response.bodyBytes))['dataHeader']);
+    // print('응답 ${response.body}');
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: '회원가입이 완료되었습니다.');
@@ -66,9 +68,9 @@ class AuthModel with ChangeNotifier {
       int userId =
           json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
               ['id'];
-      // int profile =
-      //     json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
-      //         ['profilePetId'];
+      int profile =
+          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+              ['profilePetId'];
       int level =
           json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
               ['level'];
@@ -81,7 +83,7 @@ class AuthModel with ChangeNotifier {
       userProvider.setRefreshToken(refreshToken);
       userProvider.setNickName(nickName);
       userProvider.setUserId(userId);
-      // userProvider.setProfileImage(profile);
+      userProvider.setProfileImage(profile);
       userProvider.setLevel(level);
       userProvider.setCurrency(currency);
 

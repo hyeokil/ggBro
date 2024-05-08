@@ -17,6 +17,7 @@ import com.c206.backend.domain.quest.repository.QuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,7 +36,8 @@ public class QuestServiceImpl implements QuestService{
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<MemberQuestListResponseDto> getQuestList(Long memberId) {
-        List<MemberQuest> findedQuestList = memberQuestRepository.findByMemberId(memberId);
+//        List<MemberQuest> findedQuestList = memberQuestRepository.findByMemberId(memberId);
+        List<MemberQuest> findedQuestList = memberQuestRepository.findTop3ByMemberIdOrderByCreatedAtDesc(memberId);
         List<MemberQuestListResponseDto> resList = new ArrayList<>();
 
         for(MemberQuest findedQuest : findedQuestList){
@@ -53,7 +55,7 @@ public class QuestServiceImpl implements QuestService{
     }
 
     @Override
-    public void getQuestReward(Long memberId, Long memberQuestId) {
+    public int getQuestReward(Long memberId, Long memberQuestId) {
 
         // 퀘스트 없을때
         MemberQuest findedMemberQuest = memberQuestRepository.findById(memberQuestId).orElseThrow(()
@@ -70,17 +72,10 @@ public class QuestServiceImpl implements QuestService{
         }
 
         // isdone = true로 설정해서 새로 MemberQuest에 넣어주기
-        MemberQuest completedMemberQuest = MemberQuest.builder()
-                .goal(findedMemberQuest.getGoal())
-                .isDone(true)
-                .progress(findedMemberQuest.getProgress())
-                .member(findedMemberQuest.getMember())
-                .memberPet(findedMemberQuest.getMemberPet())
-                .id(findedMemberQuest.getId())
-                .quest(findedMemberQuest.getQuest())
-                .build();
 
-        memberQuestRepository.save(completedMemberQuest);
+
+        findedMemberQuest.updateIsDone();
+        memberQuestRepository.save(findedMemberQuest);
 
 
         // 퀘스트의 횟수와 가중치에 맞게 보상 설정
@@ -98,7 +93,7 @@ public class QuestServiceImpl implements QuestService{
         }
 
         //유저정보에 보상 저장
-        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberQuestId);
+        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberId);
         MemberInfo newMemberInfo = MemberInfo.builder()
                 .profilePetId(memberInfo.getProfilePetId())
                 .exp(memberInfo.getExp())
@@ -106,6 +101,8 @@ public class QuestServiceImpl implements QuestService{
                 .currency(memberInfo.getCurrency() + reward)
                 .build();
         memberInfoRepository.save(newMemberInfo);
+
+        return reward;
     }
 
     @Override
@@ -160,4 +157,16 @@ public class QuestServiceImpl implements QuestService{
             memberQuestRepository.save(memberQuest);
         }
     }
+
+    @Override
+    @Scheduled(cron = "0 0 0 * * MON")
+//    @Scheduled(cron = "0 17 10 8 5 ?")
+    public void addQuestListSchedule() {
+        List<Member> memberList = memberRepository.findAll();
+        for(Member memberItem : memberList){
+            System.out.println(memberItem.getId()+" "+memberItem.getEmail());
+            addQuestList(memberItem.getId());
+        }
+    }
+
 }

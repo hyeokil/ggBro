@@ -9,10 +9,12 @@ import 'package:provider/provider.dart';
 
 class Partner extends StatefulWidget {
   final Image image;
+  final bool isPet;
 
   const Partner({
     super.key,
     required this.image,
+    required this.isPet,
   });
 
   @override
@@ -50,9 +52,13 @@ class _PartnerState extends State<Partner> {
         // );
       },
       child: Container(
-        width: MediaQuery.of(context).size.height * 0.95,
+        width: widget.isPet
+            ? MediaQuery.of(context).size.height * 0.95
+            : MediaQuery.of(context).size.height * 0.3,
         height: MediaQuery.of(context).size.height * 0.32,
-        child: widget.image,
+        child: Container(
+          child: widget.image,
+        ),
       ),
     );
   }

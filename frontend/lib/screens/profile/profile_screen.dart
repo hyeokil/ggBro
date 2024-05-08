@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/models/achievement_model.dart';
+import 'package:frontend/models/member_model.dart';
+import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
@@ -40,8 +42,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void selectedMenu(String selected) {
     mainProvider.menuSelected(selected);
   }
+
   @override
   Widget build(BuildContext context) {
+    final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
+    final member = Provider.of<MemberModel>(context, listen: true).getMember();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -72,14 +78,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Positioned(
                           right: 0,
                           bottom: 0,
-                          child: ProfilePet(),
+                          child: ProfilePet(profilePetImage: member['profile_pet_id'],),
                         ),
-                        ProfileClearMonster(),
+                        ProfileClearMonster(member: member,),
                         Positioned(
                           bottom: 0,
                           child: GestureDetector(
                             onTap: () async {
-                              final achievements = Provider.of<AchievementModel>(context, listen: false);
+                              final achievements =
+                                  Provider.of<AchievementModel>(context,
+                                      listen: false);
                               await achievements.getAchievements(accessToken);
                               showDialog(
                                 context: context,
@@ -108,11 +116,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  ProfileImage(image: Image.asset(AppIcons.intro_animal_1),),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  ),
-                  ProfileImage(image: Image.asset(AppIcons.intro_animal_2),),
+                  Container(
+                    // color: Colors.black,
+                    height: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    child: GridView.count(
+                      crossAxisCount: 5,
+                      // 한 줄에 4개의 항목 표시
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      // padding: EdgeInsets.only(left: 100),
+                      children: List.generate(allPets.length, (index) {
+                        return Stack(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height *
+                                  0.08, // 각 항목의 높이 설정
+                              width: MediaQuery.of(context).size.height *
+                                  0.08, // 각 항목의 너비 설정
+                              // color: Colors.blue,
+                              child: ProfileImage(
+                                image:
+                                    Image.network('${allPets[index]['image']}'),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              height: MediaQuery.of(context).size.height *
+                                  0.08, // 각 항목의 높이 설정
+                              width: MediaQuery.of(context).size.height *
+                                  0.08, // 각 항목의 너비 설정
+                              child: Icon(Icons.lock, color: Colors.white,),
+                            )
+                          ],
+                        );
+                      }),
+                    ),
+                  )
                 ],
               ),
               Positioned(

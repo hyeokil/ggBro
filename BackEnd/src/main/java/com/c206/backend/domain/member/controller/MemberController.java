@@ -2,6 +2,7 @@ package com.c206.backend.domain.member.controller;
 
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
+import com.c206.backend.domain.member.dto.response.MemberTrashCountResDto;
 import com.c206.backend.domain.member.service.MemberService;
 import com.c206.backend.global.common.dto.Message;
 import com.c206.backend.global.jwt.CustomUserDetails;
@@ -61,19 +62,47 @@ public class MemberController {
         try {
             System.out.println(signUpRequestDto.getEmail());
             System.out.println(signUpRequestDto.getNickname());
-            memberService.signUpProcess(signUpRequestDto);
+            boolean isSuccess = memberService.signUpProcess(signUpRequestDto);
 
             //펫 자동생성
             //업적 자동생성
             //회원정보 자동생성
 
-            return ResponseEntity.ok().body(Message.success());
+            if(isSuccess){
+                return ResponseEntity.ok().body(Message.success());
+            }else{
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
         }catch (Exception e)
         {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();  // HTTP 500 응답
         }
     }
+
+    @GetMapping("/info")
+    @Operation(summary = "유저 정보를 열람합니다.")
+    public ResponseEntity<Message<?>> getMemberInfo(@Parameter(hidden = true)Authentication authentication){
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = customUserDetails.getId();
+
+        MemberTrashCountResDto memberTrashCountResDto = memberService.getMemberInfo(memberId);
+
+        return ResponseEntity.ok().body(Message.success(memberTrashCountResDto));
+    }
+
+    @PostMapping("/updateprofile/{profilePetId}")
+    @Operation(summary = "유저 프로필 사진을 업데이트합니다.")
+    public ResponseEntity<Message<?>> updateProfilePic(@Parameter(hidden = true)Authentication authentication, @PathVariable("profilePetId") Long profilePetId){
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = customUserDetails.getId();
+
+        boolean isUpdated = memberService.updateMemberInfoPicture(memberId, profilePetId);
+
+        return ResponseEntity.ok().body(Message.success(isUpdated));
+    }
+
 
     @PostMapping()
     @Operation(summary = "이메일 중복체크를 진행합니다.")

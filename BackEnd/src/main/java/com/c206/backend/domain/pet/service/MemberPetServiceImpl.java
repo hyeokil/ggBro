@@ -6,8 +6,10 @@ import com.c206.backend.domain.member.exception.MemberError;
 import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.member.repository.MemberRepository;
+import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
+import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.entity.Pet;
 import com.c206.backend.domain.pet.entity.enums.PetType;
@@ -20,10 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -35,6 +34,7 @@ public class MemberPetServiceImpl implements MemberPetService {
     private final MemberInfoRepository memberInfoRepository;
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
+    private final RedisService redisService;
 //    private final PloggingRepository ploggingRepository;
 //    private final TrashRepository trashRepository;
 
@@ -85,11 +85,17 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
-        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기
-//        if (memberPetId == -1) {
-//            memberPetId =
-//
-//        }
+        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
+        if (memberPetId == -1) {
+            try{
+                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            }catch (Exception e){
+               throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+            }
+        }
+
+        redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
         // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 컬럼 추가하는 것으로 변경
@@ -138,7 +144,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .currency(memberInfo.getCurrency()-1000)
                 .build();
         memberInfoRepository.save(newMemberInfo);
-        boolean result = Math.random() < 0.1;
+        boolean result = Math.random() < 0.5; //테스트용으로 값 변경해놓음. 원래 값은 0.1
         if (result) {
             List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
             List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
@@ -165,5 +171,75 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .glass(0)
                 .build();
         memberPetRepository.save(newMemberPet);
+    }
+
+    @Override
+    public boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname) {
+        MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
+                -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+
+        if(!Objects.equals(memberPet.getMember().getId(), memberId)){
+            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+        }
+
+        memberPet.updateNickname(petNickname);
+        return true;
+    }
+
+    @Override
+    public boolean activePet(Long memberId, Long memberPetId) {
+        MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
+                -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+
+        if(!Objects.equals(memberPet.getMember().getId(), memberId)){
+            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+        }
+
+        memberPet.updateActive();
+        return true;
+    }
+
+    @Override
+    public List<PetListResponseDto> getPetList(Long memberId) {
+        List<Pet> petList = petRepository.findAll();
+
+        List<MemberPet> memberPet = memberPetRepository.findByMemberId(memberId);
+
+        List<Long> memberPetHave = new ArrayList<>();
+        List<Long> memberPetActive = new ArrayList<>();
+
+        for(MemberPet petItem : memberPet){
+            memberPetHave.add(petItem.getId());
+            if(petItem.isActive()){
+                memberPetActive.add(petItem.getId());
+            }
+        }
+
+
+        List<PetListResponseDto> petListRes = new ArrayList<>();
+        for(Pet petItem : petList){
+
+            boolean isHave = false, isActive = false;
+            if(memberPetHave.contains(petItem.getId())){
+                isHave = true;
+            }
+            if(memberPetActive.contains(petItem.getId())){
+                isActive = true;
+            }
+
+            PetListResponseDto petListResponseDto = new PetListResponseDto(
+                    petItem.getId(),
+                    petItem.getImage(),
+                    petItem.getName(),
+                    petItem.getPetType(),
+                    isHave,
+                    isActive
+            );
+
+            petListRes.add(petListResponseDto);
+        }
+
+
+        return petListRes;
     }
 }

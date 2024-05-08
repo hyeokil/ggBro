@@ -33,7 +33,6 @@ class _AchievementListState extends State<AchievementList>
   late UserProvider userProvider;
   late AchievementModel achievementModel;
   late String accessToken;
-  late int currency;
 
   AnimationController? _animationController_intersect;
   Animation<double>? _rotateAnimation_intersect;
@@ -45,7 +44,6 @@ class _AchievementListState extends State<AchievementList>
     userProvider = Provider.of<UserProvider>(context, listen: false);
     achievementModel = Provider.of<AchievementModel>(context, listen: false);
     accessToken = userProvider.getAccessToken();
-    currency = userProvider.getCurrency();
 
     _animationController_intersect = AnimationController(
         duration: const Duration(milliseconds: 10000), vsync: this);
@@ -63,6 +61,8 @@ class _AchievementListState extends State<AchievementList>
 
   @override
   Widget build(BuildContext context) {
+    final currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
+
     return Stack(
       children: [
         Container(
@@ -98,7 +98,7 @@ class _AchievementListState extends State<AchievementList>
                 context, CustomFontStyle.yeonSung60_white),
           ),
         ),
-        widget.goal >= widget.progress
+        widget.goal > widget.progress
             ? Positioned(
                 top: MediaQuery.of(context).size.height * 0.015,
                 right: MediaQuery.of(context).size.width * 0.02,

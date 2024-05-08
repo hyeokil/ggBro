@@ -137,7 +137,13 @@ class _ChangePartnerDialogState extends State<ChangePartnerDialog> {
                       Navigator.of(context).pop();
                     },
                     child: ProfileImage(
-                      image: Image.network('${pets[index]['image']}'),
+                      image: pets[index]['active'] == false
+                          ? Image.asset(
+                              AppIcons.intro_box,
+                              width: 50,
+                              height: 50,
+                            )
+                          : Image.network('${pets[index]['image']}'),
                     ),
                   ),
                 );
