@@ -26,6 +26,6 @@ public interface MemberPetService {
 
     boolean activePet(Long memberId, Long memberPetId);
 
-    List<PetListResponseDto> getPetList();
+    List<PetListResponseDto> getPetList(Long memberId);
 
 }
