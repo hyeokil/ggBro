@@ -61,13 +61,18 @@ public class MemberController {
         try {
             System.out.println(signUpRequestDto.getEmail());
             System.out.println(signUpRequestDto.getNickname());
-            memberService.signUpProcess(signUpRequestDto);
+            boolean isSuccess = memberService.signUpProcess(signUpRequestDto);
 
             //펫 자동생성
             //업적 자동생성
             //회원정보 자동생성
 
-            return ResponseEntity.ok().body(Message.success());
+            if(isSuccess){
+                return ResponseEntity.ok().body(Message.success());
+            }else{
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
         }catch (Exception e)
         {
             e.printStackTrace();
