@@ -64,23 +64,17 @@ class MyCallbacks: public BLECharacteristicCallbacks {
 
 // 카메라 데이터 전송
 void sendData(uint8_t *data, size_t length) {
-    int packetID = 0;               // 패킷 ID를 위한 변수
-    const int packetSize = 512;     // BLE 패킷 최대 크기 설정
+    String encodedData = base64::encode(data, length); // 데이터를 Base64로 인코딩
+    size_t encodedLength = encodedData.length();
+    int packetID = 0;           // 패킷 ID를 위한 변수
+    const int packetSize = 500; // BLE 패킷 최대 크기 설정
     int index = 0;
-    while (index < length) {
+    while (index < encodedLength) {
         packetID++;  // 각 패킷마다 패킷 ID를 증가
         String header = String(packetID) + "|"; // 패킷 ID를 문자열로 추가
-        
-        // 남은 데이터 길이 계산
-        int currentPacketSize = (index + packetSize <= length) ? packetSize : length - index;
-        
-        // 데이터 버퍼 생성
-        uint8_t packet[packetSize + header.length() + 1]; // +1 for null terminator
-        memcpy(packet, header.c_str(), header.length());  // 헤더 복사
-        memcpy(packet + header.length(), data + index, currentPacketSize); // 데이터 복사
-        
-        // BLE 전송
-        pTxCharacteristic->setValue(packet, currentPacketSize + header.length());
+        int currentPacketSize = (index + packetSize <= encodedLength) ? packetSize : encodedLength - index;
+        String packet = header + encodedData.substring(index, index + currentPacketSize); // 패킷 데이터 생성
+        pTxCharacteristic->setValue(packet.c_str());
         pTxCharacteristic->notify();  // BLE를 통해 패킷 전송
 
         // Serial.print("Sending packet ID ");
@@ -89,7 +83,7 @@ void sendData(uint8_t *data, size_t length) {
         // Serial.print(index);
         // Serial.print(" with size ");
         // Serial.println(currentPacketSize);
-
+        
         digitalWrite(cameraCapturePin, packetID % 2);
 
         delay(500);  // 수신기가 처리하고 응답할 시간
@@ -114,22 +108,27 @@ void printMacAddress(uint8_t* mac) {
 // 카메라 캡처 시 
 void handleButtonPress() {
   int currentButtonState = digitalRead(buttonPin);
+  camera_fb_t *fb = NULL;
   Serial.println(currentButtonState);
+
   if (currentButtonState == LOW && cameraCaptureTime >= 5000) {
     cameraCaptureTime = 0;
-    camera_fb_t *fb = esp_camera_fb_get();
-    if (fb) {
-      Serial.println("Captured image, now sending...");
-      sendData(fb->buf, fb->len);
-      esp_camera_fb_return(fb);
-    } else {
+    fb = esp_camera_fb_get();
+    Serial.println("Get Image!");
+    if (!fb) {
       Serial.println("Failed to capture image");
+      return;
     }
+    Serial.println("Captured image, now sending...");
+    sendData(fb->buf, fb->len);
+    esp_camera_fb_return(fb);
+    
   } else {
     Serial.println("No Data");
     const char* zeroSignal = "0";
     pTxCharacteristic->setValue(zeroSignal);
     pTxCharacteristic->notify();
+    return;
   }
 }
 
