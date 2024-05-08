@@ -18,3 +18,10 @@
 - Yolo v5 garbage detection model 학습
 - Yolo v5 garbage detection model 검증
 - Center 객체 crop 및 ResNet 모델 입력 코드 작성
+
+### [5.8]
+
+- Yolo v5 garbage classification model 성능 테스트
+- Yolo v5 garbage detection model + ResNet model 성능 테스트
+- 두 모델 간 성능 비교, 모델 결정 및 보완
+- ResNet 학습 데이터 객체 탐지 및 Crop 코드 작성
