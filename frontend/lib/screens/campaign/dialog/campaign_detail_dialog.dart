@@ -4,7 +4,12 @@ import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class CampaignDetailDialog extends StatefulWidget {
-  const CampaignDetailDialog({super.key});
+  final String image;
+
+  const CampaignDetailDialog({
+    super.key,
+    required this.image,
+  });
 
   @override
   State<CampaignDetailDialog> createState() => _CampaignDetailDialogState();

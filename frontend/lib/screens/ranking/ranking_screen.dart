@@ -32,8 +32,10 @@ class _RankingState extends State<RankingScreen> {
     final people = Provider.of<RankingModel>(context, listen: true).getPeople();
     late List rankings = [];
 
-    for (int i = 3; i < people.length; i++) {
-      rankings.add(people[i]);
+    if (people.length >= 3) {
+      for (int i = 3; i < people.length; i++) {
+        rankings.add(people[i]);
+      }
     }
 
     return SafeArea(
@@ -86,7 +88,7 @@ class _RankingState extends State<RankingScreen> {
                           child: Column(
                             children: [
                               RankingNameBar(
-                                nickName: people[1]["nickname"],
+                                nickName: people.length >= 2 ? people[1]["nickname"] : '',
                               ),
                               SizedBox(
                                 height:
@@ -94,7 +96,7 @@ class _RankingState extends State<RankingScreen> {
                               ),
                               RankingBar(
                                 heightSize: 0.12,
-                                exp: people[1]["exp"],
+                                exp: people.length >= 2 ? people[1]["exp"] : 0,
                               ),
                             ],
                           ),
@@ -105,7 +107,7 @@ class _RankingState extends State<RankingScreen> {
                           child: Column(
                             children: [
                               RankingNameBar(
-                                nickName: people[2]["nickname"],
+                                nickName: people.length >= 3 ? people[2]["nickname"] : '',
                               ),
                               SizedBox(
                                 height:
@@ -113,7 +115,7 @@ class _RankingState extends State<RankingScreen> {
                               ),
                               RankingBar(
                                 heightSize: 0.08,
-                                exp: people[2]["exp"],
+                                exp: people.length >= 3 ? people[2]["exp"] : 0,
                               ),
                             ],
                           ),

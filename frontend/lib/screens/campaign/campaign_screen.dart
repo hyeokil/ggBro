@@ -79,6 +79,7 @@ class _RankingState extends State<CampaignScreen> {
                           // margin: EdgeInsets.only(bottom: 5),
                           child: CampaignList(
                             title: campaign[index]['title'],
+                            image: campaign[index]['image'],
                           ),
                         );
                       },

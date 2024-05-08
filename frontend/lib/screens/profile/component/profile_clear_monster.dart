@@ -6,7 +6,12 @@ import 'package:frontend/screens/profile/component/Profile_clear_monster_content
 import 'package:frontend/screens/profile/component/profile_clear_monster_title.dart';
 
 class ProfileClearMonster extends StatefulWidget {
-  const ProfileClearMonster({super.key});
+  final Map member;
+
+  const ProfileClearMonster({
+    super.key,
+    required this.member,
+  });
 
   @override
   State<ProfileClearMonster> createState() => _ClearMonsterState();
@@ -27,10 +32,28 @@ class _ClearMonsterState extends State<ProfileClearMonster> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ProfileClearMonsterTitle(),
-          ProfileClearMonsterContent(color: AppColors.basicpink, content: '플라몽',),
-          ProfileClearMonsterContent(color: AppColors.basicgray, content: '포 캔몽',),
-          ProfileClearMonsterContent(color: AppColors.basicgreen, content: '율몽',),
-          ProfileClearMonsterContent(color: AppColors.basicnavy, content: '미쪼몬',),
+          ProfileClearMonsterContent(
+            color: AppColors.basicpink,
+            content: '플라몽',
+            count: widget.member['trash_plastic'],
+          ),
+          ProfileClearMonsterContent(
+            color: AppColors.basicgray,
+            content: '포 캔몽',
+            count: widget.member['trash_can'],
+
+          ),
+          ProfileClearMonsterContent(
+            color: AppColors.basicgreen,
+            content: '율몽',
+            count: widget.member['trash_glass'],
+
+          ),
+          ProfileClearMonsterContent(
+            color: AppColors.basicnavy,
+            content: '미쪼몬',
+            count: widget.member['trash_normal'],
+          ),
         ],
       ),
     );

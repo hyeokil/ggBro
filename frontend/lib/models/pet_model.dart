@@ -7,9 +7,10 @@ import 'package:frontend/provider/user_provider.dart';
 import "package:http/http.dart" as http;
 
 class PetModel with ChangeNotifier {
-
   final UserProvider userProvider;
+
   PetModel(this.userProvider);
+
   String address = dotenv.get('ADDRESS');
 
   List<dynamic> pets = [];
@@ -25,11 +26,15 @@ class PetModel with ChangeNotifier {
 
     if (response.statusCode == 200) {
       pets = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
-      // print(pets);
+      print(pets);
       return "Success";
     } else {
       return "fail";
     }
+  }
+
+  List getPet() {
+    return pets;
   }
 
   Map<String, dynamic> pet = {};
@@ -45,7 +50,7 @@ class PetModel with ChangeNotifier {
 
     if (response.statusCode == 200) {
       pet = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
-      print(pet);
+      print('펫 $pet');
       notifyListeners();
       return "Success";
     } else {
@@ -53,7 +58,66 @@ class PetModel with ChangeNotifier {
     }
   }
 
-  Map<String, dynamic> getPet () {
+  Map<String, dynamic> getCurrentPet() {
     return pet;
+  }
+
+  List<dynamic> allPets = [];
+
+  Future<String> getAllPets(String accessToken) async {
+    var url = Uri.https(address, "/api/v1/pet/petlist");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      allPets = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      print(allPets);
+      return "Success";
+    } else {
+      return "fail";
+    }
+  }
+
+  List getAllPet() {
+    return allPets;
+  }
+
+  Future<String> openBox(String accessToken, int memberPetId) async {
+    var url = Uri.https(address, "/api/v1/pet/active/$memberPetId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+
+    final response = await http.post(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      return "Success";
+    } else {
+      return "fail";
+    }
+  }
+
+  Future<String> updateNickName(
+      String accessToken, int memberPetId, String nickName) async {
+    var url = Uri.https(address, "/api/v1/pet/updatenickname/$memberPetId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode({"nickname": nickName});
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      print('닉네임 $nickName');
+      return "Success";
+    } else {
+      return "fail";
+    }
   }
 }

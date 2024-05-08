@@ -8,6 +8,7 @@ import 'package:frontend/core/theme/theme_data.dart';
 import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/campaign_model.dart';
+import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/ranking_model.dart';
@@ -54,6 +55,9 @@ void main() async {
         ChangeNotifierProvider(
             create: (context) =>
                 CampaignModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) =>
+                MemberModel(Provider.of<UserProvider>(context, listen: false))),
         // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),

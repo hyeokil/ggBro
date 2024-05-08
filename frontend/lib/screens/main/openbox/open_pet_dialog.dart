@@ -5,9 +5,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class OpenPetDialog extends StatefulWidget {
-  const OpenPetDialog({super.key});
+  final String image;
+
+  const OpenPetDialog({
+    super.key,
+    required this.image,
+  });
 
   @override
   State<OpenPetDialog> createState() => _OpenPetDialogState();
@@ -17,6 +25,9 @@ class _OpenPetDialogState extends State<OpenPetDialog>
     with TickerProviderStateMixin {
   bool _isVisible = true; // 상자를 보여줄지 여부를 결정하는 플래그
   bool _isFinish = false;
+  late UserProvider userProvider;
+  late String accessToken;
+  final TextEditingController _nickNameController = TextEditingController();
 
   AnimationController? _animationController_box;
   Animation<double>? _scaleAnimation_box;
@@ -28,6 +39,9 @@ class _OpenPetDialogState extends State<OpenPetDialog>
   @override
   void initState() {
     super.initState();
+
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
 
     _animationController_box = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
@@ -116,8 +130,8 @@ class _OpenPetDialogState extends State<OpenPetDialog>
               child: Container(
                 color: Colors.transparent,
                 child: Center(
-                  child: Image.asset(
-                    AppIcons.meka_sudal,
+                  child: Image.network(
+                    '${widget.image}',
                     width: MediaQuery.of(context).size.width * 0.7,
                   ),
                 ),
@@ -140,6 +154,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: TextField(
+                              controller: _nickNameController,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
@@ -148,7 +163,13 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              final pet =
+                              Provider.of<PetModel>(context, listen: false);
+                              String nickName = _nickNameController.text;
+                              await pet.updateNickName(accessToken, 1, nickName);
+                              await pet.getPetDetail(accessToken, 1);
+
                               Navigator.of(context).pop();
                             },
                             child: Container(
