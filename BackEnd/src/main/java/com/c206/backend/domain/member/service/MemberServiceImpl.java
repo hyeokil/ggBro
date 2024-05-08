@@ -6,11 +6,15 @@ import com.c206.backend.domain.achievement.entity.MemberAchievement;
 import com.c206.backend.domain.achievement.repository.AchievementRepository;
 import com.c206.backend.domain.achievement.repository.MemberAchievementRepository;
 import com.c206.backend.domain.achievement.service.MemberAchievementService;
+import com.c206.backend.domain.member.dto.response.MemberInfoResponseDto;
+import com.c206.backend.domain.member.dto.response.MemberTrashCountResDto;
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.entity.MemberInfo;
 import com.c206.backend.domain.member.exception.MemberError;
 import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
+import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
+import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.entity.Pet;
 import com.c206.backend.domain.pet.exception.PetError;
@@ -19,6 +23,7 @@ import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.pet.repository.PetRepository;
 import com.c206.backend.domain.pet.service.MemberPetService;
 import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
+import com.c206.backend.domain.quest.exception.MemberQuestException;
 import com.c206.backend.domain.quest.service.QuestService;
 import com.c206.backend.global.jwt.CustomUserDetailsService;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
@@ -57,7 +62,7 @@ public class MemberServiceImpl implements MemberService{
 
         if(isExist.isPresent()){
             System.out.println("이미 존재하는 사용자입니다.");
-            return false;
+            throw new MemberException(MemberError.EXIST_MEMBER_EMAIL);
         }else{
             System.out.println("회원가입 가능");
             //회원가입
@@ -122,6 +127,56 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.existsByEmail(email);
     }
 
+    @Override
+    public MemberTrashCountResDto getMemberInfo(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()->
+                new MemberException(MemberError.NOT_FOUND_MEMBER));
+
+        MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberId);
+
+        List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(memberId);
+        int totalTrashNormal = 0, totalTrashPlastic = 0, totalTrashCan = 0, totalTrashGlass = 0;
+        for(MemberPetListResponseDto memberPetItem : memberPetList){
+            MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId());
+            totalTrashNormal += memberPetDetail.getNormal();
+            totalTrashNormal += memberPetDetail.getPlastic();
+            totalTrashCan += memberPetDetail.getCan();
+            totalTrashGlass += memberPetDetail.getGlass();
+        }
+
+        return new MemberTrashCountResDto(
+                member.getEmail(),
+                member.getNickname(),
+                memberInfo.getProfilePetId(),
+                memberInfo.getExp()/1000,
+                memberInfo.getCurrency(),
+                totalTrashNormal,
+                totalTrashPlastic,
+                totalTrashCan,
+                totalTrashGlass
+        );
+    }
+
+    @Override
+    public boolean updateMemberInfoPicture(Long memberId, Long profilePetId) {
+        MemberInfo memberInfo;
+        try{
+            memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(memberId);
+        }catch (Exception e){
+            throw new MemberException(MemberError.NOT_FOUND_MEMBER);
+        }
+
+        try{
+            MemberPetDetailResponseDto MemberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, profilePetId);
+        }catch (Exception e){
+            throw new PetException(PetError.NOT_FOUND_PET);
+        }
+
+        memberInfo.updateProfilePetId(profilePetId);
+        memberInfoRepository.save(memberInfo);
+        return true;
+    }
 
 
 }

@@ -3,6 +3,7 @@ package com.c206.backend.domain.pet.service;
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
+import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
 
 import java.util.List;
 
@@ -20,5 +21,11 @@ public interface MemberPetService {
     //회원가입 시 펫 1개 기본 지급해 주기
     void provideBasePet(Member member);
 
+    //펫 닉네임 변경
+    boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname);
+
+    boolean activePet(Long memberId, Long memberPetId);
+
+    List<PetListResponseDto> getPetList();
 
 }
