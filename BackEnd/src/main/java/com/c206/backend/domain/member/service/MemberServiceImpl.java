@@ -51,6 +51,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberPetService memberPetService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final QuestService questService;
+    private final RedisService redisService;
 
     @Override
     public Boolean signUpProcess(SignUpRequestDto signupDto) {
@@ -80,6 +81,10 @@ public class MemberServiceImpl implements MemberService{
             Member member = memberRepository.findById(nowMember.get().getId()).orElseThrow(()
                     -> new MemberException(MemberError.NOT_FOUND_MEMBER));
             memberPetService.provideBasePet(member);
+
+            List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(member.getId());
+
+            redisService.setValues("latest pet id "+ nowMember.get().getId(), String.valueOf(memberPetList.get(0).getMemberPetId()), 14*24*60*60*1000L);
             System.out.println("기본펫 지급성공");
 
             System.out.println("회원정보 지정시작");

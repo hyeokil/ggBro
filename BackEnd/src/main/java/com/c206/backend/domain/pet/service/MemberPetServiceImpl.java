@@ -6,6 +6,7 @@ import com.c206.backend.domain.member.exception.MemberError;
 import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.member.repository.MemberRepository;
+import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
@@ -33,6 +34,7 @@ public class MemberPetServiceImpl implements MemberPetService {
     private final MemberInfoRepository memberInfoRepository;
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
+    private final RedisService redisService;
 //    private final PloggingRepository ploggingRepository;
 //    private final TrashRepository trashRepository;
 
@@ -83,11 +85,17 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
-        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기
-//        if (memberPetId == -1) {
-//            memberPetId =
-//
-//        }
+        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
+        if (memberPetId == -1) {
+            try{
+                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            }catch (Exception e){
+               throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+            }
+        }
+
+        redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
         // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 컬럼 추가하는 것으로 변경
