@@ -19,6 +19,7 @@ import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.pet.repository.PetRepository;
 import com.c206.backend.domain.pet.service.MemberPetService;
 import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
+import com.c206.backend.domain.quest.exception.MemberQuestException;
 import com.c206.backend.domain.quest.service.QuestService;
 import com.c206.backend.global.jwt.CustomUserDetailsService;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
@@ -57,7 +58,7 @@ public class MemberServiceImpl implements MemberService{
 
         if(isExist.isPresent()){
             System.out.println("이미 존재하는 사용자입니다.");
-            return false;
+            throw new MemberException(MemberError.EXIST_MEMBER_EMAIL);
         }else{
             System.out.println("회원가입 가능");
             //회원가입
