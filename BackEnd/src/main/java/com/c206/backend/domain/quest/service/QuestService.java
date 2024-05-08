@@ -16,4 +16,7 @@ public interface QuestService {
 
     void addQuestList(Long memberId);
 
+
+    void addQuestListSchedule();
+
 }

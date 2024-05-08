@@ -17,6 +17,7 @@ import com.c206.backend.domain.quest.repository.QuestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -156,4 +157,16 @@ public class QuestServiceImpl implements QuestService{
             memberQuestRepository.save(memberQuest);
         }
     }
+
+    @Override
+    @Scheduled(cron = "0 0 0 * * MON")
+//    @Scheduled(cron = "0 17 10 8 5 ?")
+    public void addQuestListSchedule() {
+        List<Member> memberList = memberRepository.findAll();
+        for(Member memberItem : memberList){
+            System.out.println(memberItem.getId()+" "+memberItem.getEmail());
+            addQuestList(memberItem.getId());
+        }
+    }
+
 }

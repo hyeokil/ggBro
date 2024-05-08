@@ -16,4 +16,6 @@ public class RankingListResponseDto {
     private int level;
 
     private int exp;
+
+    private Long profilePetId;
 }
