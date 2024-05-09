@@ -22,7 +22,22 @@ public class RankingServiceImpl implements RankingService {
     @Override
     public List<RankingListResponseDto> rankingList() {
 
-        List<MemberInfo> memberInfoListTop10 = memberInfoRepository.findTop10ByOrderByExpDesc();
+//        List<MemberInfo> memberInfoListTop10 = memberInfoRepository.findTop10ByOrderByExpDesc();
+//
+//        List<RankingListResponseDto> rankingLIst = new ArrayList<>();
+//
+//        for(MemberInfo memberInfoItem : memberInfoListTop10){
+//            RankingListResponseDto rankingItem = new RankingListResponseDto(
+//                    memberInfoItem.getMember().getNickname(),
+//                    memberInfoItem.getExp()/1000,
+//                    memberInfoItem.getExp(),
+//                    memberInfoItem.getProfilePetId()
+//            );
+//
+//            rankingLIst.add(rankingItem);
+//        }
+
+        List<MemberInfo> memberInfoListTop10 = memberInfoRepository.findTop10MostRecentMembersByExpDesc();
 
         List<RankingListResponseDto> rankingLIst = new ArrayList<>();
 
