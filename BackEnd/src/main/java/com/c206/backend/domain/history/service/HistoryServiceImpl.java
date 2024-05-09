@@ -47,7 +47,7 @@ public class HistoryServiceImpl implements HistoryService{
                     plogItem.getCreatedAt(),
                     plogItem.getUpdatedAt(),
                     plogItem.getMemberPet().getId(),
-                    12.1,
+                    plogItem.getDistance(),
                     33,
                     "testImage"
             );
@@ -75,17 +75,14 @@ public class HistoryServiceImpl implements HistoryService{
 
         for(Trash trashItem : trashList){
             TrashDTO trashDTO = new TrashDTO(
-                    trashItem.getLatitude(),
-                    trashItem.getLongitude(),
+                    trashItem.getLocation(),
                     trashItem.getTrashType(),
                     trashItem.getImage()
             );
 
+
             trashDTOList.add(trashDTO);
         }
-
-
-
 
         //임의로 경로 데이터 설정. 위도 경도의 자료형은 추후 달라질 수 있다.
         List<RouteDTO> routeDTOList = new ArrayList<>();
@@ -101,13 +98,10 @@ public class HistoryServiceImpl implements HistoryService{
         }
 
 
-        HistoryDetailResponseDTO historyDetail = new HistoryDetailResponseDTO(
+        return new HistoryDetailResponseDTO(
                 ploggingId,
                 trashDTOList,
                 routeDTOList
         );
-
-
-        return historyDetail;
     }
 }
