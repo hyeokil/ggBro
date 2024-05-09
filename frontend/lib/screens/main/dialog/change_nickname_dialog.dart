@@ -119,8 +119,8 @@ class _ChangeNickNameDialogState extends State<ChangeNickNameDialog> {
                     if (nickName == "") {
                       Fluttertoast.showToast(msg: '닉네임을 입력해주세요!');
                     } else {
-                      await pet.updateNickName(accessToken, 3, nickName);
-                      await pet.getPetDetail(accessToken, 3);
+                      await pet.updateNickName(accessToken, -1, nickName);
+                      await pet.getPetDetail(accessToken, -1);
                       Navigator.of(context).pop();
                     }
                   },
