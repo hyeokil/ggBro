@@ -87,16 +87,15 @@ public class MemberPetServiceImpl implements MemberPetService {
     public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
         System.out.println("여기는 MemberPetServiceImpl " + memberPetId);
         // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
-        if (memberPetId == -1) {
-                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
-                System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
+        if (memberPetId != -1) {
+//                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+//                System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
+            redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
         }
 
-        redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
-        memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
-        System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
+//        System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
 
-        MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
+        MemberPet memberPet = memberPetRepository.findById(Long.valueOf(redisService.getValues("latest pet id "+ memberId))).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
         // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 컬럼 추가하는 것으로 변경
 //        List<Plogging> ploggings = ploggingRepository.findByMemberPetId(memberPetId);
