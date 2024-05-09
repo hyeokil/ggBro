@@ -46,7 +46,8 @@ class _MainScreenState extends State<MainScreen> {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
     petModel = Provider.of<PetModel>(context, listen: false);
-    petModel.getPetDetail(accessToken, 1).then(
+    petModel.getAllPets(accessToken);
+    petModel.getPetDetail(accessToken, 3).then(
           (value) => setState(() {}),
         );
     currentPet = petModel.getCurrentPet();
@@ -54,11 +55,10 @@ class _MainScreenState extends State<MainScreen> {
     if (currentPet['active'] == false && currentPet['exp'] >= 300) {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        petModel.openBox(accessToken, 1);
+        petModel.openBox(accessToken, 3);
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            // 다이얼로그 위젯을 반환합니다. 예를 들면:
             return OpenBoxDialog(image: currentPet['image'],);
           },
         ).then(
