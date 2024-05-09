@@ -88,12 +88,8 @@ public class MemberPetServiceImpl implements MemberPetService {
         System.out.println("여기는 MemberPetServiceImpl " + memberPetId);
         // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
         if (memberPetId == -1) {
-            try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
                 System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
-            }catch (Exception e){
-               throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
-            }
         }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
