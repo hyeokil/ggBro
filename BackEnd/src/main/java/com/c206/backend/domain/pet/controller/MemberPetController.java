@@ -25,7 +25,6 @@ import java.util.Map;
 public class MemberPetController {
 
     private final MemberPetService memberPetService;
-    private final RedisService redisService;
 
 
     // AuthenticationPrincipal 변경
@@ -49,11 +48,6 @@ public class MemberPetController {
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
-        System.out.println("여기는 MemberPetController "+ memberPetId);
-        if(memberPetId == -1){
-            memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
-            System.out.println("여기는 MemberPetController "+ memberPetId);
-        }
         MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, memberPetId);
         return ResponseEntity.ok().body(Message.success(memberPetDetailResponseDto));
     }
