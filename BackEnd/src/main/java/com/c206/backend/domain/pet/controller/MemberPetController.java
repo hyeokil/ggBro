@@ -1,5 +1,6 @@
 package com.c206.backend.domain.pet.controller;
 
+import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -46,7 +48,6 @@ public class MemberPetController {
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
-        System.out.println("여기는 MemberPetController "+ memberPetId);
         MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, memberPetId);
         return ResponseEntity.ok().body(Message.success(memberPetDetailResponseDto));
     }
@@ -67,10 +68,11 @@ public class MemberPetController {
     public ResponseEntity<Message<?>> updatePetNickname(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication,
-            @RequestBody @Parameter String petNickname
+            @RequestBody @Parameter Map<String, Object> nicknameJson
     ){
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
+        String petNickname = (String) nicknameJson.get("nickname");
         boolean isUpdated = memberPetService.updatePetNickname(memberId,memberPetId, petNickname);
 
         return ResponseEntity.ok().body(Message.success(isUpdated));
