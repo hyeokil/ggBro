@@ -188,23 +188,23 @@ final GoRouter globalRouter = GoRouter(
         },
       ),
     ),
-    GoRoute(
-      path: RoutePath.ploggingProgress,
-      name: 'ploggingProgress',
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const ProgressPlogging(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          );
-        },
-      ),
-    ),
+    // GoRoute(
+    //   path: RoutePath.ploggingProgress,
+    //   name: 'ploggingProgress',
+    //   pageBuilder: (context, state) => CustomTransitionPage(
+    //     key: state.pageKey,
+    //     child: const ProgressPlogging(),
+    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //       return SlideTransition(
+    //         position: Tween<Offset>(
+    //           begin: const Offset(1.0, 0.0),
+    //           end: Offset.zero,
+    //         ).animate(animation),
+    //         child: child,
+    //       );
+    //     },
+    //   ),
+    // ),
     GoRoute(
       path: RoutePath.bluetooth,
       name: 'bluetooth',

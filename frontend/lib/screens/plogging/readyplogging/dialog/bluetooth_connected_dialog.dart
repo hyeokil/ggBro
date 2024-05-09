@@ -1,10 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
 
 class BluetoothConnectedDialog extends StatefulWidget {
   const BluetoothConnectedDialog({super.key});
@@ -21,46 +22,92 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: Colors.white,
-      title: const Text('Bluetooth 목록'),
-      content: Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SingleChildScrollView(
-              child: Container(
-                color: Colors.blue,
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: ListView(
-                  children: scanResults
-                      .map((r) => r.device.advName.isNotEmpty
-                          ? ListTile(
-                              title: Text(r.device.advName),
-                              subtitle: Text(r.device.remoteId.toString()),
-                              trailing: Text(r.device.isConnected
-                                  ? 'Connected'
-                                  : 'DisConnected'),
-                              onTap: () {
-                                connectToDevice(r.device);
-                              })
-                          : Container())
-                      .toList(),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            children: [
+              Container(
+                margin: const EdgeInsets.fromLTRB(3, 3, 3, 3),
+                height: MediaQuery.of(context).size.height * 0.04,
+                width: MediaQuery.of(context).size.width * 0.65,
+                decoration: BoxDecoration(
+                  color: AppColors.basicgreen,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Text(
+                    '블루투스 목록',
+                    style: CustomFontStyle.getTextStyle(
+                      context,
+                      CustomFontStyle.yeonSung80_white,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Row(
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
+              Positioned(
+                right: 0,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEEEBF5),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.basicgreen,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
                     },
-                    child: const Text('취소')),
-                ElevatedButton(
-                    onPressed: () => isScanning ? null : startScan(),
-                    child: Text(isScanning ? '스캔 중' : '스캔 가능'))
-              ],
-            )
-          ],
-        ),
+                    child: const Icon(
+                      FontAwesomeIcons.circleXmark,
+                      size: 41,
+                      color: Color(0xFFEEEBF5),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: scanResults.length,
+                itemBuilder: (BuildContext context, int idx) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: ScanDeviceTile(
+                      device: scanResults[idx].device,
+                    ),
+                  );
+                }),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () => deviceDisConnect(),
+                  child: const Text('연결 해제')),
+              ElevatedButton(
+                  onPressed: () => isScanning ? null : startScan(),
+                  child: Text(isScanning ? '검색 중' : '기기 검색'))
+            ],
+          )
+        ],
       ),
     );
   }
@@ -113,7 +160,9 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
 
       var subscription = FlutterBluePlus.scanResults.listen((results) {
         setState(() {
-          scanResults = results;
+          scanResults = results
+              .where((result) => result.device.advName.isNotEmpty)
+              .toList();
         });
         for (ScanResult result in results) {
           if (result.device.advName.isNotEmpty) {
@@ -127,18 +176,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
     }
   }
 
-  void connectToDevice(BluetoothDevice device) async {
-    try {
-      await device.connect();
-    } catch (e) {
-      print('connect 에러 : $e');
-    }
-    if (device.isConnected) {
-      Fluttertoast.showToast(msg: '${device.advName} 연결됨');
-      print('연결됨: ${device.advName}');
-    } else {
-      Fluttertoast.showToast(msg: '연결실패');
-    }
-    // 연결된 기기로 추가 작업 수행
+  void deviceDisConnect() {
+    BluetoothDevice device = FlutterBluePlus.connectedDevices
+        .firstWhere((device) => device.advName == 'GingStick');
+
+    print('연결 해제 기기 :  $device');
+    device.disconnect();
   }
 }
