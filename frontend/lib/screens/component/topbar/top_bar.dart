@@ -38,7 +38,7 @@ class _TopBarState extends State<TopBar> {
 
   @override
   Widget build(BuildContext context) {
-    var profileImage = userProvider.getProfileImage();
+    var CurrentProfileImage = Provider.of<UserProvider>(context, listen: true).getProfileImage();
     final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
 
     return Container(
@@ -68,9 +68,9 @@ class _TopBarState extends State<TopBar> {
               }
             },
             child: ProfileImage(
-              image: profileImage == 0
+              image: CurrentProfileImage == 0
                   ? Image.asset(AppIcons.earth_1)
-                  : Image.network('${allPets[profileImage - 1]['image']}'),
+                  : Image.network('${allPets[CurrentProfileImage - 1]['image']}'),
             ),
           ),
           GgingBar(),
