@@ -1,5 +1,6 @@
 package com.c206.backend.domain.pet.controller;
 
+import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class MemberPetController {
 
     private final MemberPetService memberPetService;
+    private final RedisService redisService;
 
 
     // AuthenticationPrincipal 변경
@@ -48,6 +50,10 @@ public class MemberPetController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
         System.out.println("여기는 MemberPetController "+ memberPetId);
+        if(memberPetId == -1){
+            memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            System.out.println("여기는 MemberPetController "+ memberPetId);
+        }
         MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, memberPetId);
         return ResponseEntity.ok().body(Message.success(memberPetDetailResponseDto));
     }
