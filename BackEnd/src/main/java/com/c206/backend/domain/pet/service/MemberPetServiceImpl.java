@@ -85,20 +85,20 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
-        System.out.println("여기는 MemberPetServiceImpl " + memberPetId);
         // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
         if (memberPetId == -1) {
-//                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
-//                System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
-            memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            try{
+                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            } catch (Exception e){
+                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+            }
         }
-
-//        System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+
         // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 컬럼 추가하는 것으로 변경
 //        List<Plogging> ploggings = ploggingRepository.findByMemberPetId(memberPetId);
 //        int normal, plastic, can, glass;
@@ -176,6 +176,15 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname) {
+
+        if (memberPetId == -1) {
+            try{
+                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            } catch (Exception e){
+                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+            }
+        }
+
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
@@ -184,11 +193,22 @@ public class MemberPetServiceImpl implements MemberPetService {
         }
 
         memberPet.updateNickname(petNickname);
+
+        redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+
         return true;
     }
 
     @Override
     public boolean activePet(Long memberId, Long memberPetId) {
+        if (memberPetId == -1) {
+            try{
+                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            } catch (Exception e){
+                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+            }
+        }
+
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
@@ -197,6 +217,9 @@ public class MemberPetServiceImpl implements MemberPetService {
         }
 
         memberPet.updateActive();
+
+        redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+
         return true;
     }
 
