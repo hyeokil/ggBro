@@ -47,7 +47,7 @@ class _MainScreenState extends State<MainScreen> {
     accessToken = userProvider.getAccessToken();
     petModel = Provider.of<PetModel>(context, listen: false);
     petModel.getAllPets(accessToken);
-    petModel.getPetDetail(accessToken, 3).then(
+    petModel.getPetDetail(accessToken, -1).then(
           (value) => setState(() {}),
         );
     currentPet = petModel.getCurrentPet();
@@ -55,7 +55,7 @@ class _MainScreenState extends State<MainScreen> {
     if (currentPet['active'] == false && currentPet['exp'] >= 300) {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        petModel.openBox(accessToken, 3);
+        petModel.openBox(accessToken, -1);
         showDialog(
           context: context,
           builder: (BuildContext context) {
