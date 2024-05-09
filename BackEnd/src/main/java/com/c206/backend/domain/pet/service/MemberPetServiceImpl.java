@@ -202,17 +202,17 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public List<PetListResponseDto> getPetList(Long memberId) {
-        List<Pet> petList = petRepository.findAll();
+        List<Pet> petList = petRepository.findAll(); // 1 2 3 4
 
-        List<MemberPet> memberPet = memberPetRepository.findByMemberId(memberId);
+        List<MemberPet> memberPet = memberPetRepository.findByMemberId(memberId); // 3, 6
 
-        List<Long> memberPetHave = new ArrayList<>();
-        List<Long> memberPetActive = new ArrayList<>();
+        List<Long> memberPetHave = new ArrayList<>(); // 3 6
+        List<Long> memberPetActive = new ArrayList<>(); // 3 6
 
         for(MemberPet petItem : memberPet){
-            memberPetHave.add(petItem.getId());
+            memberPetHave.add(petItem.getPet().getId());
             if(petItem.isActive()){
-                memberPetActive.add(petItem.getId());
+                memberPetActive.add(petItem.getPet().getId());
             }
         }
 
