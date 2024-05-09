@@ -16,4 +16,6 @@ public interface TrashRepository extends JpaRepository<Trash, Long> {
     @Query(value = "SELECT trash_type, COUNT(*) FROM Trash WHERE ST_Distance_Sphere(point(:longitude, :latitude), location) <= :radius GROUP BY trash_type", nativeQuery = true)
     List<Object[]> countTrashByTypeWithinDistance(double latitude, double longitude, double radius);
 
+    List<Trash> findByPloggingId(Long ploggingId);
+
 }
