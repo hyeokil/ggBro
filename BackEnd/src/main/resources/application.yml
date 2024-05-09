@@ -54,7 +54,7 @@ spring:
       data-locations:
         - 'classpath:/sql/data_pet.sql'
         - 'classpath:/sql/data_achievement.sql'
-        - 'classpath:/sql/create_spatial_index.sql'
+#        - 'classpath:/sql/create_spatial_index.sql'
         - 'classpath:/sql/data_quest.sql'
         - 'classpath:/data_notice.sql'
 
