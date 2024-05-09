@@ -21,10 +21,10 @@
 
 ### [5.7]
 
-Yolo v5 garbage classification model 학습
-Yolo v5 garbage classification model 하이퍼파라미터 조정
-Yolo v5 garbage classification model 검증
-Yolo v5 garbage detection + ResNet 연동 모델 성능 테스트
+- Yolo v5 garbage classification model 학습
+- Yolo v5 garbage classification model 하이퍼파라미터 조정
+- Yolo v5 garbage classification model 검증
+- Yolo v5 garbage detection + ResNet 연동 모델 성능 테스트
 
 ### [5.8]
 
