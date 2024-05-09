@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class PetExceptionHandler {
     @ExceptionHandler(PetException.class)
-    public ResponseEntity<Message<Void>> memberException(PetException e) {
+    public ResponseEntity<Message<Void>> petException(PetException e) {
         log.error("{} is occurred", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(Message.fail(null, e.getErrorMessage()));
     }

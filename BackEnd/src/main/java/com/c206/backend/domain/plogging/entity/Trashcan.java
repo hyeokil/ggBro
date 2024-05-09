@@ -16,9 +16,9 @@ public class Trashcan {
     @Column(name = "trashcan_id")
     private Long id;
 
-    private Double latitude;
+    private double latitude;
 
-    private Double longitude;
+    private double longitude;
 
     private String detail;
 

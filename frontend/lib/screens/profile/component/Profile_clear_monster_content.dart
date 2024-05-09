@@ -5,15 +5,18 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 class ProfileClearMonsterContent extends StatefulWidget {
   final Color color;
   final String content;
+  final int count;
 
   const ProfileClearMonsterContent({
     super.key,
     required this.color,
     required this.content,
+    required this.count,
   });
 
   @override
-  State<ProfileClearMonsterContent> createState() => _ClearMonsterContentState();
+  State<ProfileClearMonsterContent> createState() =>
+      _ClearMonsterContentState();
 }
 
 class _ClearMonsterContentState extends State<ProfileClearMonsterContent> {
@@ -43,10 +46,22 @@ class _ClearMonsterContentState extends State<ProfileClearMonsterContent> {
             style: CustomFontStyle.getTextStyle(
                 context, CustomFontStyle.yeonSung60_white),
           ),
-          Text(
-            '마리',
-            style: CustomFontStyle.getTextStyle(
-                context, CustomFontStyle.yeonSung60_white),
+          Row(
+            children: [
+              Text(
+                '${widget.count}',
+                style: CustomFontStyle.getTextStyle(
+                    context, CustomFontStyle.yeonSung60_white),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.02,
+              ),
+              Text(
+                '마리',
+                style: CustomFontStyle.getTextStyle(
+                    context, CustomFontStyle.yeonSung60_white),
+              ),
+            ],
           )
         ],
       ),

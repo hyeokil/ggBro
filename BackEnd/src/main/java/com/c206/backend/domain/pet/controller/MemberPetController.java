@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -67,10 +68,11 @@ public class MemberPetController {
     public ResponseEntity<Message<?>> updatePetNickname(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication,
-            @RequestBody @Parameter String petNickname
+            @RequestBody @Parameter Map<String, Object> nicknameJson
     ){
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
+        String petNickname = (String) nicknameJson.get("nickname");
         boolean isUpdated = memberPetService.updatePetNickname(memberId,memberPetId, petNickname);
 
         return ResponseEntity.ok().body(Message.success(isUpdated));

@@ -29,10 +29,10 @@ class _ProfileImageState extends State<Setting> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (mainProvider.isMenuSelected != 'main') {
-          context.go('/main');
-          selectedMenu('main');
-        }
+        // if (mainProvider.isMenuSelected != 'main') {
+        //   context.go('/main');
+        //   selectedMenu('main');
+        // }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -50,11 +50,12 @@ class _ProfileImageState extends State<Setting> {
         height: MediaQuery.of(context).size.height * 0.08,
         width: MediaQuery.of(context).size.height * 0.08,
         child: Icon(
-          mainProvider.isMenuSelected == 'main'
-              ? Icons.settings : Icons.home_filled,
-                color: Colors.white,
-                size: MediaQuery.of(context).size.width * 0.12,
-              ),
+          // mainProvider.isMenuSelected == 'main'
+          //     ? Icons.settings : Icons.home_filled,
+          Icons.settings,
+          color: Colors.white,
+          size: MediaQuery.of(context).size.width * 0.12,
+        ),
       ),
     );
   }

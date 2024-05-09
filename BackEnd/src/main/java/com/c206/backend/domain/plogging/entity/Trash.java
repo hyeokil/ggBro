@@ -5,6 +5,8 @@ import com.c206.backend.domain.plogging.entity.enums.TrashType;
 import com.c206.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
+
 
 @Entity
 @Getter
@@ -25,9 +27,9 @@ public class Trash extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TrashType trashType;
 
-    private Double latitude;
+    @Column(columnDefinition = "Point", nullable = false)
+    private Point location;
 
-    private Double longitude;
 
     private String image;
 }
