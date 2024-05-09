@@ -513,15 +513,15 @@ class _ProgressMapState extends State<ProgressMap> {
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
-                              context.push('/main');
-                              // showDialog(
-                              //   context: context,
-                              //   builder: (BuildContext context) {
-                              //     return FinishCheckPloggingDialog(
-                              //       onConfirm: showFinishPloggingDialog,
-                              //     );
-                              //   },
-                              // );
+                              // context.push('/main');
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return FinishCheckPloggingDialog(
+                                    onConfirm: showFinishPloggingDialog,
+                                  );
+                                },
+                              );
                             },
                             child: Container(
                               decoration: BoxDecoration(
