@@ -97,6 +97,8 @@ public class MemberPetServiceImpl implements MemberPetService {
         }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+        memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+        System.out.println("레디스에서 꺼내온 MemberPetServiceImpl " + memberPetId);
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
