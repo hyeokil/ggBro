@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -19,4 +21,8 @@ public class NoticeListResponseDto {
     private String image;
 
     private String title;
+
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
 }
