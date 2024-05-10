@@ -5,7 +5,6 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
-import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart';
 import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -28,8 +27,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
   }
 
   goNext() {
-    print('가보자');
-    context.go('/ploggingProgress');
+    context.push('/ploggingProgress');
   }
 
   @override

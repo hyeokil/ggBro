@@ -2,24 +2,24 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
-import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ProgressMap extends StatefulWidget {
-  // final Bluetoothdevice;
   const ProgressMap({
     super.key,
-    // requiredevice,
   });
 
   @override
@@ -28,6 +28,8 @@ class ProgressMap extends StatefulWidget {
 
 class _ProgressMapState extends State<ProgressMap> {
   late MainProvider mainProvider;
+  late UserProvider userProvider;
+
   late BluetoothDevice device;
   late double latitude;
   late double longitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
@@ -51,9 +53,18 @@ class _ProgressMapState extends State<ProgressMap> {
   Set<String> imageResult = {}; // 블루투스로 데이터 받을 때 저장 변수
   String base64String = '';
 
+  // api 응답 관련 변수
+  late PloggingModel ploggingModel;
+  late int ploggingId;
+  late String accessToken;
+
   @override
   void initState() {
     super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    ploggingModel = Provider.of<PloggingModel>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
+    startAPI();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
     device = mainProvider.getDevice();
     findServiceAndCharacteristics();
@@ -69,6 +80,11 @@ class _ProgressMapState extends State<ProgressMap> {
     device.disconnect();
     _mapController!.dispose();
     super.dispose();
+  }
+
+  void startAPI() async {
+    await ploggingModel.ploggingStart(accessToken, -1);
+    ploggingId = ploggingModel.getPloggingId();
   }
 
   // 기기 서비스와 해당 서비스의 필요한 characteristic 연결 함수
@@ -106,6 +122,7 @@ class _ProgressMapState extends State<ProgressMap> {
                       id: 'trash$trashId',
                       position: NLatLng(trashLatitude, trashLongitude));
                   _mapController!.addOverlay(trashMarker);
+                  print('최종 길이 : ${base64String.length}');
                   imageResult.clear();
                   setState(() {});
                 }
@@ -113,11 +130,11 @@ class _ProgressMapState extends State<ProgressMap> {
               }
               // 쓰레기 데이터 들어온다면 주운 위치 저장
               var result = '';
-              event.toList().forEach((element) {
-                result += String.fromCharCode(element);
-              });
+              print('이벤트 : ${event.runtimeType}');
+              result += base64Encode(event);
+
               print('결과물 : $result, 길이 ${result.length}');
-              imageResult.add(result.split('|')[1]);
+              imageResult.add(result);
             });
             device.cancelWhenDisconnected(blueSubscription);
             setState(() {});
@@ -180,9 +197,9 @@ class _ProgressMapState extends State<ProgressMap> {
   void returnCurrentLocation() async {
     await getPathLocation();
     print('현재 위치로 $latitude랑 $longitude');
-    _mapController!.updateCamera(NCameraUpdate.scrollAndZoomTo(
-        target: NLatLng(latitude, longitude), zoom: 13)
-      ..setPivot(const NPoint(1 / 2, 10 / 11)));
+    _mapController!.setLocationTrackingMode(NLocationTrackingMode.face);
+    // _mapController!.updateCamera(NCameraUpdate.withParams(
+    //     target: NLatLng(latitude, longitude), zoom: 15, bearing: 0, tilt: 45));
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -332,27 +349,30 @@ class _ProgressMapState extends State<ProgressMap> {
                   mylocation.setCircleColor(Colors.transparent);
 
                   _mapController!
-                      .setLocationTrackingMode(NLocationTrackingMode.follow);
-                  NCameraPosition(
-                    target: NLatLng(latitude, longitude),
-                    zoom: 15,
-                  );
-                  _mapController!.updateCamera(
-                    NCameraUpdate.withParams(
-                        target: NLatLng(latitude, longitude),
-                        zoom: 15,
-                        bearing: 0,
-                        tilt: 45)
-                      ..setPivot(const NPoint(1 / 2, 10 / 11)),
-                  );
+                      .setLocationTrackingMode(NLocationTrackingMode.face);
+
+                  // _mapController!.updateCamera(
+                  //   NCameraUpdate.withParams(
+                  //       target: NLatLng(latitude, longitude),
+                  //       zoom: 15,
+                  //       bearing: 0,
+                  //       tilt: 45)
+                  //     ..setPivot(const NPoint(1 / 2, 10 / 11)),
+                  // );
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
                 },
                 onCameraIdle: onCameraIdle,
-                options: const NaverMapViewOptions(
-                  scaleBarEnable: false,
-                  logoAlign: NLogoAlign.leftTop,
-                  logoMargin: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                ),
+                options: NaverMapViewOptions(
+                    minZoom: 13,
+                    maxZoom: 16,
+                    scaleBarEnable: false,
+                    logoAlign: NLogoAlign.leftTop,
+                    logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                    initialCameraPosition: NCameraPosition(
+                        target: NLatLng(latitude, longitude),
+                        zoom: 15,
+                        bearing: 0,
+                        tilt: 45)),
               ),
               Positioned(
                 bottom: MediaQuery.of(context).size.height * 0.01,
@@ -476,13 +496,20 @@ class _ProgressMapState extends State<ProgressMap> {
                               height: MediaQuery.of(context).size.height * 0.06,
                               width: MediaQuery.of(context).size.height * 0.06,
                               child: Center(
-                                  child: Image.asset(
-                                AppIcons.trash_tong,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.05,
-                                width:
-                                    MediaQuery.of(context).size.height * 0.05,
-                              )),
+                                  child: base64String.isNotEmpty
+                                      ? Image.asset(
+                                          AppIcons.trash_tong,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.05,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.05,
+                                        )
+                                      : Image.memory(
+                                          base64.decode(base64String))),
                             ),
                           ),
                         ),
@@ -519,7 +546,6 @@ class _ProgressMapState extends State<ProgressMap> {
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
-                              // context.push('/main');
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
