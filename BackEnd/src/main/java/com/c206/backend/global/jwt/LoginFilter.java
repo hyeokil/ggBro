@@ -113,6 +113,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         int level = customUserDetails.getLevel();
         int currency = customUserDetails.getCurrency();
         String password = customUserDetails.getPassword();
+        boolean isTutorial = customUserDetails.isTutorial();
 
         System.out.println("토큰에서 확인할 수 있는 정보들"+" "+memberId+" "+email+" "+nickname+" "+memberInfoId+" "+level+" "+currency);
 
@@ -141,6 +142,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 .profilePetId(memberInfoId)
                 .level(level)
                 .currency(currency)
+                .isTutorial(isTutorial)
                 .build();
 
         ResponseData responseData = ResponseData.builder()
@@ -193,5 +195,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         private Long profilePetId;
         private int level;
         private int currency;
+        private boolean isTutorial;
     }
 }

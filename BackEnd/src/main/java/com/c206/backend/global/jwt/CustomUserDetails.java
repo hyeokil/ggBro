@@ -65,6 +65,8 @@ public class CustomUserDetails implements UserDetails {
 
     public int getCurrency() { return member.getCurrency(); }
 
+    public boolean isTutorial() { return member.isTutorial();}
+
     //=======================
     @Override
     public boolean isAccountNonExpired() {
