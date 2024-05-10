@@ -21,6 +21,8 @@ import 'package:frontend/screens/main/dialog/weekly_quest_dialog.dart';
 import 'package:frontend/screens/main/openbox/open_box_dialog.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
+import 'package:frontend/screens/tutorial/box_open_tutorial_dialog.dart';
+import 'package:frontend/screens/tutorial/go_plogging_tutorial_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,8 @@ class _MainScreenState extends State<MainScreen> {
   late String accessToken;
   late PetModel petModel;
   late Map currentPet;
+  late bool tutorial;
+  late bool isTutorialPloggingFinish;
   bool _isButtonDisabled = false;
 
   @override
@@ -45,21 +49,65 @@ class _MainScreenState extends State<MainScreen> {
     mainProvider = Provider.of<MainProvider>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+    tutorial = userProvider.getTutorial();
+    isTutorialPloggingFinish = mainProvider.getIsTutorialPloggingFinish();
     petModel = Provider.of<PetModel>(context, listen: false);
     petModel.getAllPets(accessToken);
     petModel.getPetDetail(accessToken, -1).then(
           (value) => setState(() {}),
-        );
+    );
     currentPet = petModel.getCurrentPet();
 
-    if (currentPet['active'] == false && currentPet['exp'] >= 300) {
+    // 튜토리얼 판별
+    if (tutorial == false && isTutorialPloggingFinish == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return GoPloggingTutorialDialog();
+          },
+        ).then(
+          (value) {
+            setState(() {});
+            context.push('/ploggingReady');
+          },
+        );
+      });
+    }
 
+    // 플로깅 끝내고 main 왔는지
+    if (tutorial == false && isTutorialPloggingFinish) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return BoxOpenTutorialDialog();
+            }).then((value) {
+          petModel.openBox(accessToken, -1);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return OpenBoxDialog(
+                image: currentPet['image'],
+              );
+            },
+          ).then(
+            (value) => setState(() {}),
+          );
+        });
+      });
+    }
+
+    // 경험치 찼는지 판별
+    if (currentPet['active'] == false && currentPet['exp'] >= 300) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         petModel.openBox(accessToken, -1);
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return OpenBoxDialog(image: currentPet['image'],);
+            return OpenBoxDialog(
+              image: currentPet['image'],
+            );
           },
         ).then(
           (value) => setState(() {}),
@@ -75,6 +123,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
+    final currentTutorial = Provider.of<UserProvider>(context, listen: true).getTutorial();
 
     return SafeArea(
       child: Scaffold(
@@ -230,13 +279,15 @@ class _MainScreenState extends State<MainScreen> {
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
               Partner(
-                image: pet['active'] == false
-                    ? Image.asset(
-                        AppIcons.intro_box,
-                      )
-                    : Image.network(
+                image: pet['active']
+                    ? Image.network(
                         pet['image'],
-                      ),
+                      )
+                    : currentTutorial == false
+                        ? Image.asset(AppIcons.intersect)
+                        : Image.asset(
+                            AppIcons.intro_box,
+                          ),
                 isPet: pet['active'],
               ),
               SizedBox(
@@ -249,7 +300,9 @@ class _MainScreenState extends State<MainScreen> {
                       ? NickNameBar(
                           nickName: pet['nickname'],
                         )
-                      : ExpBar(exp: pet['exp']),
+                      : currentTutorial == false
+                          ? NickNameBar(nickName: '')
+                          : ExpBar(exp: pet['exp']),
                   GestureDetector(
                     onTap: () {
                       context.push('/ploggingReady');

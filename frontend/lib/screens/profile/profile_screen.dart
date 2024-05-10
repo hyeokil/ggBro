@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           right: 0,
                           bottom: 0,
                           child: ProfilePet(
-                            profilePetImage: member['profile_pet_id'],
+                            // profilePetImage: member['profile_pet_id'],
                           ),
                         ),
                         ProfileClearMonster(

@@ -21,4 +21,15 @@ class MainProvider with ChangeNotifier {
   BluetoothDevice getDevice() {
     return _device;
   }
+
+  bool _isTutorialPloggingFinish = false;
+
+  void setIsTutorialPloggingFinish() {
+    _isTutorialPloggingFinish = true;
+    notifyListeners();
+  }
+
+  bool getIsTutorialPloggingFinish() {
+    return _isTutorialPloggingFinish;
+  }
 }
