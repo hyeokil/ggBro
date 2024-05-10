@@ -21,4 +21,6 @@ public interface MemberService {
 
     public boolean updateMemberInfoPicture(Long memberId, Long profilePetId);
 
+    public boolean updateMemberTutorial(Long memberId);
+
 }

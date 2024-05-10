@@ -167,8 +167,8 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               final pet =
                               Provider.of<PetModel>(context, listen: false);
                               String nickName = _nickNameController.text;
-                              await pet.updateNickName(accessToken, 3, nickName);
-                              await pet.getPetDetail(accessToken, 3);
+                              await pet.updateNickName(accessToken, -1, nickName);
+                              await pet.getPetDetail(accessToken, -1);
 
                               Navigator.of(context).pop();
                             },

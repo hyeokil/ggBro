@@ -26,5 +26,9 @@ public class Member extends BaseEntity {
 
     private String nickname;
 
+    private boolean isTutorial;
 
+    public void updateMemberTutorial(){
+        this.isTutorial = true;
+    }
 }

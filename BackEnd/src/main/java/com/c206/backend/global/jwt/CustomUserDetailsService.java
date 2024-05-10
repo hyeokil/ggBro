@@ -34,6 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             System.out.println(member.get().getId());
             System.out.println(member.get().getEmail());
             System.out.println(member.get().getNickname());
+            System.out.println(member.get().isTutorial());
 
             MemberInfo memberInfo = memberInfoRepository.findTopByMemberIdOrderByIdDesc(member.get().getId());
 
@@ -45,6 +46,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .profilePetId(memberInfo.getProfilePetId())
                     .level(memberInfo.getExp()/1000)
                     .currency(memberInfo.getCurrency())
+                    .isTutorial(member.get().isTutorial())
                     .build();
 //            return new CustomUserDetails(member.get());
             return new CustomUserDetails(memberRes);

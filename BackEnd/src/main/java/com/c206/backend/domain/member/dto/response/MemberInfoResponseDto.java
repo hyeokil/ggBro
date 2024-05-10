@@ -23,4 +23,6 @@ public class MemberInfoResponseDto {
 
     private int currency;
 
+    private boolean isTutorial;
+
 }

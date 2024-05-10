@@ -36,7 +36,9 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -65,6 +67,24 @@ public class TrashServiceImpl implements TrashService {
     private String bucket;
 
     private final AmazonS3 amazonS3;
+
+    private final WebClient webClient;
+
+    private TrashType classifyTrash(String imageUrl) {
+        try {
+            String response = webClient.post()
+                    .uri("/predict")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue("{\"url\": \"" + imageUrl + "\"}")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block(); // 동기 처리, 비동기로 변경 가능
+            return TrashType.valueOf(response.toUpperCase()); // 응답을 Enum으로 변환
+        } catch (Exception e) {
+            throw new PloggingException(PloggingError.FLASK_SERVER_ERROR);
+        }
+    }
+
 
     private void  updateMemberAchievement(Long memberId, Long achievementId) {
         memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress();
@@ -110,12 +130,13 @@ public class TrashServiceImpl implements TrashService {
         byte[] imageData = createTrashRequestDto.getImage();
         // 이미지 메타데이터 설정
         String imageUrl = uploadImageAndGetUrl(fileName, imageData);
-        // 플라스크로 url 보내서 종류 받아오기
-        // 일단 보류 일단 랜덤
+        // 플라스크로 url 보내서 종류 받아오기 아래 주석
+//        TrashType trashType = classifyTrash(imageUrl);
+        // 일단 랜덤으로 테스트  여기서 부터
         TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
         Random random = new Random();
         int randomIndex = random.nextInt(trashTypes.length);
-        TrashType trashType = trashTypes[randomIndex];
+        TrashType trashType = trashTypes[randomIndex]; // 여기까지 주석처리하고 134 번째줄 주석빼고 쓰면 됨
         // 쓰레기 저장
         // Coordinate 객체를 사용하여 Point 생성
         GeometryFactory geometryFactory = new GeometryFactory();
