@@ -32,6 +32,7 @@ public class SignUpRequestDto {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
+                .isTutorial(false)
                 .build();
     }
 }

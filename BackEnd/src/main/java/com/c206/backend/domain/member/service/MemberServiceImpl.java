@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.IThrottledTemplateProcessor;
 
 import java.util.List;
 import java.util.Optional;
@@ -180,6 +181,17 @@ public class MemberServiceImpl implements MemberService{
 
         memberInfo.updateProfilePetId(profilePetId);
         memberInfoRepository.save(memberInfo);
+        return true;
+    }
+
+    @Override
+    public boolean updateMemberTutorial(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberError.NOT_FOUND_MEMBER)
+        );
+        member.updateMemberTutorial();
+
         return true;
     }
 

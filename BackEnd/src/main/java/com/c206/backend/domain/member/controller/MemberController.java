@@ -122,4 +122,16 @@ public class MemberController {
         }
 
     }
+
+    @PostMapping("/tutorial")
+    @Operation(summary = "튜토리얼 진행 완료시 호출됩니다.")
+    public ResponseEntity<Message<?>> tutorialCheck(@Parameter(hidden = true) Authentication authentication){
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = customUserDetails.getId();
+
+        boolean isTutorial = memberService.updateMemberTutorial(memberId);
+
+        return ResponseEntity.ok().body(Message.success(isTutorial));
+
+    }
 }

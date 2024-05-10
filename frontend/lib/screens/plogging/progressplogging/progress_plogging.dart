@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/progress_map.dart';
 
 class ProgressPlogging extends StatelessWidget {
-  const ProgressPlogging({super.key});
+  // final BluetoothDevice device;
+  const ProgressPlogging({
+    super.key,
+    // required this.device,
+  });
 
   @override
   Widget build(BuildContext context) {

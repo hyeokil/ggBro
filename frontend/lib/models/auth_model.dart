@@ -77,6 +77,9 @@ class AuthModel with ChangeNotifier {
       int currency =
           json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
               ['currency'];
+      bool tutorial =
+          json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
+              ['tutorial'];
 
       userProvider.setEmail(email);
       userProvider.setAccessToken(accessToken);
@@ -86,6 +89,7 @@ class AuthModel with ChangeNotifier {
       userProvider.setProfileImage(profile);
       userProvider.setLevel(level);
       userProvider.setCurrency(currency);
+      userProvider.setTutorial(tutorial);
 
       return AuthStatus.loginSuccess;
     } else {

@@ -43,26 +43,26 @@ public class MemberPet extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void updateExp(int exp) {
-        this.exp = exp;
+    public void addExp(int exp) {
+        this.exp += exp;
     }
 
     public void updateActive() {
         this.active = true;
     }
 
-    public void updateNormal() {
+    public void addNormal() {
         this.normal += 1;
     }
 
-    public void updatePlastic() {
+    public void addPlastic() {
         this.plastic += 1;
     }
 
-    public void updateCan() {
+    public void addCan() {
         this.can += 1;
     }
-    public void updateGlass() {
+    public void addGlass() {
         this.glass += 1;
     }
 }

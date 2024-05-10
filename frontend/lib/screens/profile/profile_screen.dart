@@ -16,6 +16,7 @@ import 'package:frontend/screens/profile/component/profile_clear_monster.dart';
 import 'package:frontend/screens/profile/component/profile_pet.dart';
 import 'package:frontend/screens/profile/component/rescue_button.dart';
 import 'package:frontend/screens/profile/dialog/achievement_dialog.dart';
+import 'package:frontend/screens/profile/dialog/change_profile_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -78,9 +79,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Positioned(
                           right: 0,
                           bottom: 0,
-                          child: ProfilePet(profilePetImage: member['profile_pet_id'],),
+                          child: ProfilePet(
+                            // profilePetImage: member['profile_pet_id'],
+                          ),
                         ),
-                        ProfileClearMonster(member: member,),
+                        ProfileClearMonster(
+                          member: member,
+                        ),
                         Positioned(
                           bottom: 0,
                           child: GestureDetector(
@@ -140,17 +145,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Image.network('${allPets[index]['image']}'),
                               ),
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              height: MediaQuery.of(context).size.height *
-                                  0.08, // 각 항목의 높이 설정
-                              width: MediaQuery.of(context).size.height *
-                                  0.08, // 각 항목의 너비 설정
-                              child: Icon(Icons.lock, color: Colors.white,),
-                            )
+                            allPets[index]['active'] && allPets[index]['have']
+                                ? GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ChangeProfileImage(
+                                            name: allPets[index]['name'],
+                                            index: index + 1,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      color: Colors.transparent,
+                                    ),
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.circular(40),
+                                    ),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.08, // 각 항목의 높이 설정
+                                    width: MediaQuery.of(context).size.height *
+                                        0.08, // 각 항목의 너비 설정
+                                    child: Icon(
+                                      Icons.lock,
+                                      color: Colors.white,
+                                    ),
+                                  )
                           ],
                         );
                       }),

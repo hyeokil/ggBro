@@ -1,14 +1,18 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart';
+import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
+import 'package:frontend/screens/tutorial/bluetooth_connect_tutorial_dialog.dart';
+import 'package:frontend/screens/tutorial/bluetooth_connet_confirm_dialog.dart';
+import 'package:frontend/screens/tutorial/bluetooth_tutorial_dialog.dart';
+import 'package:frontend/screens/tutorial/confirm_map_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -21,16 +25,61 @@ class ReadyPlogging extends StatefulWidget {
 
 class _ReadyPloggingState extends State<ReadyPlogging> {
   late PetModel petModel;
+  late UserProvider userProvider;
+  late bool tutorial;
 
   @override
   void initState() {
     super.initState();
     petModel = Provider.of<PetModel>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    tutorial = userProvider.getTutorial();
+
+    if (tutorial == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ConfirmMapDialog();
+          },
+        ).then(
+          (value) {
+            setState(() {});
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return BluetoothConnectTutorialDialog();
+              },
+            ).then((value) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return BluetoothConnectConfirmTutorialDialog();
+                  },
+                ).then((value) {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return BluetoothConnectedDialog(func: goNext);
+                      });
+                });
+              });
+            });
+          },
+        );
+    }
+  }
+
+  goNext() {
+    print('가보자');
+    context.go('/ploggingProgress');
   }
 
   @override
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
+    final currentTutorial = Provider.of<UserProvider>(context, listen: true).getTutorial();
 
     return SafeArea(
       child: Scaffold(
@@ -54,23 +103,25 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
               Positioned(
                 top: MediaQuery.of(context).size.height * 0.02,
                 left: MediaQuery.of(context).size.width * 0.05,
-                child: ReadyMap(),
+                child: const ReadyMap(),
               ),
               Positioned(
                 bottom: MediaQuery.of(context).size.height * 0.02,
-                child: Container(
+                child: SizedBox(
                   // color: Colors.black,
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
                   // color: Colors.black,
                   child: Partner(
-                    image: pet['active'] == false
-                        ? Image.asset(
-                      AppIcons.intro_box,
-                    )
-                        : Image.network(
-                      pet['image'],
-                    ),
+                    image: pet['active']
+                        ? Image.network(
+                            pet['image'],
+                          )
+                        : currentTutorial == false
+                            ? Image.asset(AppIcons.intersect)
+                            : Image.asset(
+                                AppIcons.intro_box,
+                              ),
                     isPet: pet['active'],
                   ),
                 ),
@@ -78,14 +129,19 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
               Positioned(
                 right: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
                 child: GestureDetector(
                   onTap: () {
-                    context.push('/bluetooth');
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return BluetoothConnectedDialog(func: goNext);
+                        });
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,

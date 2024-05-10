@@ -2,23 +2,33 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
+import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ProgressMap extends StatefulWidget {
-  const ProgressMap({super.key});
+  // final Bluetoothdevice;
+  const ProgressMap({
+    super.key,
+    // requiredevice,
+  });
 
   @override
   State<ProgressMap> createState() => _ProgressMapState();
 }
 
 class _ProgressMapState extends State<ProgressMap> {
+  late MainProvider mainProvider;
+  late BluetoothDevice device;
   late double latitude;
   late double longitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
   double previousLatitude = 0;
@@ -30,13 +40,25 @@ class _ProgressMapState extends State<ProgressMap> {
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
   bool isSelectedTrashTong = false;
-  double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정;
+  double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
+
+  // 블루투스용 변수들
+  late double trashLatitude;
+  late double trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
+  late BluetoothCharacteristic _notifyChar;
+  late StreamSubscription<List<int>> blueSubscription;
+  int trashId = 0;
+  Set<String> imageResult = {}; // 블루투스로 데이터 받을 때 저장 변수
+  String base64String = '';
 
   @override
   void initState() {
     super.initState();
+    mainProvider = Provider.of<MainProvider>(context, listen: false);
+    device = mainProvider.getDevice();
+    findServiceAndCharacteristics();
     totalDistance = 0;
-    getLocation();
+    getPathLocation();
     realTimePath();
   }
 
@@ -44,12 +66,78 @@ class _ProgressMapState extends State<ProgressMap> {
   @override
   void dispose() {
     pathStream.cancel();
+    device.disconnect();
     _mapController!.dispose();
     super.dispose();
   }
 
+  // 기기 서비스와 해당 서비스의 필요한 characteristic 연결 함수
+  void findServiceAndCharacteristics() async {
+    if (!device.isConnected) {
+      // showDialog(
+      //     barrierDismissible: false,
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return const BluetoothConnectedDialog();
+      //     });
+    }
+    List<BluetoothService> services = await device.discoverServices();
+    for (BluetoothService service in services) {
+      if (service.uuid == Guid('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.uuid ==
+              Guid('6E400003-B5A3-F393-E0A9-E50E24DCCA9E')) {
+            _notifyChar = characteristic;
+            await _notifyChar.setNotifyValue(true);
+
+            blueSubscription = _notifyChar.onValueReceived.listen((event) {
+              print('Received: $event');
+              // 블루투스 연결 시 0 으로 데이터가 계속 넘어옴 0일 경우 return
+              // 0이면서 쓰레기 데이터가 비어있지 않다면 데이터 합쳐서 쓰레기 줍기 api 요청
+              if (String.fromCharCodes(event) == '0') {
+                if (imageResult.isNotEmpty) {
+                  getTrashLocation();
+                  base64String = imageResult.join(''); // 블루투스로 받아오는 데이터
+                  // 여기에 쓰레기 줍기 API 요청 보내야함
+                  trashId += 1;
+                  print('trashID : $trashId');
+                  NMarker trashMarker = NMarker(
+                      id: 'trash$trashId',
+                      position: NLatLng(trashLatitude, trashLongitude));
+                  _mapController!.addOverlay(trashMarker);
+                  imageResult.clear();
+                  setState(() {});
+                }
+                return;
+              }
+              // 쓰레기 데이터 들어온다면 주운 위치 저장
+              var result = '';
+              event.toList().forEach((element) {
+                result += String.fromCharCode(element);
+              });
+              print('결과물 : $result, 길이 ${result.length}');
+              imageResult.add(result.split('|')[1]);
+            });
+            device.cancelWhenDisconnected(blueSubscription);
+            setState(() {});
+          }
+        }
+      }
+    }
+  }
+
+  getTrashLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    setState(() {
+      trashLatitude = position.latitude;
+      trashLongitude = position.longitude;
+    });
+  }
+
   // 현재 위치 조회하는 함수
-  getLocation() async {
+  getPathLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     setState(() {
@@ -66,7 +154,6 @@ class _ProgressMapState extends State<ProgressMap> {
     pathStream = Geolocator.getPositionStream(
             locationSettings: const LocationSettings(distanceFilter: 2))
         .listen((Position position) {
-      print('경로 : $_pathPoints');
       setState(() {
         previousLatitude = _pathPoints.last.latitude;
         previousLongitude = _pathPoints.last.longitude;
@@ -76,10 +163,9 @@ class _ProgressMapState extends State<ProgressMap> {
         _pathPoints.add(NLatLng(latitude, longitude)); // 받아온 위치 추가하는 부분
         double distanceInMeters = Geolocator.distanceBetween(
             previousLatitude, previousLongitude, latitude, longitude);
-        print(
-            '경로 : $previousLatitude, $previousLongitude -> $latitude, $longitude, 거리 : $distanceInMeters');
         totalDistance += distanceInMeters; // 총거리에 더해주기
-        print('총거리 : $totalDistance');
+        print(
+            '경로 : $previousLatitude, $previousLongitude -> $latitude, $longitude, 거리 : $distanceInMeters 총 거리 : $totalDistance');
       });
       _mapController!.addOverlay(NPathOverlay(
         id: 'realtime',
@@ -92,11 +178,11 @@ class _ProgressMapState extends State<ProgressMap> {
 
   // 지도에서 다른 화면을 보다가 현재 위치로 돌아오는 함수
   void returnCurrentLocation() async {
-    await getLocation();
+    await getPathLocation();
     print('현재 위치로 $latitude랑 $longitude');
-    _mapController!.updateCamera(
-        NCameraUpdate.scrollAndZoomTo(target: NLatLng(latitude, longitude))
-          ..setPivot(const NPoint(1 / 2, 10 / 11)));
+    _mapController!.updateCamera(NCameraUpdate.scrollAndZoomTo(
+        target: NLatLng(latitude, longitude), zoom: 13)
+      ..setPivot(const NPoint(1 / 2, 10 / 11)));
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -112,7 +198,7 @@ class _ProgressMapState extends State<ProgressMap> {
     updateMarkers();
   }
 
-  void _onCameraIdle() {
+  void onCameraIdle() {
     if (_mapController == null) return;
 
     _mapController!.getCameraPosition().then((position) {
@@ -130,7 +216,7 @@ class _ProgressMapState extends State<ProgressMap> {
     });
   }
 
-  String _getClusterKey(Map<String, dynamic> data) {
+  String getClusterKey(Map<String, dynamic> data) {
     // 클러스터 키 생성 로직, 예: 위치를 기반으로 그리드 생성
     int gridLat = (double.parse(data['위도']) * 10).floor();
     int gridLng = (double.parse(data['경도']) * 10).floor();
@@ -139,14 +225,14 @@ class _ProgressMapState extends State<ProgressMap> {
 
   void updateMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
-    await _mapController!.clearOverlays(type: NOverlayType.marker);
+    // await _mapController!.clearOverlays(type: NOverlayType.marker);
 
     var jsonData = await readJsonData();
     Map<String, List<NMarker>> clusters = {};
 
     if (isSelectedTrashTong) {
       for (var data in jsonData) {
-        var key = _getClusterKey(data);
+        var key = getClusterKey(data);
         if (!clusters.containsKey(key)) {
           clusters[key] = [];
         }
@@ -165,14 +251,14 @@ class _ProgressMapState extends State<ProgressMap> {
     }
     // print("줌 $_currentZoom");
     if (_currentZoom < 13) {
-      await _mapController!.clearOverlays();
+      await _mapController!.clearOverlays(type: NOverlayType.marker);
     }
     // 클러스터 또는 개별 마커 표시
     clusters.forEach(
       (key, markers) {
         if (_currentZoom < 13 && markers.length > 1) {
           // 클러스터 표시
-          _displayClusterMarker(markers);
+          displayClusterMarker(markers);
         } else {
           // 개별 마커 표시
           for (final marker in markers) {
@@ -196,7 +282,7 @@ class _ProgressMapState extends State<ProgressMap> {
     );
   }
 
-  void _displayClusterMarker(List<NMarker> markers) {
+  void displayClusterMarker(List<NMarker> markers) {
     // 클러스터 대표 마커 표시
     var centerLat = 0.0;
     var centerLng = 0.0;
@@ -238,6 +324,13 @@ class _ProgressMapState extends State<ProgressMap> {
               NaverMap(
                 onMapReady: (controller) {
                   _mapController = controller; // 지도 컨트롤러 초기화
+                  final mylocation = _mapController!.getLocationOverlay();
+                  mylocation.setIcon(
+                    const NOverlayImage.fromAssetImage(AppIcons.meka_sudal),
+                  );
+                  mylocation.setIconSize(const NSize(50, 50));
+                  mylocation.setCircleColor(Colors.transparent);
+
                   _mapController!
                       .setLocationTrackingMode(NLocationTrackingMode.follow);
                   NCameraPosition(
@@ -254,7 +347,7 @@ class _ProgressMapState extends State<ProgressMap> {
                   );
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
                 },
-                onCameraIdle: _onCameraIdle,
+                onCameraIdle: onCameraIdle,
                 options: const NaverMapViewOptions(
                   scaleBarEnable: false,
                   logoAlign: NLogoAlign.leftTop,
@@ -426,6 +519,7 @@ class _ProgressMapState extends State<ProgressMap> {
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
+                              // context.push('/main');
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {

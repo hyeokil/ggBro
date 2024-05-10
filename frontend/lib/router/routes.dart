@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/router/router_path.dart';
-import 'package:frontend/screens/bluetooth/blutooth_test.dart';
-import 'package:frontend/screens/bluetooth/scan_screen.dart';
 import 'package:frontend/screens/campaign/campaign_screen.dart';
 import 'package:frontend/screens/history/history_screen.dart';
 import 'package:frontend/screens/intro/intro_screen.dart';
@@ -9,6 +7,7 @@ import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
 import 'package:frontend/screens/plogging/progressplogging/progress_plogging.dart';
+import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/ready_plogging.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
@@ -204,23 +203,23 @@ final GoRouter globalRouter = GoRouter(
         },
       ),
     ),
-    GoRoute(
-      path: RoutePath.bluetooth,
-      name: 'bluetooth',
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: FlutterBlueApp(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          );
-        },
-      ),
-    ),
+    // GoRoute(
+    //   path: RoutePath.bluetooth,
+    //   name: 'bluetooth',
+    //   pageBuilder: (context, state) => CustomTransitionPage(
+    //     key: state.pageKey,
+    //     child: const BluetoothConnectedDialog(),
+    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //       return SlideTransition(
+    //         position: Tween<Offset>(
+    //           begin: const Offset(1.0, 0.0),
+    //           end: Offset.zero,
+    //         ).animate(animation),
+    //         child: child,
+    //       );
+    //     },
+    //   ),
+    // ),
     // GoRoute(
     //   path: RoutePath.main,
     //   name: 'main',
