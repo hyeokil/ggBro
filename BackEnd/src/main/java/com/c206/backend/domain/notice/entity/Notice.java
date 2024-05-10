@@ -4,6 +4,8 @@ package com.c206.backend.domain.notice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
@@ -19,5 +21,9 @@ public class Notice {
     private String title;
 
     private String image;
+
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
 
 }
