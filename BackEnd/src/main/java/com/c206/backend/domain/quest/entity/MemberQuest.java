@@ -36,8 +36,8 @@ public class MemberQuest extends BaseEntity {
 
     private boolean isDone;
 
-    public void updateProgress(int progress) {
-        this.progress = progress;
+    public void updateProgress() {
+        this.progress += 1;
     }
 
     public void updateIsDone() {

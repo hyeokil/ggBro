@@ -9,6 +9,7 @@ import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart';
+import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -54,11 +55,11 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
               Positioned(
                 top: MediaQuery.of(context).size.height * 0.02,
                 left: MediaQuery.of(context).size.width * 0.05,
-                child: ReadyMap(),
+                child: const ReadyMap(),
               ),
               Positioned(
                 bottom: MediaQuery.of(context).size.height * 0.02,
-                child: Container(
+                child: SizedBox(
                   // color: Colors.black,
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
@@ -66,11 +67,11 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                   child: Partner(
                     image: pet['active'] == false
                         ? Image.asset(
-                      AppIcons.intro_box,
-                    )
+                            AppIcons.intro_box,
+                          )
                         : Image.network(
-                      pet['image'],
-                    ),
+                            pet['image'],
+                          ),
                     isPet: pet['active'],
                   ),
                 ),
@@ -78,14 +79,19 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
               Positioned(
                 right: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
                 child: GestureDetector(
                   onTap: () {
-                    context.push('/bluetooth');
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const BluetoothConnectedDialog();
+                        });
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,

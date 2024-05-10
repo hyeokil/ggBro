@@ -50,11 +50,11 @@ void main() async {
             create: (context) =>
                 QuestModel(Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
-            create: (context) =>
-                RankingModel(Provider.of<UserProvider>(context, listen: false))),
+            create: (context) => RankingModel(
+                Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
-            create: (context) =>
-                CampaignModel(Provider.of<UserProvider>(context, listen: false))),
+            create: (context) => CampaignModel(
+                Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
             create: (context) =>
                 MemberModel(Provider.of<UserProvider>(context, listen: false))),

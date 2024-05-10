@@ -1,23 +1,28 @@
-package com.c206.backend.domain.history.dto;
+package com.c206.backend.domain.plogging.dto.response;
+
+
 
 import com.c206.backend.domain.plogging.entity.enums.TrashType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import org.locationtech.jts.geom.Point;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TrashDTO {
-    private Point Location;
+public class CreateTrashResponseDto {
 
-    private TrashType type;
+    private TrashType trashType;
 
-    private String image;
+    private int value;
+
+    private boolean petActive;
+
+    private boolean isRescue;
+
 }

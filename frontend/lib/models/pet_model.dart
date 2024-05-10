@@ -87,6 +87,7 @@ class PetModel with ChangeNotifier {
   }
 
   Future<String> openBox(String accessToken, int memberPetId) async {
+    print('멤버펫아이디 $memberPetId');
     var url = Uri.https(address, "/api/v1/pet/active/$memberPetId");
     final headers = {
       'Content-Type': 'application/json',
@@ -96,8 +97,10 @@ class PetModel with ChangeNotifier {
     final response = await http.post(url, headers: headers);
 
     if (response.statusCode == 200) {
+      print('성공');
       return "Success";
     } else {
+      print('실패');
       return "fail";
     }
   }
