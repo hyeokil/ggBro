@@ -192,7 +192,6 @@ public class MemberServiceImpl implements MemberService{
         );
         member.updateMemberTutorial();
 
-        memberRepository.save(member);
         return true;
     }
 
