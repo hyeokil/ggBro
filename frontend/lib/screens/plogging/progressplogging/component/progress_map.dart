@@ -7,17 +7,19 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ProgressMap extends StatefulWidget {
-  final BluetoothDevice device;
+  // final Bluetoothdevice;
   const ProgressMap({
     super.key,
-    required this.device,
+    // requiredevice,
   });
 
   @override
@@ -25,6 +27,8 @@ class ProgressMap extends StatefulWidget {
 }
 
 class _ProgressMapState extends State<ProgressMap> {
+  late MainProvider mainProvider;
+  late BluetoothDevice device;
   late double latitude;
   late double longitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
   double previousLatitude = 0;
@@ -50,6 +54,8 @@ class _ProgressMapState extends State<ProgressMap> {
   @override
   void initState() {
     super.initState();
+    mainProvider = Provider.of<MainProvider>(context, listen: false);
+    device = mainProvider.getDevice();
     findServiceAndCharacteristics();
     totalDistance = 0;
     getPathLocation();
@@ -60,14 +66,14 @@ class _ProgressMapState extends State<ProgressMap> {
   @override
   void dispose() {
     pathStream.cancel();
-    widget.device.disconnect();
+    device.disconnect();
     _mapController!.dispose();
     super.dispose();
   }
 
   // 기기 서비스와 해당 서비스의 필요한 characteristic 연결 함수
   void findServiceAndCharacteristics() async {
-    if (!widget.device.isConnected) {
+    if (!device.isConnected) {
       showDialog(
           barrierDismissible: false,
           context: context,
@@ -75,7 +81,7 @@ class _ProgressMapState extends State<ProgressMap> {
             return const BluetoothConnectedDialog();
           });
     }
-    List<BluetoothService> services = await widget.device.discoverServices();
+    List<BluetoothService> services = await device.discoverServices();
     for (BluetoothService service in services) {
       if (service.uuid == Guid('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')) {
         for (BluetoothCharacteristic characteristic
@@ -113,7 +119,7 @@ class _ProgressMapState extends State<ProgressMap> {
               print('결과물 : $result, 길이 ${result.length}');
               imageResult.add(result.split('|')[1]);
             });
-            widget.device.cancelWhenDisconnected(blueSubscription);
+            device.cancelWhenDisconnected(blueSubscription);
             setState(() {});
           }
         }
