@@ -5,6 +5,7 @@ import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.exception.MemberError;
 import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberRepository;
+import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.exception.PetError;
 import com.c206.backend.domain.pet.exception.PetException;
@@ -41,9 +42,20 @@ public class PloggingServiceImpl implements PloggingService {
     private final PloggingRepository ploggingRepository;
     private final TrashRepository trashRepository;
     private final PloggingRouteRepository ploggingRouteRepository;
+    private final RedisService redisService;
 
     @Override
     public Long createPlogging(Long memberPetId, Long memberId) {
+
+        // memberPetId 가 -1 일 경우 redis에 저장된 가장 최근 선택된 펫 ID로 지정하는 로직
+        if (memberPetId == -1) {
+            try{
+                memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
+            } catch (Exception e){
+                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+            }
+        }
+
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberError.NOT_FOUND_MEMBER));
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
@@ -56,6 +68,10 @@ public class PloggingServiceImpl implements PloggingService {
                 .time(now.format(formatter) + " ~ ")
                 .distance(0)
                 .build());
+
+        // 가장 최근 선택한 펫 ID를 Redis에 저장하기
+        redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
+
         return plogging.getId();
     }
 
