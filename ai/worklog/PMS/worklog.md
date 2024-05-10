@@ -38,3 +38,9 @@
 - Yolo v5 detection 및 쓰레기 객체 개수 추출 코드 작성
 - Yolo v5 detection 및 쓰레기 객체 개수 추출 테스트
 - Yolo detection model + ResNet model Flask 이식 및 연동 코드 작성
+
+### [5.10]
+
+- Flask Yolo + ResNet 연동 모델 작동 테스트
+- Flask S3 이미지 로드 및 저장 코드 작성
+- Flask S3 이미지 로드 및 연동 모델 Postman 작동 테스트
