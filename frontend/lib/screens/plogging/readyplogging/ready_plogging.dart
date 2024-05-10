@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
@@ -27,6 +25,11 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
   void initState() {
     super.initState();
     petModel = Provider.of<PetModel>(context, listen: false);
+  }
+
+  goNext() {
+    print('가보자');
+    context.go('/ploggingProgress');
   }
 
   @override
@@ -90,7 +93,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                         barrierDismissible: false,
                         context: context,
                         builder: (BuildContext context) {
-                          return const BluetoothConnectedDialog();
+                          return BluetoothConnectedDialog(func: goNext);
                         });
                   },
                   child: Container(

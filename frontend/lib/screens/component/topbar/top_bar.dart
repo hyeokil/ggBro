@@ -38,10 +38,11 @@ class _TopBarState extends State<TopBar> {
 
   @override
   Widget build(BuildContext context) {
-    var CurrentProfileImage = Provider.of<UserProvider>(context, listen: true).getProfileImage();
+    var CurrentProfileImage =
+        Provider.of<UserProvider>(context, listen: true).getProfileImage();
     final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
 
-    return Container(
+    return SizedBox(
       height: 100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,11 +71,12 @@ class _TopBarState extends State<TopBar> {
             child: ProfileImage(
               image: CurrentProfileImage == 0
                   ? Image.asset(AppIcons.earth_1)
-                  : Image.network('${allPets[CurrentProfileImage - 1]['image']}'),
+                  : Image.network(
+                      '${allPets[CurrentProfileImage - 1]['image']}'),
             ),
           ),
-          GgingBar(),
-          Setting(),
+          const GgingBar(),
+          const Setting(),
         ],
       ),
     );

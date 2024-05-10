@@ -74,12 +74,12 @@ class _ProgressMapState extends State<ProgressMap> {
   // 기기 서비스와 해당 서비스의 필요한 characteristic 연결 함수
   void findServiceAndCharacteristics() async {
     if (!device.isConnected) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return const BluetoothConnectedDialog();
-          });
+      // showDialog(
+      //     barrierDismissible: false,
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return const BluetoothConnectedDialog();
+      //     });
     }
     List<BluetoothService> services = await device.discoverServices();
     for (BluetoothService service in services) {
