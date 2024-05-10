@@ -25,7 +25,13 @@ public class NoticeServiceImpl implements NoticeService{
         List<NoticeListResponseDto> noticeResList = new ArrayList<>();
 
         for(Notice noticeItem : noticeList){
-            NoticeListResponseDto noticeListResponseDto = new NoticeListResponseDto(noticeItem.getId(), noticeItem.getImage(), noticeItem.getTitle());
+            NoticeListResponseDto noticeListResponseDto = new NoticeListResponseDto(
+                    noticeItem.getId(),
+                    noticeItem.getImage(),
+                    noticeItem.getTitle(),
+                    noticeItem.getStartDate(),
+                    noticeItem.getEndDate()
+            );
             noticeResList.add(noticeListResponseDto);
         }
 
