@@ -3,13 +3,18 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/plogging/progressplogging/progress_plogging.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ScanDeviceTile extends StatefulWidget {
   final BluetoothDevice device;
+  final Function func;
   const ScanDeviceTile({
     super.key,
     required this.device,
+    required this.func,
   });
 
   @override
@@ -92,10 +97,15 @@ class _ScanDeviceTileState extends State<ScanDeviceTile> {
     }
     if (device.isConnected && mounted) {
       Fluttertoast.showToast(msg: '${device.advName} 연결됨');
+      var main = Provider.of<MainProvider>(context, listen: false);
+      main.setDevice(device);
+      print('현재 루트 ${Navigator.of(context).widget.initialRoute}');
       Navigator.of(context).pop(); // 대화상자 닫기
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ProgressPlogging(device: widget.device),
-      ));
+      widget.func();
+      // context.go('/ploggingProgress');
+      // Navigator.of(context).push(MaterialPageRoute(
+      //   builder: (context) => const ProgressPlogging(),
+      // ));
     }
   }
 }

@@ -8,7 +8,8 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
 
 class BluetoothConnectedDialog extends StatefulWidget {
-  const BluetoothConnectedDialog({super.key});
+  final Function func;
+  const BluetoothConnectedDialog({super.key, required this.func});
 
   @override
   State<BluetoothConnectedDialog> createState() => _BluetoothConnecState();
@@ -84,6 +85,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.4,
+            width: MediaQuery.of(context).size.height * 0.4,
             child: ListView.builder(
                 scrollDirection: Axis.vertical,
                 itemCount: scanResults.length,
@@ -92,6 +94,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                     margin: const EdgeInsets.only(bottom: 10),
                     child: ScanDeviceTile(
                       device: scanResults[idx].device,
+                      func: widget.func,
                     ),
                   );
                 }),
