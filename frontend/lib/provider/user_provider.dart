@@ -9,6 +9,7 @@ class UserProvider with ChangeNotifier {
   late int _profileImage;
   late int _level;
   late int _currency;
+  late bool _tutorial;
 
   void setEmail(String email) {
     _email = email;
@@ -50,6 +51,11 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setTutorial(bool tutorial) {
+    _tutorial = tutorial;
+    notifyListeners();
+  }
+
   String getEmail() {
     return _email;
   }
@@ -80,5 +86,9 @@ class UserProvider with ChangeNotifier {
 
   int getUserId() {
     return _userId;
+  }
+
+  bool getTutorial() {
+    return _tutorial;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/screens/tutorial/go_plogginG_tutorial_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -29,10 +30,17 @@ class _ProfileImageState extends State<Setting> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // if (mainProvider.isMenuSelected != 'main') {
-        //   context.go('/main');
-        //   selectedMenu('main');
-        // }
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return GoPloggingTutorialDialog();
+          },
+        ).then(
+              (value) {
+            setState(() {});
+            context.push('/ploggingReady');
+          },
+        );
       },
       child: Container(
         decoration: BoxDecoration(

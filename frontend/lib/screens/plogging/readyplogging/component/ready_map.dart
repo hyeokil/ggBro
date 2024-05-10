@@ -6,8 +6,10 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ReadyMap extends StatefulWidget {
   const ReadyMap({super.key});
@@ -197,7 +199,7 @@ class _ReadyMapState extends State<ReadyMap> {
                   },
                   onCameraIdle: _onCameraIdle,
                   options: NaverMapViewOptions(
-                    liteModeEnable: true,
+                    // liteModeEnable: true,
                     initialCameraPosition: NCameraPosition(
                       target: NLatLng(latitude, longitude),
                       zoom: 15,

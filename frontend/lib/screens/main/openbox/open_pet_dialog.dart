@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
   bool _isFinish = false;
   late UserProvider userProvider;
   late String accessToken;
+  late bool tutorial;
   final TextEditingController _nickNameController = TextEditingController();
 
   AnimationController? _animationController_box;
@@ -42,6 +44,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
 
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+    tutorial = userProvider.getTutorial();
 
     _animationController_box = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
@@ -169,6 +172,11 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               String nickName = _nickNameController.text;
                               await pet.updateNickName(accessToken, -1, nickName);
                               await pet.getPetDetail(accessToken, -1);
+                              if (tutorial == false) {
+                                final member = Provider.of<MemberModel>(context, listen: false);
+                                member.finishTutorial(accessToken);
+                                userProvider.setTutorial(true);
+                              }
 
                               Navigator.of(context).pop();
                             },

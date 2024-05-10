@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +72,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           AuthStatus loginStatus =
                               await auth.login(email, password);
                           if (loginStatus == AuthStatus.loginSuccess) {
-                            context.go('/intro');
+                            var user = Provider.of<UserProvider>(context,
+                                listen: false);
+                            var tutorial = user.getTutorial();
+                            if (tutorial) {
+                              context.go('/main');
+                            } else {
+                              context.go('/intro');
+                            }
                           }
                         }
                       },
