@@ -6,11 +6,15 @@ import 'package:frontend/screens/campaign/dialog/campaign_detail_dialog.dart';
 class CampaignList extends StatefulWidget {
   final String title;
   final String image;
+  final String startDate;
+  final String endDate;
 
   const CampaignList({
     super.key,
     required this.title,
     required this.image,
+    required this.startDate,
+    required this.endDate,
   });
 
   @override
@@ -62,24 +66,49 @@ class _CampaignListState extends State<CampaignList> {
                     color: AppColors.basicnavy,
                     borderRadius: BorderRadius.circular(7),
                   ),
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${widget.title}',
-                          style: CustomFontStyle.getTextStyle(
-                              context, CustomFontStyle.yeonSung90_white),
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${widget.title}',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung90_white),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '기간 : ${widget.startDate.split('T').first} ~ ${widget.endDate.split('T').first}',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung55_white),
+                            ),
+                          ),
+                        ],
                       ),
-                      // Container(
-                      //   alignment: Alignment.centerLeft,
-                      //   child: Text(
-                      //     '${widget.period}',
-                      //     style: CustomFontStyle.getTextStyle(
-                      //         context, CustomFontStyle.yeonSung55_white),
-                      //   ),
-                      // ),
+                      Row(
+                        children: [
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: MediaQuery.of(context).size.height * 0.04,
+                              ),
+                              Text(
+                                '포스터',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung60_white),
+                              )
+                            ],
+                          ),
+                          SizedBox(width: MediaQuery.of(context).size.width * 0.02,)
+                        ],
+                      ),
                     ],
                   ),
                 ),

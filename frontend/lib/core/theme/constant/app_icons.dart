@@ -33,4 +33,8 @@ class AppIcons {
   static const String trash_tong = "assets/images/trash_tong.png";
   static const String meka_sudal = "assets/images/meka_sudal.png";
   static const String big_intersect = "assets/images/big_Intersect.png";
+  static const String mizzomon = "assets/images/mizzomon.png";
+  static const String plamong = "assets/images/plamong.png";
+  static const String pocanmong = "assets/images/pocanmong.png";
+  static const String yulmong = "assets/images/yulmong.png";
 }

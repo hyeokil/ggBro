@@ -6,12 +6,14 @@ class ProfileClearMonsterContent extends StatefulWidget {
   final Color color;
   final String content;
   final int count;
+  final Image monster;
 
   const ProfileClearMonsterContent({
     super.key,
     required this.color,
     required this.content,
     required this.count,
+    required this.monster,
   });
 
   @override
@@ -23,7 +25,7 @@ class _ClearMonsterContentState extends State<ProfileClearMonsterContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.fromLTRB(3, 3, 10, 3),
       width: MediaQuery.of(context).size.width * 0.8,
       height: MediaQuery.of(context).size.height * 0.07,
       decoration: BoxDecoration(
@@ -41,10 +43,21 @@ class _ClearMonsterContentState extends State<ProfileClearMonsterContent> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            widget.content,
-            style: CustomFontStyle.getTextStyle(
-                context, CustomFontStyle.yeonSung60_white),
+          Row(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.13,
+                child: widget.monster,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.02,
+              ),
+              Text(
+                widget.content,
+                style: CustomFontStyle.getTextStyle(
+                    context, CustomFontStyle.yeonSung60_white),
+              ),
+            ],
           ),
           Row(
             children: [
