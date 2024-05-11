@@ -4,7 +4,12 @@ import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class AchievementButton extends StatefulWidget {
-  const AchievementButton({super.key});
+  final bool isPressed;
+
+  const AchievementButton({
+    super.key,
+    required this.isPressed,
+  });
 
   @override
   State<AchievementButton> createState() => _AchievementButtonState();
@@ -20,7 +25,7 @@ class _AchievementButtonState extends State<AchievementButton> {
         color: AppColors.achievementButton,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(width: 3, color: Colors.white),
-        boxShadow: [
+        boxShadow: widget.isPressed ? [] : [
           BoxShadow(
             color: AppColors.basicgray.withOpacity(0.5),
             offset: Offset(0, 4),

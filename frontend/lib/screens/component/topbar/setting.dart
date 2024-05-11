@@ -50,6 +50,26 @@ class _ProfileImageState extends State<Setting> {
     context.go('/intro');
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -61,12 +81,15 @@ class _ProfileImageState extends State<Setting> {
           },
         );
       },
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.basicpink,
           borderRadius: BorderRadius.circular(40),
           border: Border.all(width: 3, color: Colors.white),
-          boxShadow: [
+          boxShadow: _isPressed ? [] : [
             BoxShadow(
                 color: AppColors.basicgray.withOpacity(0.5),
                 offset: Offset(0, 4),

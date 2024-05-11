@@ -82,6 +82,26 @@ class _OpenPetDialogState extends State<OpenPetDialog>
     });
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   void dispose() {
     _animationController_box!.dispose();
@@ -180,6 +200,9 @@ class _OpenPetDialogState extends State<OpenPetDialog>
 
                               Navigator.of(context).pop();
                             },
+                            onTapDown: _onTapDown,
+                            onTapUp: _onTapUp,
+                            onTapCancel: _onTapCancel,
                             child: Container(
                               height: MediaQuery.of(context).size.height * 0.07,
                               width: MediaQuery.of(context).size.width * 0.2,
@@ -188,7 +211,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                                 borderRadius: BorderRadius.circular(20),
                                 border:
                                     Border.all(width: 3, color: Colors.white),
-                                boxShadow: [
+                                boxShadow: _isPressed ? [] : [
                                   BoxShadow(
                                       color: AppColors.basicShadowGray
                                           .withOpacity(0.5),

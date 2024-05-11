@@ -34,6 +34,45 @@ class _SettingDialogState extends State<SettingDialog> {
     userProvider = Provider.of<UserProvider>(context, listen: false);
   }
 
+  bool _isTutorialPressed = false;
+  bool _isIntroPressed = false;
+
+  void _onTutorialTapDown(TapDownDetails details) {
+    setState(() {
+      _isTutorialPressed = true;
+    });
+  }
+
+  void _onTutorialTapUp(TapUpDetails details) {
+    setState(() {
+      _isTutorialPressed = false;
+    });
+  }
+
+  void _onTutorialTapCancel() {
+    setState(() {
+      _isTutorialPressed = false;
+    });
+  }
+
+  void _onIntroTapDown(TapDownDetails details) {
+    setState(() {
+      _isIntroPressed = true;
+    });
+  }
+
+  void _onIntroTapUp(TapUpDetails details) {
+    setState(() {
+      _isIntroPressed = false;
+    });
+  }
+
+  void _onIntroTapCancel() {
+    setState(() {
+      _isIntroPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -106,6 +145,9 @@ class _SettingDialogState extends State<SettingDialog> {
                   Navigator.of(context).pop();
                   widget.goTutorial();
                 },
+                onTapDown: _onTutorialTapDown,
+                onTapUp: _onTutorialTapUp,
+                onTapCancel: _onTutorialTapCancel,
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.3,
                   height: MediaQuery.of(context).size.width * 0.3,
@@ -114,7 +156,7 @@ class _SettingDialogState extends State<SettingDialog> {
                     color: AppColors.basicgray,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: [
+                    boxShadow: _isTutorialPressed ? [] : [
                       BoxShadow(
                           color: AppColors.basicgray.withOpacity(0.5),
                           offset: Offset(0, 4),
@@ -147,6 +189,9 @@ class _SettingDialogState extends State<SettingDialog> {
                   Navigator.of(context).pop();
                   widget.goIntro();
                 },
+                onTapDown: _onIntroTapDown,
+                onTapUp: _onIntroTapUp,
+                onTapCancel: _onIntroTapCancel,
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.3,
                   height: MediaQuery.of(context).size.width * 0.3,
@@ -155,7 +200,7 @@ class _SettingDialogState extends State<SettingDialog> {
                     color: AppColors.basicgray,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: [
+                    boxShadow: _isIntroPressed ? [] : [
                       BoxShadow(
                           color: AppColors.basicgray.withOpacity(0.5),
                           offset: Offset(0, 4),
