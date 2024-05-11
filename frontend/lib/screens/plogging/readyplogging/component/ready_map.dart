@@ -6,8 +6,10 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ReadyMap extends StatefulWidget {
   const ReadyMap({super.key});
@@ -170,6 +172,26 @@ class _ReadyMapState extends State<ReadyMap> {
     _mapController!.addOverlay(clusterMarker);
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -197,7 +219,7 @@ class _ReadyMapState extends State<ReadyMap> {
                   },
                   onCameraIdle: _onCameraIdle,
                   options: NaverMapViewOptions(
-                    liteModeEnable: true,
+                    // liteModeEnable: true,
                     initialCameraPosition: NCameraPosition(
                       target: NLatLng(latitude, longitude),
                       zoom: 15,
@@ -214,6 +236,9 @@ class _ReadyMapState extends State<ReadyMap> {
                     onTap: () {
                       trashTongToggle();
                     },
+                    onTapDown: _onTapDown,
+                    onTapUp: _onTapUp,
+                    onTapCancel: _onTapCancel,
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.37,
                       height: MediaQuery.of(context).size.height * 0.06,
@@ -221,7 +246,7 @@ class _ReadyMapState extends State<ReadyMap> {
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: [
+                        boxShadow: _isPressed ? [] : [
                           BoxShadow(
                             color: AppColors.basicgray.withOpacity(0.5),
                             offset: const Offset(0, 4),

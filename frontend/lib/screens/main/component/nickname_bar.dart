@@ -16,6 +16,26 @@ class NickNameBar extends StatefulWidget {
 }
 
 class _NickNameBarState extends State<NickNameBar> {
+  bool _isNicknamePressed = false;
+
+  void _onNicknameTapDown(TapDownDetails details) {
+    setState(() {
+      _isNicknamePressed = true;
+    });
+  }
+
+  void _onNicknameTapUp(TapUpDetails details) {
+    setState(() {
+      _isNicknamePressed = false;
+    });
+  }
+
+  void _onNicknameTapCancel() {
+    setState(() {
+      _isNicknamePressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -27,6 +47,9 @@ class _NickNameBarState extends State<NickNameBar> {
           },
         );
       },
+      onTapDown: _onNicknameTapDown,
+      onTapUp: _onNicknameTapUp,
+      onTapCancel: _onNicknameTapCancel,
       child: Container(
         height: MediaQuery.of(context).size.height * 0.05,
         width: MediaQuery.of(context).size.width * 0.6,
@@ -34,7 +57,7 @@ class _NickNameBarState extends State<NickNameBar> {
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(width: 3, color: Colors.white),
-          boxShadow: [
+          boxShadow: _isNicknamePressed ? [] : [
             BoxShadow(
               color: AppColors.basicgray.withOpacity(0.5),
               offset: Offset(0, 4),

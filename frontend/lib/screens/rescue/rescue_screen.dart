@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
@@ -28,6 +30,26 @@ class _RescueScreenState extends State<RescueScreen> {
     rescueModel = Provider.of<RescueModel>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+  }
+
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
   }
 
   @override
@@ -102,9 +124,14 @@ class _RescueScreenState extends State<RescueScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Image.asset(AppIcons.trashs),
+                  GestureDetector(
+                    onTap: () {
+                      Fluttertoast.showToast(msg: '구조하기 버튼을 눌러주세요!');
+                    },
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Image.asset(AppIcons.trashs),
+                    ),
                   ),
                   GestureDetector(
                     onTap: () {
@@ -121,6 +148,9 @@ class _RescueScreenState extends State<RescueScreen> {
                         }
                       });
                     },
+                    onTapDown: _onTapDown,
+                    onTapUp: _onTapUp,
+                    onTapCancel: _onTapCancel,
                     child: Container(
                       width: MediaQuery.of(context).size.height * 0.15,
                       height: MediaQuery.of(context).size.height * 0.07,
@@ -128,7 +158,7 @@ class _RescueScreenState extends State<RescueScreen> {
                         color: AppColors.rescueButton,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: [
+                        boxShadow: _isPressed ? [] : [
                           BoxShadow(
                             color: AppColors.basicgray.withOpacity(0.5),
                             offset: const Offset(0, 4),

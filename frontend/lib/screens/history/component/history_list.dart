@@ -14,6 +14,26 @@ class HistoryList extends StatefulWidget {
 }
 
 class _HistoryListState extends State<HistoryList> {
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,7 +60,7 @@ class _HistoryListState extends State<HistoryList> {
                     color: AppColors.basicShadowGreen,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(width: 3, color: Colors.white),
-                    boxShadow: [
+                    boxShadow: _isPressed ? [] : [
                       BoxShadow(
                         color: AppColors.basicgray.withOpacity(0.5),
                         offset: Offset(0, 4),
@@ -65,7 +85,7 @@ class _HistoryListState extends State<HistoryList> {
                       Container(
                         height: 55,
                         width: 55,
-                        child: ProfileImage(image: Image.asset(AppIcons.meka_sudal),), // 같이 간 펫
+                        child: ProfileImage(image: Image.asset(AppIcons.meka_sudal), isPressed: false,), // 같이 간 펫
                       ),
                       Positioned(
                         left: MediaQuery.of(context).size.width * 0.19,
@@ -123,6 +143,9 @@ class _HistoryListState extends State<HistoryList> {
                               },
                             );
                           },
+                          onTapDown: _onTapDown,
+                          onTapUp: _onTapUp,
+                          onTapCancel: _onTapCancel,
                           child: Container(
                             child: Icon(
                               Icons.search,
