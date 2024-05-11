@@ -46,6 +46,8 @@ dependencies:
   permission_handler: ^11.3.1
   flutter_blue_plus: ^1.32.4
   http: ^1.2.1
+  connectivity_plus: ^6.0.3
+  open_settings: ^2.0.2
 
 flutter_icons:
   android: true

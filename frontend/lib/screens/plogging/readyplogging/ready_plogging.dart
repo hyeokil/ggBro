@@ -35,14 +35,14 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
     tutorial = userProvider.getTutorial();
 
     if (tutorial == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return ConfirmMapDialog();
-          },
-        ).then(
-          (value) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return ConfirmMapDialog();
+            },
+          ).then((value) {
             setState(() {});
             showDialog(
               context: context,
@@ -50,23 +50,24 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                 return BluetoothConnectTutorialDialog();
               },
             ).then((value) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return BluetoothConnectConfirmTutorialDialog();
+                },
+              ).then((value) {
+                userProvider.setTutorial(true);
                 showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return BluetoothConnectConfirmTutorialDialog();
-                  },
-                ).then((value) {
-                  showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return BluetoothConnectedDialog(func: goNext);
-                      });
-                });
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return BluetoothConnectedDialog(func: goNext);
+                    });
               });
             });
-          },
-        );
+          });
+        },
+      );
     }
   }
 
@@ -74,10 +75,31 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
     context.push('/ploggingProgress');
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
-    final currentTutorial = Provider.of<UserProvider>(context, listen: true).getTutorial();
+    final currentTutorial =
+        Provider.of<UserProvider>(context, listen: true).getMemberTutorial();
 
     return SafeArea(
       child: Scaffold(
@@ -110,24 +132,22 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
                   // color: Colors.black,
-                  child: Partner(
+                  child: currentTutorial == true ? Partner(
                     image: pet['active']
                         ? Image.network(
                             pet['image'],
                           )
-                        : currentTutorial == false
-                            ? Image.asset(AppIcons.intersect)
-                            : Image.asset(
+                        : Image.asset(
                                 AppIcons.intro_box,
                               ),
                     isPet: pet['active'],
-                  ),
+                  ) : Container(),
                 ),
               ),
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
-                child: const CustomBackButton(),
+                child: CustomBackButton(),
               ),
               Positioned(
                 right: MediaQuery.of(context).size.width * 0.03,
@@ -141,6 +161,9 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                           return BluetoothConnectedDialog(func: goNext);
                         });
                   },
+                  onTapDown: _onTapDown,
+                  onTapUp: _onTapUp,
+                  onTapCancel: _onTapCancel,
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: MediaQuery.of(context).size.height * 0.05,
@@ -148,14 +171,16 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                       color: AppColors.readyButton,
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(width: 3, color: Colors.white),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.basicgray.withOpacity(0.5),
-                          offset: const Offset(0, 4),
-                          blurRadius: 1,
-                          spreadRadius: 1,
-                        )
-                      ],
+                      boxShadow: _isPressed
+                          ? []
+                          : [
+                              BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.5),
+                                offset: const Offset(0, 4),
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              )
+                            ],
                     ),
                     child: Stack(
                       children: [

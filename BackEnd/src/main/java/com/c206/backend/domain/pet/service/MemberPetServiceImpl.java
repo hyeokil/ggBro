@@ -43,11 +43,9 @@ public class MemberPetServiceImpl implements MemberPetService {
         for (Pet pet:pets) {
             petIdSet.add(pet.getId());
         }
-        System.out.println(petIdSet);
         for (MemberPet memberPet : memberPets) {
             petIdSet.remove(memberPet.getPet().getId());
         }
-        System.out.println(petIdSet);
         List<Long> petIdList = new ArrayList<>(petIdSet);
         if (petIdList.isEmpty()) {
             throw new PetException(PetError.PET_OWNERSHIP_COMPLETE);
@@ -145,15 +143,17 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .currency(memberInfo.getCurrency()-1000)
                 .build();
         memberInfoRepository.save(newMemberInfo);
-        boolean result = Math.random() < 0.5; //테스트용으로 값 변경해놓음. 원래 값은 0.1
-        if (result) {
-            List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
-            List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
-            createMemberPet(memberPets, pets, member);
-            return true;
-        } else {
-            return false;
+
+        List<MemberPet> memberPets = memberPetRepository.findByMemberIdAndPetPetType(memberId,PetType.NORMAL);
+        List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
+        if (memberPets.size() == pets.size()) {
+            throw new PetException(PetError.PET_OWNERSHIP_COMPLETE);
         }
+        boolean result = Math.random() < 0.1;
+        if (result) {
+            createMemberPet(memberPets, pets, member);
+        }
+        return result;
     }
 
     @Override
