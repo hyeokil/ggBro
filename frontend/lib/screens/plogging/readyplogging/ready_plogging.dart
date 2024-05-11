@@ -57,7 +57,6 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                     return BluetoothConnectConfirmTutorialDialog();
                   },
                 ).then((value) {
-                  userProvider.setTutorial(true);
                   showDialog(
                       barrierDismissible: false,
                       context: context,
@@ -74,6 +73,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
 
   goNext() {
     print('가보자');
+    userProvider.setTutorial(true);
     context.go('/ploggingProgress');
   }
 
