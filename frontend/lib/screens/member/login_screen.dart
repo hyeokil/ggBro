@@ -79,8 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _connectionStatus = result;
     });
     // ignore: avoid_print
-    // print('Connectivity changed: $_connectionStatus');
-    if (_connectionStatus.toString() != '[ConnectivityResult.mobile]') {
+    print('Connectivity changed: $_connectionStatus');
+    if (!(_connectionStatus.contains(ConnectivityResult.mobile) |
+        _connectionStatus.contains(ConnectivityResult.wifi))) {
       _showDialogToTurnOnData();
     }
   }

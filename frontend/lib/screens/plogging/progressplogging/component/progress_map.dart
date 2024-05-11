@@ -13,6 +13,7 @@ import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
+import 'package:frontend/screens/rescue/rescue_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +51,7 @@ class _ProgressMapState extends State<ProgressMap> {
   late BluetoothCharacteristic _notifyChar;
   late StreamSubscription<List<int>> blueSubscription;
   int trashId = 0;
-  Set<String> imageResult = {}; // 블루투스로 데이터 받을 때 저장 변수
+  List<int> imageResult = []; // 블루투스로 데이터 받을 때 저장 변수
   String base64String = '';
 
   // api 응답 관련 변수
@@ -106,38 +107,48 @@ class _ProgressMapState extends State<ProgressMap> {
               Guid('6E400003-B5A3-F393-E0A9-E50E24DCCA9E')) {
             _notifyChar = characteristic;
             await _notifyChar.setNotifyValue(true);
-
             blueSubscription = _notifyChar.onValueReceived.listen((event) {
-              print('Received: $event');
+              print('Received: ${event.length}');
               // 블루투스 연결 시 0 으로 데이터가 계속 넘어옴 0일 경우 return
               // 0이면서 쓰레기 데이터가 비어있지 않다면 데이터 합쳐서 쓰레기 줍기 api 요청
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
-                  getTrashLocation();
-                  base64String = imageResult.join(''); // 블루투스로 받아오는 데이터
+                  // 쓰레기 데이터 들어온다면 주운 위치 저장
+                  print('데이터 전송 끝');
+                  base64String = base64Encode(imageResult);
+                  print('총길이 ${base64String.length}');
                   // 여기에 쓰레기 줍기 API 요청 보내야함
                   trashId += 1;
                   print('trashID : $trashId');
+
+                  imageResult.clear();
+
                   NMarker trashMarker = NMarker(
                       id: 'trash$trashId',
                       position: NLatLng(trashLatitude, trashLongitude));
+
                   _mapController!.addOverlay(trashMarker);
-                  print('최종 길이 : ${base64String.length}');
-                  imageResult.clear();
                   setState(() {});
                 }
                 return;
               }
-              // 쓰레기 데이터 들어온다면 주운 위치 저장
-              var result = '';
-              print('이벤트 : ${event.runtimeType}');
-              result += base64Encode(event);
+              // 데이터 수신 시작했으므로 위치 저장
+              if (imageResult.isEmpty) {
+                getTrashLocation();
+              }
+              // '|' 뒤 데이터 저장
+              List<int> result = [];
+              for (int i = 0; i < event.length; i++) {
+                if (String.fromCharCode(event[i]) == '|') {
+                  result = event.sublist(i + 1);
+                  break;
+                }
+              }
+              imageResult.addAll(result);
 
-              print('결과물 : $result, 길이 ${result.length}');
-              imageResult.add(result);
+              print('결과물 길이 ${result.length}');
             });
             device.cancelWhenDisconnected(blueSubscription);
-            setState(() {});
           }
         }
       }
@@ -169,7 +180,7 @@ class _ProgressMapState extends State<ProgressMap> {
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
-            locationSettings: const LocationSettings(distanceFilter: 2))
+            locationSettings: const LocationSettings(distanceFilter: 10))
         .listen((Position position) {
       setState(() {
         previousLatitude = _pathPoints.last.latitude;
@@ -178,6 +189,7 @@ class _ProgressMapState extends State<ProgressMap> {
         longitude = position.longitude;
 
         _pathPoints.add(NLatLng(latitude, longitude)); // 받아온 위치 추가하는 부분
+
         double distanceInMeters = Geolocator.distanceBetween(
             previousLatitude, previousLongitude, latitude, longitude);
         totalDistance += distanceInMeters; // 총거리에 더해주기
@@ -242,7 +254,7 @@ class _ProgressMapState extends State<ProgressMap> {
 
   void updateMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
-    // await _mapController!.clearOverlays(type: NOverlayType.marker);
+    await _mapController!.clearOverlays(type: NOverlayType.marker);
 
     var jsonData = await readJsonData();
     Map<String, List<NMarker>> clusters = {};
@@ -341,6 +353,8 @@ class _ProgressMapState extends State<ProgressMap> {
               NaverMap(
                 onMapReady: (controller) {
                   _mapController = controller; // 지도 컨트롤러 초기화
+
+                  // 내 위치 표시 아이콘 설정
                   final mylocation = _mapController!.getLocationOverlay();
                   mylocation.setIcon(
                     const NOverlayImage.fromAssetImage(AppIcons.meka_sudal),
@@ -359,6 +373,7 @@ class _ProgressMapState extends State<ProgressMap> {
                   //       tilt: 45)
                   //     ..setPivot(const NPoint(1 / 2, 10 / 11)),
                   // );
+
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
                 },
                 onCameraIdle: onCameraIdle,
@@ -374,6 +389,15 @@ class _ProgressMapState extends State<ProgressMap> {
                         bearing: 0,
                         tilt: 45)),
               ),
+              // 이미지 확인용 코드
+              // Positioned(
+              //     child: base64String.isEmpty
+              //         ? Image.asset(
+              //             AppIcons.trash_tong,
+              //             height: MediaQuery.of(context).size.height * 0.05,
+              //             width: MediaQuery.of(context).size.height * 0.05,
+              //           )
+              //         : Image.memory(base64.decode(base64String))),
               Positioned(
                 bottom: MediaQuery.of(context).size.height * 0.01,
                 left: 0,
@@ -483,34 +507,28 @@ class _ProgressMapState extends State<ProgressMap> {
                               trashTongToggle();
                             },
                             child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: Center(
-                                  child: base64String.isNotEmpty
-                                      ? Image.asset(
-                                          AppIcons.trash_tong,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.05,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.05,
-                                        )
-                                      : Image.memory(
-                                          base64.decode(base64String))),
-                            ),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Center(
+                                    child: Image.asset(
+                                  AppIcons.trash_tong,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  width:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                ))),
                           ),
                         ),
                       ),
