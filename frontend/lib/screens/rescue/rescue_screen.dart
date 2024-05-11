@@ -30,6 +30,26 @@ class _RescueScreenState extends State<RescueScreen> {
     accessToken = userProvider.getAccessToken();
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
@@ -121,6 +141,9 @@ class _RescueScreenState extends State<RescueScreen> {
                         }
                       });
                     },
+                    onTapDown: _onTapDown,
+                    onTapUp: _onTapUp,
+                    onTapCancel: _onTapCancel,
                     child: Container(
                       width: MediaQuery.of(context).size.height * 0.15,
                       height: MediaQuery.of(context).size.height * 0.07,
@@ -128,7 +151,7 @@ class _RescueScreenState extends State<RescueScreen> {
                         color: AppColors.rescueButton,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: [
+                        boxShadow: _isPressed ? [] : [
                           BoxShadow(
                             color: AppColors.basicgray.withOpacity(0.5),
                             offset: const Offset(0, 4),

@@ -28,6 +28,26 @@ class _ClearMonsterContentState extends State<ClearMonsterContent>
   AnimationController? _animationController_monster;
   Animation<double>? _rotateAnimation_monster;
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,184 +71,182 @@ class _ClearMonsterContentState extends State<ClearMonsterContent>
     return GestureDetector(
       onTap: () {
         showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                // color: Colors.yellow,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: MediaQuery.of(context).size.height * 0.5,
-                      left: MediaQuery.of(context).size.width * 0.1,
-                      child: AnimatedBuilder(
-                        animation: _animationController_monster!,
-                        builder: (context, widget) {
-                          if (_rotateAnimation_monster != null) {
-                            return Transform.rotate(
-                              angle: _rotateAnimation_monster!.value,
-                              child: widget,
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                        child: Container(
-                          // color: Colors.white,
-                          child: Image.asset(widget.content == '플라몽'
-                              ? AppIcons.plamong
-                              : widget.content == '포 캔몽'
-                                  ? AppIcons.pocanmong
-                                  : widget.content == '율몽'
-                                      ? AppIcons.yulmong
-                                      : AppIcons.mizzomon),
-                        ),
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              // color: Colors.yellow,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: MediaQuery.of(context).size.height * 0.5,
+                    left: MediaQuery.of(context).size.width * 0.1,
+                    child: AnimatedBuilder(
+                      animation: _animationController_monster!,
+                      builder: (context, widget) {
+                        if (_rotateAnimation_monster != null) {
+                          return Transform.rotate(
+                            angle: _rotateAnimation_monster!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: Container(
+                        // color: Colors.white,
+                        child: Image.asset(widget.content == '플라몽'
+                            ? AppIcons.plamong
+                            : widget.content == '포 캔몽'
+                                ? AppIcons.pocanmong
+                                : widget.content == '율몽'
+                                    ? AppIcons.yulmong
+                                    : AppIcons.mizzomon),
                       ),
                     ),
-                    Container(
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: MediaQuery.of(context).size.height * 0.24,
-                            right: MediaQuery.of(context).size.height * 0,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.7,
-                              child: Image.asset(AppIcons.intro_speak_bubble),
-                            ),
+                  ),
+                  Container(
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.24,
+                          right: MediaQuery.of(context).size.height * 0,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.7,
+                            child: Image.asset(AppIcons.intro_speak_bubble),
                           ),
-                          widget.content == '플라몽'
-                              ? Positioned(
-                                  top:
-                                      MediaQuery.of(context).size.height * 0.29,
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.08,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        '플라스틱으로',
-                                        style: CustomFontStyle.getTextStyle(
-                                          context,
-                                          CustomFontStyle.yeonSung100,
-                                        ),
+                        ),
+                        widget.content == '플라몽'
+                            ? Positioned(
+                                top: MediaQuery.of(context).size.height * 0.29,
+                                right: MediaQuery.of(context).size.width * 0.08,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '플라스틱으로',
+                                      style: CustomFontStyle.getTextStyle(
+                                        context,
+                                        CustomFontStyle.yeonSung100,
                                       ),
-                                      Text(
-                                        '온 지구를 점령 해주지!',
-                                        style: CustomFontStyle.getTextStyle(
-                                          context,
-                                          CustomFontStyle.yeonSung100,
-                                        ),
+                                    ),
+                                    Text(
+                                      '온 지구를 점령 해주지!',
+                                      style: CustomFontStyle.getTextStyle(
+                                        context,
+                                        CustomFontStyle.yeonSung100,
                                       ),
-                                    ],
-                                  ),
-                                )
-                              : widget.content == '포 캔몽'
-                                  ? Positioned(
-                                      top: MediaQuery.of(context).size.height *
-                                          0.27,
-                                      right: MediaQuery.of(context).size.width *
-                                          0.19,
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            '후후후..',
-                                            style: CustomFontStyle.getTextStyle(
-                                              context,
-                                              CustomFontStyle.yeonSung100,
-                                            ),
-                                          ),
-                                          Text(
-                                            '이제 지구는',
-                                            style: CustomFontStyle.getTextStyle(
-                                              context,
-                                              CustomFontStyle.yeonSung100,
-                                            ),
-                                          ),
-                                          Text(
-                                            '캔 세상이야!',
-                                            style: CustomFontStyle.getTextStyle(
-                                              context,
-                                              CustomFontStyle.yeonSung100,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : widget.content == '율몽'
-                                      ? Positioned(
-                                          top: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.265,
-                                          right: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.1,
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                '흐흐',
-                                                style: CustomFontStyle
-                                                    .getTextStyle(
-                                                  context,
-                                                  CustomFontStyle.yeonSung100,
-                                                ),
-                                              ),
-                                              Text(
-                                                '지구를 유리 세상으로',
-                                                style: CustomFontStyle
-                                                    .getTextStyle(
-                                                  context,
-                                                  CustomFontStyle.yeonSung100,
-                                                ),
-                                              ),
-                                              Text(
-                                                '만들어 볼까?',
-                                                style: CustomFontStyle
-                                                    .getTextStyle(
-                                                  context,
-                                                  CustomFontStyle.yeonSung100,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : Positioned(
-                                          top: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.3,
-                                          right: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.16,
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                '일반 쓰레기도',
-                                                style: CustomFontStyle
-                                                    .getTextStyle(
-                                                  context,
-                                                  CustomFontStyle.yeonSung100,
-                                                ),
-                                              ),
-                                              Text(
-                                                '만만치 않을걸~',
-                                                style: CustomFontStyle
-                                                    .getTextStyle(
-                                                  context,
-                                                  CustomFontStyle.yeonSung100,
-                                                ),
-                                              ),
-                                            ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : widget.content == '포 캔몽'
+                                ? Positioned(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.27,
+                                    right: MediaQuery.of(context).size.width *
+                                        0.19,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '후후후..',
+                                          style: CustomFontStyle.getTextStyle(
+                                            context,
+                                            CustomFontStyle.yeonSung100,
                                           ),
                                         ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            });
+                                        Text(
+                                          '이제 지구는',
+                                          style: CustomFontStyle.getTextStyle(
+                                            context,
+                                            CustomFontStyle.yeonSung100,
+                                          ),
+                                        ),
+                                        Text(
+                                          '캔 세상이야!',
+                                          style: CustomFontStyle.getTextStyle(
+                                            context,
+                                            CustomFontStyle.yeonSung100,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : widget.content == '율몽'
+                                    ? Positioned(
+                                        top:
+                                            MediaQuery.of(context).size.height *
+                                                0.265,
+                                        right:
+                                            MediaQuery.of(context).size.width *
+                                                0.1,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              '흐흐',
+                                              style:
+                                                  CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung100,
+                                              ),
+                                            ),
+                                            Text(
+                                              '지구를 유리 세상으로',
+                                              style:
+                                                  CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung100,
+                                              ),
+                                            ),
+                                            Text(
+                                              '만들어 볼까?',
+                                              style:
+                                                  CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung100,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : Positioned(
+                                        top:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
+                                        right:
+                                            MediaQuery.of(context).size.width *
+                                                0.16,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              '일반 쓰레기도',
+                                              style:
+                                                  CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung100,
+                                              ),
+                                            ),
+                                            Text(
+                                              '만만치 않을걸~',
+                                              style:
+                                                  CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung100,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        );
       },
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
       child: Container(
         padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
         width: MediaQuery.of(context).size.width * 0.42,
@@ -236,14 +254,16 @@ class _ClearMonsterContentState extends State<ClearMonsterContent>
         decoration: BoxDecoration(
           color: widget.color,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.basicgray.withOpacity(0.5),
-              offset: Offset(0, 4),
-              blurRadius: 1,
-              spreadRadius: 1,
-            )
-          ],
+          boxShadow: _isPressed
+              ? []
+              : [
+                  BoxShadow(
+                    color: AppColors.basicgray.withOpacity(0.5),
+                    offset: Offset(0, 4),
+                    blurRadius: 1,
+                    spreadRadius: 1,
+                  )
+                ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

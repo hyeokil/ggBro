@@ -11,6 +11,7 @@ class Menu extends StatefulWidget {
   final Color shadowColor;
   final Icon icon;
   final String content;
+  final bool isPressed;
 
   const Menu({
     super.key,
@@ -18,6 +19,7 @@ class Menu extends StatefulWidget {
     required this.shadowColor,
     required this.icon,
     required this.content,
+    required this.isPressed,
   });
 
   @override
@@ -33,10 +35,10 @@ class _MenuState extends State<Menu> {
           height: MediaQuery.of(context).size.height * 0.08,
           width: MediaQuery.of(context).size.width * 0.15,
           decoration: BoxDecoration(
-            color: widget.shadowColor,
+            color: widget.isPressed ? widget.color : widget.shadowColor,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(width: 3, color: Colors.white),
-            boxShadow: [
+            boxShadow: widget.isPressed ? [] : [
               BoxShadow(
                 color: AppColors.basicgray.withOpacity(0.5),
                 offset: Offset(0, 4),

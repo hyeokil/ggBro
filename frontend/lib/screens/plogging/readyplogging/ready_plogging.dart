@@ -77,6 +77,26 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
     context.go('/ploggingProgress');
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
@@ -144,6 +164,9 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                           return BluetoothConnectedDialog(func: goNext);
                         });
                   },
+                  onTapDown: _onTapDown,
+                  onTapUp: _onTapUp,
+                  onTapCancel: _onTapCancel,
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,
                     height: MediaQuery.of(context).size.height * 0.05,
@@ -151,7 +174,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                       color: AppColors.readyButton,
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(width: 3, color: Colors.white),
-                      boxShadow: [
+                      boxShadow: _isPressed ? [] : [
                         BoxShadow(
                           color: AppColors.basicgray.withOpacity(0.5),
                           offset: const Offset(0, 4),

@@ -30,6 +30,7 @@ class _RankingNameBarState extends State<RankingNameBar> {
           Positioned(
             child: ProfileImage(
               image: Image.asset(AppIcons.meka_sudal),
+              isPressed: false,
             ),
             left: MediaQuery.of(context).size.width * 0.045,
           ),

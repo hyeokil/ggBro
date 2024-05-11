@@ -120,6 +120,102 @@ class _MainScreenState extends State<MainScreen> {
     mainProvider.menuSelected(selected);
   }
 
+  bool _isQuestPressed = false;
+  bool _isRankingPressed = false;
+  bool _isHistoryPressed = false;
+  bool _isCampaignPressed = false;
+  bool _isReadyPressed = false;
+
+  void _onQuestTapDown(TapDownDetails details) {
+    setState(() {
+      _isQuestPressed = true;
+    });
+  }
+
+  void _onQuestTapUp(TapUpDetails details) {
+    setState(() {
+      _isQuestPressed = false;
+    });
+  }
+
+  void _onQuestTapCancel() {
+    setState(() {
+      _isQuestPressed = false;
+    });
+  }
+
+  void _onRankingTapDown(TapDownDetails details) {
+    setState(() {
+      _isRankingPressed = true;
+    });
+  }
+
+  void _onRankingTapUp(TapUpDetails details) {
+    setState(() {
+      _isRankingPressed = false;
+    });
+  }
+
+  void _onRankingTapCancel() {
+    setState(() {
+      _isRankingPressed = false;
+    });
+  }
+
+  void _onHistoryTapDown(TapDownDetails details) {
+    setState(() {
+      _isHistoryPressed = true;
+    });
+  }
+
+  void _onHistoryTapUp(TapUpDetails details) {
+    setState(() {
+      _isHistoryPressed = false;
+    });
+  }
+
+  void _onHistoryTapCancel() {
+    setState(() {
+      _isHistoryPressed = false;
+    });
+  }
+
+  void _onCampaignTapDown(TapDownDetails details) {
+    setState(() {
+      _isCampaignPressed = true;
+    });
+  }
+
+  void _onCampaignTapUp(TapUpDetails details) {
+    setState(() {
+      _isCampaignPressed = false;
+    });
+  }
+
+  void _onCampaignTapCancel() {
+    setState(() {
+      _isCampaignPressed = false;
+    });
+  }
+
+  void _onReadyTapDown(TapDownDetails details) {
+    setState(() {
+      _isReadyPressed = true;
+    });
+  }
+
+  void _onReadyTapUp(TapUpDetails details) {
+    setState(() {
+      _isReadyPressed = false;
+    });
+  }
+
+  void _onReadyTapCancel() {
+    setState(() {
+      _isReadyPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
@@ -169,6 +265,9 @@ class _MainScreenState extends State<MainScreen> {
                         );
                       }
                     },
+                    onTapDown: _onQuestTapDown,
+                    onTapUp: _onQuestTapUp,
+                    onTapCancel: _onQuestTapCancel,
                     child: Menu(
                       color: AppColors.basicpink,
                       shadowColor: AppColors.basicShadowPink,
@@ -178,6 +277,7 @@ class _MainScreenState extends State<MainScreen> {
                         size: MediaQuery.of(context).size.width * 0.07,
                       ),
                       content: '주간 퀘스트',
+                      isPressed: _isQuestPressed,
                     ),
                   ),
                   // SizedBox(
@@ -201,6 +301,9 @@ class _MainScreenState extends State<MainScreen> {
                         selectedMenu('ranking');
                       }
                     },
+                    onTapDown: _onRankingTapDown,
+                    onTapUp: _onRankingTapUp,
+                    onTapCancel: _onRankingTapCancel,
                     child: Menu(
                       color: AppColors.basicgray,
                       shadowColor: AppColors.basicShadowGray,
@@ -210,6 +313,7 @@ class _MainScreenState extends State<MainScreen> {
                         size: MediaQuery.of(context).size.width * 0.07,
                       ),
                       content: '랭킹',
+                      isPressed: _isRankingPressed,
                     ),
                   ),
                   // SizedBox(
@@ -230,6 +334,9 @@ class _MainScreenState extends State<MainScreen> {
                         selectedMenu('history');
                       }
                     },
+                    onTapDown: _onHistoryTapDown,
+                    onTapUp: _onHistoryTapUp,
+                    onTapCancel: _onHistoryTapCancel,
                     child: Menu(
                       color: AppColors.basicgreen,
                       shadowColor: AppColors.basicShadowGreen,
@@ -239,6 +346,7 @@ class _MainScreenState extends State<MainScreen> {
                         size: MediaQuery.of(context).size.width * 0.07,
                       ),
                       content: '히스토리',
+                      isPressed: _isHistoryPressed,
                     ),
                   ),
                   // SizedBox(
@@ -262,6 +370,9 @@ class _MainScreenState extends State<MainScreen> {
                         selectedMenu('campaign');
                       }
                     },
+                    onTapDown: _onCampaignTapDown,
+                    onTapUp: _onCampaignTapUp,
+                    onTapCancel: _onCampaignTapCancel,
                     child: Menu(
                       color: AppColors.basicnavy,
                       shadowColor: AppColors.basicShadowNavy,
@@ -271,6 +382,7 @@ class _MainScreenState extends State<MainScreen> {
                         size: MediaQuery.of(context).size.width * 0.07,
                       ),
                       content: '캠페인',
+                      isPressed: _isCampaignPressed,
                     ),
                   ),
                 ],
@@ -307,6 +419,9 @@ class _MainScreenState extends State<MainScreen> {
                     onTap: () {
                       context.push('/ploggingReady');
                     },
+                    onTapDown: _onReadyTapDown,
+                    onTapUp: _onReadyTapUp,
+                    onTapCancel: _onReadyTapCancel,
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.05,
                       width: MediaQuery.of(context).size.width * 0.3,
@@ -314,7 +429,7 @@ class _MainScreenState extends State<MainScreen> {
                         color: AppColors.readyButton,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: [
+                        boxShadow: _isReadyPressed ? [] : [
                           BoxShadow(
                               color: AppColors.basicgray.withOpacity(0.5),
                               offset: const Offset(0, 4),
