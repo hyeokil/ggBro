@@ -57,6 +57,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                     return BluetoothConnectConfirmTutorialDialog();
                   },
                 ).then((value) {
+                  userProvider.setTutorial(true);
                   showDialog(
                       barrierDismissible: false,
                       context: context,
