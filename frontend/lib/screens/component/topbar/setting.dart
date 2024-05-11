@@ -33,6 +33,9 @@ class _ProfileImageState extends State<Setting> {
 
   void goTutorial() {
     userProvider.setTutorial(false);
+    if (mainProvider.isMenuSelected != 'main') {
+      context.push('/main');
+    }
     showDialog(
       context: context,
       builder: (BuildContext context) {

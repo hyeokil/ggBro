@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
@@ -122,9 +124,14 @@ class _RescueScreenState extends State<RescueScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Image.asset(AppIcons.trashs),
+                  GestureDetector(
+                    onTap: () {
+                      Fluttertoast.showToast(msg: '구조하기 버튼을 눌러주세요!');
+                    },
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Image.asset(AppIcons.trashs),
+                    ),
                   ),
                   GestureDetector(
                     onTap: () {

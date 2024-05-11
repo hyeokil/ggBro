@@ -196,6 +196,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                                 final member = Provider.of<MemberModel>(context, listen: false);
                                 member.finishTutorial(accessToken);
                                 userProvider.setTutorial(true);
+                                userProvider.setMemberTutorial(true);
                               }
 
                               Navigator.of(context).pop();

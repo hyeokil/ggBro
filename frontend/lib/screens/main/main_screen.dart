@@ -40,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
   late PetModel petModel;
   late Map currentPet;
   late bool tutorial;
+  late bool memberTutorial;
   late bool isTutorialPloggingFinish;
   bool _isButtonDisabled = false;
 
@@ -50,16 +51,17 @@ class _MainScreenState extends State<MainScreen> {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
     tutorial = userProvider.getTutorial();
+    memberTutorial = userProvider.getMemberTutorial();
     isTutorialPloggingFinish = mainProvider.getIsTutorialPloggingFinish();
     petModel = Provider.of<PetModel>(context, listen: false);
     petModel.getAllPets(accessToken);
     petModel.getPetDetail(accessToken, -1).then(
           (value) => setState(() {}),
-    );
+        );
     currentPet = petModel.getCurrentPet();
 
     // 튜토리얼 판별
-    if (tutorial == false && isTutorialPloggingFinish == false) {
+    if (memberTutorial == false && isTutorialPloggingFinish == false) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
@@ -69,7 +71,7 @@ class _MainScreenState extends State<MainScreen> {
         ).then(
           (value) {
             setState(() {});
-            context.push('/ploggingReady');
+            context.go('/ploggingReady');
           },
         );
       });
@@ -219,7 +221,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
-    final currentTutorial = Provider.of<UserProvider>(context, listen: true).getTutorial();
+    final currentTutorial =
+        Provider.of<UserProvider>(context, listen: true).getMemberTutorial();
 
     return SafeArea(
       child: Scaffold(
@@ -390,18 +393,20 @@ class _MainScreenState extends State<MainScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
-              Partner(
-                image: pet['active']
-                    ? Image.network(
-                        pet['image'],
-                      )
-                    : currentTutorial == false
-                        ? Image.asset(AppIcons.intersect)
-                        : Image.asset(
-                            AppIcons.intro_box,
-                          ),
-                isPet: pet['active'],
-              ),
+              currentTutorial == true
+                  ? Partner(
+                      image: pet['active']
+                          ? Image.network(
+                              pet['image'],
+                            )
+                          : Image.asset(
+                              AppIcons.intro_box,
+                            ),
+                      isPet: pet['active'],
+                    )
+                  : Container(
+                      height: MediaQuery.of(context).size.height * 0.32,
+                    ),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
@@ -429,13 +434,15 @@ class _MainScreenState extends State<MainScreen> {
                         color: AppColors.readyButton,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: _isReadyPressed ? [] : [
-                          BoxShadow(
-                              color: AppColors.basicgray.withOpacity(0.5),
-                              offset: const Offset(0, 4),
-                              blurRadius: 1,
-                              spreadRadius: 1)
-                        ],
+                        boxShadow: _isReadyPressed
+                            ? []
+                            : [
+                                BoxShadow(
+                                    color: AppColors.basicgray.withOpacity(0.5),
+                                    offset: const Offset(0, 4),
+                                    blurRadius: 1,
+                                    spreadRadius: 1)
+                              ],
                       ),
                       child: Stack(
                         children: [
