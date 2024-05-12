@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     // ignore: avoid_print
     print('Connectivity changed: $_connectionStatus');
-    if (!(_connectionStatus.contains(ConnectivityResult.mobile) |
+    if (!(_connectionStatus.contains(ConnectivityResult.mobile) ||
         _connectionStatus.contains(ConnectivityResult.wifi))) {
       _showDialogToTurnOnData();
     }

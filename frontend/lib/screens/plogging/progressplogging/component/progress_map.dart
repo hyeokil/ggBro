@@ -52,7 +52,7 @@ class _ProgressMapState extends State<ProgressMap> {
   late StreamSubscription<List<int>> blueSubscription;
   int trashId = 0;
   List<int> imageResult = []; // 블루투스로 데이터 받을 때 저장 변수
-  String base64String = '';
+  // String base64String = '';
 
   // api 응답 관련 변수
   late PloggingModel ploggingModel;
@@ -113,16 +113,15 @@ class _ProgressMapState extends State<ProgressMap> {
               // 0이면서 쓰레기 데이터가 비어있지 않다면 데이터 합쳐서 쓰레기 줍기 api 요청
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
-                  // 쓰레기 데이터 들어온다면 주운 위치 저장
-                  print('데이터 전송 끝');
-                  base64String = base64Encode(imageResult);
-                  print('총길이 ${base64String.length}');
-                  // 여기에 쓰레기 줍기 API 요청 보내야함
-                  trashId += 1;
-                  print('trashID : $trashId');
 
+                  print('데이터 전송 끝');
+                  // base64String = base64Encode(imageResult); base64 encode해서 보낼 경우 사용
+                  // 쓰레기 판별 API
+                  ploggingModel.classificationTrash(
+                      accessToken, trashLatitude, trashLongitude, imageResult);
                   imageResult.clear();
 
+                  trashId += 1;
                   NMarker trashMarker = NMarker(
                       id: 'trash$trashId',
                       position: NLatLng(trashLatitude, trashLongitude));
@@ -254,8 +253,9 @@ class _ProgressMapState extends State<ProgressMap> {
 
   void updateMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
-    await _mapController!.clearOverlays(type: NOverlayType.marker);
-
+    await _mapController!.clearOverlays(
+      type: NOverlayType.marker,
+    );
     var jsonData = await readJsonData();
     Map<String, List<NMarker>> clusters = {};
 
@@ -278,6 +278,7 @@ class _ProgressMapState extends State<ProgressMap> {
         );
       }
     }
+    // _mapController!.deleteOverlay(NOverlayInfo(type: type, id: id))
     // print("줌 $_currentZoom");
     if (_currentZoom < 13) {
       await _mapController!.clearOverlays(type: NOverlayType.marker);

@@ -37,4 +37,30 @@ class PloggingModel with ChangeNotifier {
   int getPloggingId() {
     return ploggingId;
   }
+
+// Future<Map<String, dynamic>>
+  Future<String> classificationTrash(String accessToken, double latitude,
+      double longitude, List<int> image) async {
+    var url = Uri.https(address, "/api/v1/plogging/trash/$ploggingId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode(
+        {'latitude': latitude, 'longitude': longitude, 'image': image});
+    print(
+        'classificationTrash request : $url, headers : $headers body : $body');
+    final response = await http.post(url, headers: headers, body: body);
+    print(
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataHeader"]}');
+    print(
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
+
+    if (response.statusCode == 200) {
+      ploggingId = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      return 'Success';
+    } else {
+      return 'fail';
+    }
+  }
 }

@@ -43,6 +43,7 @@ class _MainScreenState extends State<MainScreen> {
   late bool memberTutorial;
   late bool isTutorialPloggingFinish;
   bool _isButtonDisabled = false;
+  bool isDataLoading = false;
 
   @override
   void initState() {
@@ -53,10 +54,16 @@ class _MainScreenState extends State<MainScreen> {
     tutorial = userProvider.getTutorial();
     memberTutorial = userProvider.getMemberTutorial();
     isTutorialPloggingFinish = mainProvider.getIsTutorialPloggingFinish();
+    getData();
+  }
+
+  getData() async {
     petModel = Provider.of<PetModel>(context, listen: false);
     petModel.getAllPets(accessToken);
-    petModel.getPetDetail(accessToken, -1).then(
-          (value) => setState(() {}),
+    await petModel.getPetDetail(accessToken, -1).then(
+          (value) => setState(() {
+            isDataLoading = true;
+          }),
         );
     currentPet = petModel.getCurrentPet();
 
@@ -241,241 +248,247 @@ class _MainScreenState extends State<MainScreen> {
               ], // 그라데이션 색상 배열
             ),
           ),
-          child: Column(
-            children: [
-              TopBar(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      if (!_isButtonDisabled) {
-                        setState(() {
-                          _isButtonDisabled = true; // 버튼 비활성화
-                        });
-                        final quests =
-                            Provider.of<QuestModel>(context, listen: false);
-                        await quests.getQuests(accessToken);
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const WeeklyQuestDialog();
+          child: isDataLoading
+              ? Column(
+                  children: [
+                    TopBar(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            if (!_isButtonDisabled) {
+                              setState(() {
+                                _isButtonDisabled = true; // 버튼 비활성화
+                              });
+                              final quests = Provider.of<QuestModel>(context,
+                                  listen: false);
+                              await quests.getQuests(accessToken);
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const WeeklyQuestDialog();
+                                },
+                              ).then(
+                                (value) => setState(() {
+                                  _isButtonDisabled = false;
+                                }),
+                              );
+                            }
                           },
-                        ).then(
-                          (value) => setState(() {
-                            _isButtonDisabled = false;
-                          }),
-                        );
-                      }
-                    },
-                    onTapDown: _onQuestTapDown,
-                    onTapUp: _onQuestTapUp,
-                    onTapCancel: _onQuestTapCancel,
-                    child: Menu(
-                      color: AppColors.basicpink,
-                      shadowColor: AppColors.basicShadowPink,
-                      icon: Icon(
-                        FontAwesomeIcons.calendarCheck,
-                        color: Colors.white,
-                        size: MediaQuery.of(context).size.width * 0.07,
-                      ),
-                      content: '주간 퀘스트',
-                      isPressed: _isQuestPressed,
-                    ),
-                  ),
-                  // SizedBox(
-                  //   width: MediaQuery.of(context).size.width * 0.04,
-                  // ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (!_isButtonDisabled) {
-                        setState(() {
-                          _isButtonDisabled = true; // 버튼 비활성화
-                        });
-                        final ranking =
-                            Provider.of<RankingModel>(context, listen: false);
-                        await ranking.getRanking(accessToken);
-                        context.push('/ranking').then((value) {
-                          // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
-                          setState(() {
-                            _isButtonDisabled = false;
-                          });
-                        });
-                        selectedMenu('ranking');
-                      }
-                    },
-                    onTapDown: _onRankingTapDown,
-                    onTapUp: _onRankingTapUp,
-                    onTapCancel: _onRankingTapCancel,
-                    child: Menu(
-                      color: AppColors.basicgray,
-                      shadowColor: AppColors.basicShadowGray,
-                      icon: Icon(
-                        FontAwesomeIcons.trophy,
-                        color: Colors.white,
-                        size: MediaQuery.of(context).size.width * 0.07,
-                      ),
-                      content: '랭킹',
-                      isPressed: _isRankingPressed,
-                    ),
-                  ),
-                  // SizedBox(
-                  //   width: MediaQuery.of(context).size.width * 0.04,
-                  // ),
-                  GestureDetector(
-                    onTap: () {
-                      if (!_isButtonDisabled) {
-                        setState(() {
-                          _isButtonDisabled = true; // 버튼 비활성화
-                        });
-                        context.push('/history').then((value) {
-                          // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
-                          setState(() {
-                            _isButtonDisabled = false;
-                          });
-                        });
-                        selectedMenu('history');
-                      }
-                    },
-                    onTapDown: _onHistoryTapDown,
-                    onTapUp: _onHistoryTapUp,
-                    onTapCancel: _onHistoryTapCancel,
-                    child: Menu(
-                      color: AppColors.basicgreen,
-                      shadowColor: AppColors.basicShadowGreen,
-                      icon: Icon(
-                        FontAwesomeIcons.clipboardList,
-                        color: Colors.white,
-                        size: MediaQuery.of(context).size.width * 0.07,
-                      ),
-                      content: '히스토리',
-                      isPressed: _isHistoryPressed,
-                    ),
-                  ),
-                  // SizedBox(
-                  //   width: MediaQuery.of(context).size.width * 0.04,
-                  // ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (!_isButtonDisabled) {
-                        setState(() {
-                          _isButtonDisabled = true; // 버튼 비활성화
-                        });
-                        final campaign =
-                            Provider.of<CampaignModel>(context, listen: false);
-                        await campaign.getCampaigns(accessToken);
-                        context.push('/campaign').then((value) {
-                          // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
-                          setState(() {
-                            _isButtonDisabled = false;
-                          });
-                        });
-                        selectedMenu('campaign');
-                      }
-                    },
-                    onTapDown: _onCampaignTapDown,
-                    onTapUp: _onCampaignTapUp,
-                    onTapCancel: _onCampaignTapCancel,
-                    child: Menu(
-                      color: AppColors.basicnavy,
-                      shadowColor: AppColors.basicShadowNavy,
-                      icon: Icon(
-                        FontAwesomeIcons.users,
-                        color: Colors.white,
-                        size: MediaQuery.of(context).size.width * 0.07,
-                      ),
-                      content: '캠페인',
-                      isPressed: _isCampaignPressed,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              currentTutorial == true
-                  ? Partner(
-                      image: pet['active']
-                          ? Image.network(
-                              pet['image'],
-                            )
-                          : Image.asset(
-                              AppIcons.intro_box,
+                          onTapDown: _onQuestTapDown,
+                          onTapUp: _onQuestTapUp,
+                          onTapCancel: _onQuestTapCancel,
+                          child: Menu(
+                            color: AppColors.basicpink,
+                            shadowColor: AppColors.basicShadowPink,
+                            icon: Icon(
+                              FontAwesomeIcons.calendarCheck,
+                              color: Colors.white,
+                              size: MediaQuery.of(context).size.width * 0.07,
                             ),
-                      isPet: pet['active'],
-                    )
-                  : Container(
-                      height: MediaQuery.of(context).size.height * 0.32,
+                            content: '주간 퀘스트',
+                            isPressed: _isQuestPressed,
+                          ),
+                        ),
+                        // SizedBox(
+                        //   width: MediaQuery.of(context).size.width * 0.04,
+                        // ),
+                        GestureDetector(
+                          onTap: () async {
+                            if (!_isButtonDisabled) {
+                              setState(() {
+                                _isButtonDisabled = true; // 버튼 비활성화
+                              });
+                              final ranking = Provider.of<RankingModel>(context,
+                                  listen: false);
+                              await ranking.getRanking(accessToken);
+                              context.push('/ranking').then((value) {
+                                // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
+                                setState(() {
+                                  _isButtonDisabled = false;
+                                });
+                              });
+                              selectedMenu('ranking');
+                            }
+                          },
+                          onTapDown: _onRankingTapDown,
+                          onTapUp: _onRankingTapUp,
+                          onTapCancel: _onRankingTapCancel,
+                          child: Menu(
+                            color: AppColors.basicgray,
+                            shadowColor: AppColors.basicShadowGray,
+                            icon: Icon(
+                              FontAwesomeIcons.trophy,
+                              color: Colors.white,
+                              size: MediaQuery.of(context).size.width * 0.07,
+                            ),
+                            content: '랭킹',
+                            isPressed: _isRankingPressed,
+                          ),
+                        ),
+                        // SizedBox(
+                        //   width: MediaQuery.of(context).size.width * 0.04,
+                        // ),
+                        GestureDetector(
+                          onTap: () {
+                            if (!_isButtonDisabled) {
+                              setState(() {
+                                _isButtonDisabled = true; // 버튼 비활성화
+                              });
+                              context.push('/history').then((value) {
+                                // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
+                                setState(() {
+                                  _isButtonDisabled = false;
+                                });
+                              });
+                              selectedMenu('history');
+                            }
+                          },
+                          onTapDown: _onHistoryTapDown,
+                          onTapUp: _onHistoryTapUp,
+                          onTapCancel: _onHistoryTapCancel,
+                          child: Menu(
+                            color: AppColors.basicgreen,
+                            shadowColor: AppColors.basicShadowGreen,
+                            icon: Icon(
+                              FontAwesomeIcons.clipboardList,
+                              color: Colors.white,
+                              size: MediaQuery.of(context).size.width * 0.07,
+                            ),
+                            content: '히스토리',
+                            isPressed: _isHistoryPressed,
+                          ),
+                        ),
+                        // SizedBox(
+                        //   width: MediaQuery.of(context).size.width * 0.04,
+                        // ),
+                        GestureDetector(
+                          onTap: () async {
+                            if (!_isButtonDisabled) {
+                              setState(() {
+                                _isButtonDisabled = true; // 버튼 비활성화
+                              });
+                              final campaign = Provider.of<CampaignModel>(
+                                  context,
+                                  listen: false);
+                              await campaign.getCampaigns(accessToken);
+                              context.push('/campaign').then((value) {
+                                // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
+                                setState(() {
+                                  _isButtonDisabled = false;
+                                });
+                              });
+                              selectedMenu('campaign');
+                            }
+                          },
+                          onTapDown: _onCampaignTapDown,
+                          onTapUp: _onCampaignTapUp,
+                          onTapCancel: _onCampaignTapCancel,
+                          child: Menu(
+                            color: AppColors.basicnavy,
+                            shadowColor: AppColors.basicShadowNavy,
+                            icon: Icon(
+                              FontAwesomeIcons.users,
+                              color: Colors.white,
+                              size: MediaQuery.of(context).size.width * 0.07,
+                            ),
+                            content: '캠페인',
+                            isPressed: _isCampaignPressed,
+                          ),
+                        ),
+                      ],
                     ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.01,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  pet['active']
-                      ? NickNameBar(
-                          nickName: pet['nickname'],
-                        )
-                      : currentTutorial == false
-                          ? NickNameBar(nickName: '')
-                          : ExpBar(exp: pet['exp']),
-                  GestureDetector(
-                    onTap: () {
-                      context.push('/ploggingReady');
-                    },
-                    onTapDown: _onReadyTapDown,
-                    onTapUp: _onReadyTapUp,
-                    onTapCancel: _onReadyTapCancel,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      decoration: BoxDecoration(
-                        color: AppColors.readyButton,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: _isReadyPressed
-                            ? []
-                            : [
-                                BoxShadow(
-                                    color: AppColors.basicgray.withOpacity(0.5),
-                                    offset: const Offset(0, 4),
-                                    blurRadius: 1,
-                                    spreadRadius: 1)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
+                    currentTutorial == true
+                        ? Partner(
+                            image: pet['active']
+                                ? Image.network(
+                                    pet['image'],
+                                  )
+                                : Image.asset(
+                                    AppIcons.intro_box,
+                                  ),
+                            isPet: pet['active'],
+                          )
+                        : Container(
+                            height: MediaQuery.of(context).size.height * 0.32,
+                          ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        pet['active']
+                            ? NickNameBar(
+                                nickName: pet['nickname'],
+                              )
+                            : currentTutorial == false
+                                ? NickNameBar(nickName: '')
+                                : ExpBar(exp: pet['exp']),
+                        GestureDetector(
+                          onTap: () {
+                            context.push('/ploggingReady');
+                          },
+                          onTapDown: _onReadyTapDown,
+                          onTapUp: _onReadyTapUp,
+                          onTapCancel: _onReadyTapCancel,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            decoration: BoxDecoration(
+                              color: AppColors.readyButton,
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(width: 3, color: Colors.white),
+                              boxShadow: _isReadyPressed
+                                  ? []
+                                  : [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.5),
+                                          offset: const Offset(0, 4),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ],
+                            ),
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  top: MediaQuery.of(context).size.height *
+                                      0.003,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.015,
+                                  child: Container(
+                                    child: const Icon(
+                                      Icons.directions_run_sharp,
+                                      size: 30,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: Text(
+                                    '   준비하기',
+                                    style: CustomFontStyle.getTextStyle(context,
+                                        CustomFontStyle.yeonSung80_white),
+                                  ),
+                                ),
                               ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            top: MediaQuery.of(context).size.height * 0.003,
-                            left: MediaQuery.of(context).size.width * 0.015,
-                            child: Container(
-                              child: const Icon(
-                                Icons.directions_run_sharp,
-                                size: 30,
-                                color: Colors.white,
-                              ),
                             ),
                           ),
-                          Center(
-                            child: Text(
-                              '   준비하기',
-                              style: CustomFontStyle.getTextStyle(
-                                  context, CustomFontStyle.yeonSung80_white),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              ClearMonster(pet: pet),
-            ],
-          ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
+                    ClearMonster(pet: pet),
+                  ],
+                )
+              : CircularProgressIndicator(),
         ),
       ),
     );
