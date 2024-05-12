@@ -28,7 +28,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
   bool _isFinish = false;
   late UserProvider userProvider;
   late String accessToken;
-  late bool tutorial;
+  late bool memberTutorial;
   final TextEditingController _nickNameController = TextEditingController();
 
   AnimationController? _animationController_box;
@@ -44,7 +44,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
 
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
-    tutorial = userProvider.getTutorial();
+    memberTutorial = userProvider.getMemberTutorial();
 
     _animationController_box = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
@@ -192,7 +192,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               String nickName = _nickNameController.text;
                               await pet.updateNickName(accessToken, -1, nickName);
                               await pet.getPetDetail(accessToken, -1);
-                              if (tutorial == false) {
+                              if (memberTutorial == false) {
                                 final member = Provider.of<MemberModel>(context, listen: false);
                                 member.finishTutorial(accessToken);
                                 userProvider.setTutorial(true);
