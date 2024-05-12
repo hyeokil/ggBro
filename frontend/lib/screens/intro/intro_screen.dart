@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/intro/dialog/intro_dialog_helping.dart';
 import 'package:frontend/screens/intro/dialog/intro_dialog_warning.dart';
 import 'package:frontend/screens/intro/intro_angryearth.dart';
@@ -16,6 +17,7 @@ import 'package:frontend/screens/intro/intro_earth_spacedevil.dart';
 import 'package:frontend/screens/intro/intro_sayearth.dart';
 import 'package:frontend/screens/intro/intro_trash.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -56,6 +58,14 @@ class _IntroScreenState extends State<IntroScreen> {
     // print(page);
   }
 
+  late MainProvider mainProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    mainProvider = Provider.of<MainProvider>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +89,8 @@ class _IntroScreenState extends State<IntroScreen> {
                       return const IntroDialogHelping();
                     },
                   ).then((_) {
-                    context.go('/main');
+                    mainProvider.menuSelected('main');
+                    context.pushReplacement('/main');
                   });
                 });
               }
