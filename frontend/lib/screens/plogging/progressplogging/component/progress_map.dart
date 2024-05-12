@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
@@ -13,7 +12,7 @@ import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
-import 'package:frontend/screens/rescue/rescue_screen.dart';
+import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -46,8 +45,7 @@ class _ProgressMapState extends State<ProgressMap> {
   double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
 
   // 블루투스용 변수들
-  late double trashLatitude;
-  late double trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
+  late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
   late BluetoothCharacteristic _notifyChar;
   late StreamSubscription<List<int>> blueSubscription;
   int trashId = 0;
@@ -57,7 +55,9 @@ class _ProgressMapState extends State<ProgressMap> {
   // api 응답 관련 변수
   late PloggingModel ploggingModel;
   late int ploggingId;
-  late String accessToken;
+  late String accessToken, displayMonster;
+  bool isKill = false;
+  int plastic = 0, can = 0, glass = 0, normal = 0;
 
   @override
   void initState() {
@@ -108,24 +108,58 @@ class _ProgressMapState extends State<ProgressMap> {
             _notifyChar = characteristic;
             await _notifyChar.setNotifyValue(true);
             blueSubscription = _notifyChar.onValueReceived.listen((event) {
-              print('Received: ${event.length}');
+              // print('Received: ${event.length}');
+
               // 블루투스 연결 시 0 으로 데이터가 계속 넘어옴 0일 경우 return
               // 0이면서 쓰레기 데이터가 비어있지 않다면 데이터 합쳐서 쓰레기 줍기 api 요청
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
-
-                  print('데이터 전송 끝');
                   // base64String = base64Encode(imageResult); base64 encode해서 보낼 경우 사용
                   // 쓰레기 판별 API
+                  String monsterIcon = '';
                   ploggingModel.classificationTrash(
                       accessToken, trashLatitude, trashLongitude, imageResult);
                   imageResult.clear();
-
+                  Map<String, dynamic> classificationData =
+                      ploggingModel.getClassificationData();
+                  switch (classificationData['trash_type']) {
+                    case 'NORMAL':
+                      normal += 1;
+                      displayMonster = '미쪼몽';
+                      monsterIcon = AppIcons.mizzomon;
+                      break;
+                    case 'CAN':
+                      can += 1;
+                      displayMonster = '포캔몽';
+                      monsterIcon = AppIcons.pocanmong;
+                      break;
+                    case 'PLASTIC':
+                      plastic += 1;
+                      displayMonster = '플라몽';
+                      monsterIcon = AppIcons.plamong;
+                      break;
+                    case 'GLASS':
+                      glass += 1;
+                      displayMonster = '율몽';
+                      monsterIcon = AppIcons.yulmong;
+                      break;
+                    default:
+                      return; // 판별하지 못했다면 마커 찍지 X
+                  }
+                  isKill = true;
+                  Future.delayed(Duration(seconds: 3), () {
+                    isKill = false;
+                    setState(() {});
+                  });
                   trashId += 1;
                   NMarker trashMarker = NMarker(
-                      id: 'trash$trashId',
-                      position: NLatLng(trashLatitude, trashLongitude));
-
+                    angle: 30,
+                    id: 'trash$trashId',
+                    position: NLatLng(trashLatitude, trashLongitude),
+                    icon: NOverlayImage.fromAssetImage(monsterIcon),
+                    size: const NSize(30, 40),
+                  );
+                  trashMarker.setGlobalZIndex(trashId);
                   _mapController!.addOverlay(trashMarker);
                   setState(() {});
                 }
@@ -176,6 +210,7 @@ class _ProgressMapState extends State<ProgressMap> {
     print('현재 위치 : ${position.latitude}, ${position.longitude}');
   }
 
+// 실시간으로 경로 받아오는 함수
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
@@ -202,15 +237,15 @@ class _ProgressMapState extends State<ProgressMap> {
         color: AppColors.basicgreen,
       ));
     });
-  } // 실시간으로 경로 받아오는 함수
+  }
 
   // 지도에서 다른 화면을 보다가 현재 위치로 돌아오는 함수
   void returnCurrentLocation() async {
     await getPathLocation();
     print('현재 위치로 $latitude랑 $longitude');
+    await _mapController!.updateCamera(NCameraUpdate.withParams(
+        target: NLatLng(latitude, longitude), zoom: 15, bearing: 0, tilt: 45));
     _mapController!.setLocationTrackingMode(NLocationTrackingMode.face);
-    // _mapController!.updateCamera(NCameraUpdate.withParams(
-    //     target: NLatLng(latitude, longitude), zoom: 15, bearing: 0, tilt: 45));
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -253,9 +288,7 @@ class _ProgressMapState extends State<ProgressMap> {
 
   void updateMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
-    await _mapController!.clearOverlays(
-      type: NOverlayType.marker,
-    );
+
     var jsonData = await readJsonData();
     Map<String, List<NMarker>> clusters = {};
 
@@ -278,11 +311,6 @@ class _ProgressMapState extends State<ProgressMap> {
         );
       }
     }
-    // _mapController!.deleteOverlay(NOverlayInfo(type: type, id: id))
-    // print("줌 $_currentZoom");
-    if (_currentZoom < 13) {
-      await _mapController!.clearOverlays(type: NOverlayType.marker);
-    }
     // 클러스터 또는 개별 마커 표시
     clusters.forEach(
       (key, markers) {
@@ -292,6 +320,7 @@ class _ProgressMapState extends State<ProgressMap> {
         } else {
           // 개별 마커 표시
           for (final marker in markers) {
+            marker.setMinZoom(13);
             _mapController!.addOverlay(marker);
             final onMarkerInfoWindow = NInfoWindow.onMarker(
               id: marker.info.id,
@@ -328,9 +357,10 @@ class _ProgressMapState extends State<ProgressMap> {
       position: NLatLng(centerLat, centerLng),
       icon: const NOverlayImage.fromAssetImage(AppIcons.trash_tong),
       // 클러스터 아이콘 설정
-      size: const NSize(100, 100),
+      size: const NSize(90, 90),
       caption: NOverlayCaption(text: '${markers.length}', textSize: 20),
     );
+    clusterMarker.setMaxZoom(13);
     _mapController!.addOverlay(clusterMarker);
   }
 
@@ -365,22 +395,12 @@ class _ProgressMapState extends State<ProgressMap> {
 
                   _mapController!
                       .setLocationTrackingMode(NLocationTrackingMode.face);
-
-                  // _mapController!.updateCamera(
-                  //   NCameraUpdate.withParams(
-                  //       target: NLatLng(latitude, longitude),
-                  //       zoom: 15,
-                  //       bearing: 0,
-                  //       tilt: 45)
-                  //     ..setPivot(const NPoint(1 / 2, 10 / 11)),
-                  // );
-
                   updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
                 },
                 onCameraIdle: onCameraIdle,
                 options: NaverMapViewOptions(
-                    minZoom: 13,
-                    maxZoom: 16,
+                    // minZoom: 13,
+                    // maxZoom: 16,
                     scaleBarEnable: false,
                     logoAlign: NLogoAlign.leftTop,
                     logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
@@ -409,87 +429,56 @@ class _ProgressMapState extends State<ProgressMap> {
                     });
                   },
                   child: isTrashTotal
-                      ? Container(
-                          width: MediaQuery.of(context).size.width * 0.37,
-                          decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: AppColors.basicgray.withOpacity(0.2),
-                                    blurRadius: 1,
-                                    spreadRadius: 1)
-                              ]),
-                          child: Column(
-                            children: [
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      '총 처치 현황',
-                                      style: CustomFontStyle.getTextStyle(
-                                        context,
-                                        CustomFontStyle.yeonSung60,
-                                      ),
-                                    ),
-                                  ]),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Image.asset(
-                                      AppIcons.trash_tong,
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                    Text(
-                                      '플라몽 처치 : 1',
-                                      style: CustomFontStyle.getTextStyle(
-                                        context,
-                                        CustomFontStyle.yeonSung60,
-                                      ),
-                                    ),
-                                  ]),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      '율몽 처치 : 1',
-                                      style: CustomFontStyle.getTextStyle(
-                                        context,
-                                        CustomFontStyle.yeonSung60,
-                                      ),
-                                    ),
-                                  ]),
-                            ],
-                          ),
+                      ? TotalTrash(
+                          plastic: plastic,
+                          can: can,
+                          glass: glass,
+                          normal: normal,
                         )
-                      : Container(
-                          width: MediaQuery.of(context).size.width * 0.37,
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: AppColors.basicgray.withOpacity(0.2),
-                                    blurRadius: 1,
-                                    spreadRadius: 1)
-                              ]),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  '플라몬 처치 + 1',
-                                  style: CustomFontStyle.getTextStyle(
-                                    context,
-                                    CustomFontStyle.yeonSung60,
-                                  ),
-                                ),
-                              ]),
-                        ),
+                      : isKill
+                          ? Container(
+                              width: MediaQuery.of(context).size.width * 0.37,
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(30),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: AppColors.basicgray
+                                            .withOpacity(0.2),
+                                        blurRadius: 1,
+                                        spreadRadius: 1)
+                                  ]),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text(
+                                      '$displayMonster + 1',
+                                      style: CustomFontStyle.getTextStyle(
+                                        context,
+                                        CustomFontStyle.yeonSung60,
+                                      ),
+                                    ),
+                                  ]),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(40),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: AppColors.basicgray
+                                            .withOpacity(0.2),
+                                        blurRadius: 1,
+                                        spreadRadius: 1)
+                                  ]),
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              width: MediaQuery.of(context).size.height * 0.06,
+                              child: const Center(
+                                child: Icon(Icons.my_location),
+                              ),
+                            ),
                 ),
               ),
               Positioned(

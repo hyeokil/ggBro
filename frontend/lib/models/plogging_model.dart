@@ -38,7 +38,8 @@ class PloggingModel with ChangeNotifier {
     return ploggingId;
   }
 
-// Future<Map<String, dynamic>>
+  late Map<String, dynamic> classificationData;
+
   Future<String> classificationTrash(String accessToken, double latitude,
       double longitude, List<int> image) async {
     var url = Uri.https(address, "/api/v1/plogging/trash/$ploggingId");
@@ -51,16 +52,20 @@ class PloggingModel with ChangeNotifier {
     print(
         'classificationTrash request : $url, headers : $headers body : $body');
     final response = await http.post(url, headers: headers, body: body);
-    print(
-        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataHeader"]}');
+
     print(
         'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
 
     if (response.statusCode == 200) {
-      ploggingId = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      classificationData =
+          json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       return 'Success';
     } else {
       return 'fail';
     }
+  }
+
+  getClassificationData() {
+    return classificationData;
   }
 }
