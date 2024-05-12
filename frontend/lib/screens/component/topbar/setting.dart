@@ -38,17 +38,17 @@ class _ProfileImageState extends State<Setting> {
       context.push('/main');
       mainProvider.menuSelected('main');
     }
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return GoPloggingTutorialDialog();
-    //   },
-    // ).then(
-    //       (value) {
-    //     setState(() {});
-    //     context.push('/ploggingReady');
-    //   },
-    // );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return GoPloggingTutorialDialog();
+      },
+    ).then(
+          (value) {
+        setState(() {});
+        context.push('/ploggingReady');
+      },
+    );
   }
 
   void goIntro() {

@@ -71,6 +71,7 @@ class _RankingState extends State<RankingScreen> {
                             children: [
                               RankingNameBar(
                                 nickName: people[0]["nickname"],
+                                profile: people[0]['profile_pet_id'],
                               ),
                               SizedBox(
                                 height:
@@ -88,7 +89,12 @@ class _RankingState extends State<RankingScreen> {
                           child: Column(
                             children: [
                               RankingNameBar(
-                                nickName: people.length >= 2 ? people[1]["nickname"] : '',
+                                nickName: people.length >= 2
+                                    ? people[1]["nickname"]
+                                    : '',
+                                profile: people.length >= 2
+                                    ? people[0]['profile_pet_id']
+                                    : 0,
                               ),
                               SizedBox(
                                 height:
@@ -107,7 +113,12 @@ class _RankingState extends State<RankingScreen> {
                           child: Column(
                             children: [
                               RankingNameBar(
-                                nickName: people.length >= 3 ? people[2]["nickname"] : '',
+                                nickName: people.length >= 3
+                                    ? people[2]["nickname"]
+                                    : '',
+                                profile: people.length >= 3
+                                    ? people[0]['profile_pet_id']
+                                    : 0,
                               ),
                               SizedBox(
                                 height:
