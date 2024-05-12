@@ -55,4 +55,21 @@ class MemberModel with ChangeNotifier {
       return "fail";
     }
   }
+
+  Future<String> finishTutorial(String accessToken) async {
+    var url = Uri.https(address, "/api/v1/member/tutorial");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+
+    final response = await http.post(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      print("성공");
+      return "Success";
+    } else {
+      return "fail";
+    }
+  }
 }

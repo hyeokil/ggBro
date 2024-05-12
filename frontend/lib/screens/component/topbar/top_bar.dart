@@ -36,9 +36,29 @@ class _TopBarState extends State<TopBar> {
     mainProvider.menuSelected(selected);
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var CurrentProfileImage =
+    var currentProfileImage =
         Provider.of<UserProvider>(context, listen: true).getProfileImage();
     final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
 
@@ -68,11 +88,15 @@ class _TopBarState extends State<TopBar> {
                 selectedMenu('profile');
               }
             },
+            onTapDown: _onTapDown,
+            onTapUp: _onTapUp,
+            onTapCancel: _onTapCancel,
             child: ProfileImage(
-              image: CurrentProfileImage == 0
+              image: currentProfileImage == 0
                   ? Image.asset(AppIcons.earth_1)
                   : Image.network(
-                      '${allPets[CurrentProfileImage - 1]['image']}'),
+                      '${allPets[currentProfileImage - 1]['image']}'),
+              isPressed : _isPressed,
             ),
           ),
           const GgingBar(),

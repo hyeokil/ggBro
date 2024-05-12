@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
   bool _isFinish = false;
   late UserProvider userProvider;
   late String accessToken;
+  late bool memberTutorial;
   final TextEditingController _nickNameController = TextEditingController();
 
   AnimationController? _animationController_box;
@@ -42,6 +44,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
 
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+    memberTutorial = userProvider.getMemberTutorial();
 
     _animationController_box = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this);
@@ -76,6 +79,26 @@ class _OpenPetDialogState extends State<OpenPetDialog>
       setState(() {
         _isFinish = !_isFinish;
       });
+    });
+  }
+
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
     });
   }
 
@@ -169,9 +192,18 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               String nickName = _nickNameController.text;
                               await pet.updateNickName(accessToken, -1, nickName);
                               await pet.getPetDetail(accessToken, -1);
+                              if (memberTutorial == false) {
+                                final member = Provider.of<MemberModel>(context, listen: false);
+                                member.finishTutorial(accessToken);
+                                userProvider.setTutorial(true);
+                                userProvider.setMemberTutorial(true);
+                              }
 
                               Navigator.of(context).pop();
                             },
+                            onTapDown: _onTapDown,
+                            onTapUp: _onTapUp,
+                            onTapCancel: _onTapCancel,
                             child: Container(
                               height: MediaQuery.of(context).size.height * 0.07,
                               width: MediaQuery.of(context).size.width * 0.2,
@@ -180,7 +212,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                                 borderRadius: BorderRadius.circular(20),
                                 border:
                                     Border.all(width: 3, color: Colors.white),
-                                boxShadow: [
+                                boxShadow: _isPressed ? [] : [
                                   BoxShadow(
                                       color: AppColors.basicShadowGray
                                           .withOpacity(0.5),

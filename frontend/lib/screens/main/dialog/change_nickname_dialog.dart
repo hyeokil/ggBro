@@ -27,6 +27,26 @@ class _ChangeNickNameDialogState extends State<ChangeNickNameDialog> {
     accessToken = userProvider.getAccessToken();
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -124,6 +144,9 @@ class _ChangeNickNameDialogState extends State<ChangeNickNameDialog> {
                       Navigator.of(context).pop();
                     }
                   },
+                  onTapDown: _onTapDown,
+                  onTapUp: _onTapUp,
+                  onTapCancel: _onTapCancel,
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.05,
                     width: MediaQuery.of(context).size.width * 0.13,
@@ -131,7 +154,7 @@ class _ChangeNickNameDialogState extends State<ChangeNickNameDialog> {
                       color: AppColors.rescueButton,
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(width: 3, color: Colors.white),
-                      boxShadow: [
+                      boxShadow: _isPressed ? [] : [
                         BoxShadow(
                             color: AppColors.basicShadowGray.withOpacity(0.5),
                             offset: const Offset(0, 4),

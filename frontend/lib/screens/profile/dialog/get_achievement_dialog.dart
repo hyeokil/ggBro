@@ -58,78 +58,85 @@ class _GetAchievementDialogState extends State<GetAchievementDialog>
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.transparent,
-      content: Container(
-        height: MediaQuery.of(context).size.height * 0.5,
-        child: Stack(
-          children: [
-            AnimatedBuilder(
-              animation: _animationController_intersect!,
-              builder: (context, widget) {
-                if (_rotateAnimation_intersect != null) {
-                  return Transform.rotate(
-                    angle: _rotateAnimation_intersect!.value,
-                    child: widget,
-                  );
-                } else {
-                  return Container();
-                }
-              },
-              child: Container(
-                child: Center(
-                  child: Image.asset(AppIcons.big_intersect),
-                ),
-              ),
-            ),
-            AnimatedBuilder(
-              animation: _animationController_achievement!,
-              builder: (context, widget) {
-                if (_scaleAnimation_achievement != null) {
-                  return Transform.scale(
-                    scale: _scaleAnimation_achievement!.value,
-                    child: widget,
-                  );
-                } else {
-                  return Container();
-                }
-              },
-              child: Container(
-                color: Colors.transparent,
-                child: Center(
-                  child: Image.asset(
-                    widget.index == 0 || widget.index == 2
-                        ? AppIcons.intro_box
-                        : AppIcons.gging,
-                    width: MediaQuery.of(context).size.width * 0.7,
+    return GestureDetector(
+      onTap: () {
+        if (_isFinish) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Container(
+        color: Colors.transparent,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Stack(
+            children: [
+              AnimatedBuilder(
+                animation: _animationController_intersect!,
+                builder: (context, widget) {
+                  if (_rotateAnimation_intersect != null) {
+                    return Transform.rotate(
+                      angle: _rotateAnimation_intersect!.value,
+                      child: widget,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+                child: Container(
+                  child: Center(
+                    child: Image.asset(AppIcons.big_intersect),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              left: MediaQuery.of(context).size.width * 0.05,
-              bottom: 0,
-              child: Container(
-                // color: Colors.black,
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: Center(
-                  child: _isFinish
-                      ? widget.index == 0 || widget.index == 2
-                          ? Text(
-                              '상자를 획득하였습니다!',
-                              style: CustomFontStyle.getTextStyle(
-                                  context, CustomFontStyle.yeonSung90_white),
-                            )
-                          : Text(
-                              '5000낑을 획득하였습니다!',
-                              style: CustomFontStyle.getTextStyle(
-                                  context, CustomFontStyle.yeonSung90_white),
-                            )
-                      : Container(),
+              AnimatedBuilder(
+                animation: _animationController_achievement!,
+                builder: (context, widget) {
+                  if (_scaleAnimation_achievement != null) {
+                    return Transform.scale(
+                      scale: _scaleAnimation_achievement!.value,
+                      child: widget,
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: Image.asset(
+                      widget.index == 0 || widget.index == 2
+                          ? AppIcons.intro_box
+                          : AppIcons.gging,
+                      width: MediaQuery.of(context).size.width * 0.7,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                left: MediaQuery.of(context).size.width * 0.2,
+                bottom: MediaQuery.of(context).size.height * 0.2,
+                child: Container(
+                  // color: Colors.black,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Center(
+                    child: _isFinish
+                        ? widget.index == 0 || widget.index == 2
+                            ? Text(
+                                '상자를 획득하였습니다!',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung90_white),
+                              )
+                            : Text(
+                                '5000낑을 획득하였습니다!',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung90_white),
+                              )
+                        : Container(),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
