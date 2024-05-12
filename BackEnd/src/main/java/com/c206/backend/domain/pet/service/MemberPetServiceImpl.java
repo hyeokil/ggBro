@@ -88,12 +88,17 @@ public class MemberPetServiceImpl implements MemberPetService {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
+
                 throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+
+        if(!Objects.equals(memberPet.getMember().getId(), memberId)){
+            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+        }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
 
