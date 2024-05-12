@@ -31,14 +31,18 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late MainProvider mainProvider;
   late UserProvider userProvider;
+  late PetModel petModel;
   late String accessToken;
+  late List allPets = [];
 
   @override
   void initState() {
     super.initState();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    petModel = Provider.of<PetModel>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+    allPets = petModel.allPets;
   }
 
   void selectedMenu(String selected) {
@@ -105,7 +109,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
     final member = Provider.of<MemberModel>(context, listen: true).getMember();
 
     return SafeArea(

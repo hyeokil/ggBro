@@ -78,7 +78,7 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     // 플로깅 끝내고 main 왔는지
-    if (tutorial == false && isTutorialPloggingFinish) {
+    if (memberTutorial == false && isTutorialPloggingFinish) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
             context: context,
