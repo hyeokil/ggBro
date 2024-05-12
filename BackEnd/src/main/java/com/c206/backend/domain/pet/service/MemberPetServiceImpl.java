@@ -82,18 +82,23 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
+    public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId, boolean isRedis) {
         // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
         if (memberPetId == -1) {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
+
                 throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+
+        if(!Objects.equals(memberPet.getMember().getId(), memberId)){
+            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+        }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
 

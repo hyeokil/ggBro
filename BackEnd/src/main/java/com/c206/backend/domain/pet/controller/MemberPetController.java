@@ -48,7 +48,7 @@ public class MemberPetController {
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
-        MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, memberPetId);
+        MemberPetDetailResponseDto memberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, memberPetId, true);
         return ResponseEntity.ok().body(Message.success(memberPetDetailResponseDto));
     }
 

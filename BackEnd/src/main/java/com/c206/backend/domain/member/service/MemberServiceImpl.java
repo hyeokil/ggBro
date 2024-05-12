@@ -144,7 +144,7 @@ public class MemberServiceImpl implements MemberService{
         List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(memberId);
         int totalTrashNormal = 0, totalTrashPlastic = 0, totalTrashCan = 0, totalTrashGlass = 0;
         for(MemberPetListResponseDto memberPetItem : memberPetList){
-            MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId());
+            MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId(), false);
             totalTrashNormal += memberPetDetail.getNormal();
             totalTrashNormal += memberPetDetail.getPlastic();
             totalTrashCan += memberPetDetail.getCan();
@@ -174,7 +174,7 @@ public class MemberServiceImpl implements MemberService{
         }
 
         try{
-            MemberPetDetailResponseDto MemberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, profilePetId);
+            MemberPetDetailResponseDto MemberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, profilePetId, false);
         }catch (Exception e){
             throw new PetException(PetError.NOT_FOUND_PET);
         }
