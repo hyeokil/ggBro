@@ -42,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     petModel = Provider.of<PetModel>(context, listen: false);
     accessToken = userProvider.getAccessToken();
-    allPets = petModel.allPets;
+    allPets = petModel.getAllPet();
   }
 
   void selectedMenu(String selected) {
