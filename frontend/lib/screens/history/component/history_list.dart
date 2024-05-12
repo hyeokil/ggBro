@@ -73,7 +73,7 @@ class _HistoryListState extends State<HistoryList> {
                 top: MediaQuery.of(context).size.height * 0.004,
                 left: MediaQuery.of(context).size.height * 0.004,
                 child: Container(
-                  padding: EdgeInsets.all(5),
+                  padding: EdgeInsets.fromLTRB(10, 3, 3, 0),
                   width: MediaQuery.of(context).size.width * 0.884,
                   height: MediaQuery.of(context).size.height * 0.075,
                   decoration: BoxDecoration(
@@ -146,12 +146,19 @@ class _HistoryListState extends State<HistoryList> {
                           onTapDown: _onTapDown,
                           onTapUp: _onTapUp,
                           onTapCancel: _onTapCancel,
-                          child: Container(
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: MediaQuery.of(context).size.width * 0.13,
-                            ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: MediaQuery.of(context).size.height * 0.051,
+                              ),
+                              Text(
+                                '상세정보',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung50_white),
+                              )
+                            ],
                           ),
                         ),
                       ),
