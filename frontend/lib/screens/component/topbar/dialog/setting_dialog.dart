@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/tutorial/go_plogginG_tutorial_dialog.dart';
+import 'package:frontend/screens/tutorial/introduce_main_profile_tutorial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -156,13 +158,15 @@ class _SettingDialogState extends State<SettingDialog> {
                     color: AppColors.basicgray,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: _isTutorialPressed ? [] : [
-                      BoxShadow(
-                          color: AppColors.basicgray.withOpacity(0.5),
-                          offset: Offset(0, 4),
-                          blurRadius: 1,
-                          spreadRadius: 1)
-                    ],
+                    boxShadow: _isTutorialPressed
+                        ? []
+                        : [
+                            BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.5),
+                                offset: Offset(0, 4),
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ],
                   ),
                   child: Column(
                     children: [
@@ -200,13 +204,15 @@ class _SettingDialogState extends State<SettingDialog> {
                     color: AppColors.basicgray,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: Colors.white, width: 2),
-                    boxShadow: _isIntroPressed ? [] : [
-                      BoxShadow(
-                          color: AppColors.basicgray.withOpacity(0.5),
-                          offset: Offset(0, 4),
-                          blurRadius: 1,
-                          spreadRadius: 1)
-                    ],
+                    boxShadow: _isIntroPressed
+                        ? []
+                        : [
+                            BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.5),
+                                offset: Offset(0, 4),
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ],
                   ),
                   child: Column(
                     children: [

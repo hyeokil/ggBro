@@ -23,6 +23,8 @@ class _RescueScreenState extends State<RescueScreen> {
   late RescueModel rescueModel;
   late UserProvider userProvider;
   late String accessToken;
+  bool _isButtonDisabled = false;
+
 
   @override
   void initState() {
@@ -135,18 +137,26 @@ class _RescueScreenState extends State<RescueScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      rescueModel.rescuePet(accessToken, currency, (result) {
-                        if (result == "Success") {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const RescuePetDialog();
-                            },
-                          );
-                        } else {
-                          // 실패 다이얼로그 처리
-                        }
-                      });
+                      if (!_isButtonDisabled) {
+                        setState(() {
+                          _isButtonDisabled = true;
+                        });
+                        rescueModel.rescuePet(accessToken, currency, (result) {
+                          if (result == "Success") {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const RescuePetDialog();
+                              },
+                            );
+                          } else {
+                            // 실패 다이얼로그 처리
+                          }
+                        });
+                        setState(() {
+                          _isButtonDisabled = false;
+                        });
+                      }
                     },
                     onTapDown: _onTapDown,
                     onTapUp: _onTapUp,
