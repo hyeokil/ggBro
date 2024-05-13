@@ -72,6 +72,8 @@ class _ProgressMapState extends State<ProgressMap> {
     totalDistance = 0;
     getPathLocation();
     realTimePath();
+    createTrashtongMarkers();
+    updateMarkers();
   }
 
   // 위젯 제거 될 때 controller 제거, Stream 구독 취소
@@ -258,7 +260,6 @@ class _ProgressMapState extends State<ProgressMap> {
     setState(() {
       isSelectedTrashTong = !isSelectedTrashTong;
     });
-    updateMarkers();
   }
 
   void onCameraIdle() {
@@ -286,11 +287,12 @@ class _ProgressMapState extends State<ProgressMap> {
     return "$gridLat:$gridLng";
   }
 
-  void updateMarkers() async {
+  Map<String, List<NMarker>> clusters = {};
+
+  void createTrashtongMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
 
     var jsonData = await readJsonData();
-    Map<String, List<NMarker>> clusters = {};
 
     if (isSelectedTrashTong) {
       for (var data in jsonData) {
@@ -311,6 +313,9 @@ class _ProgressMapState extends State<ProgressMap> {
         );
       }
     }
+  }
+
+  void updateMarkers() async {
     // 클러스터 또는 개별 마커 표시
     clusters.forEach(
       (key, markers) {
@@ -321,6 +326,7 @@ class _ProgressMapState extends State<ProgressMap> {
           // 개별 마커 표시
           for (final marker in markers) {
             marker.setMinZoom(13);
+            marker.setIsVisible(isSelectedTrashTong);
             _mapController!.addOverlay(marker);
             final onMarkerInfoWindow = NInfoWindow.onMarker(
               id: marker.info.id,
