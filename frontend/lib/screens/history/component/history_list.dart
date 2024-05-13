@@ -14,6 +14,26 @@ class HistoryList extends StatefulWidget {
 }
 
 class _HistoryListState extends State<HistoryList> {
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,7 +60,7 @@ class _HistoryListState extends State<HistoryList> {
                     color: AppColors.basicShadowGreen,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(width: 3, color: Colors.white),
-                    boxShadow: [
+                    boxShadow: _isPressed ? [] : [
                       BoxShadow(
                         color: AppColors.basicgray.withOpacity(0.5),
                         offset: Offset(0, 4),
@@ -53,7 +73,7 @@ class _HistoryListState extends State<HistoryList> {
                 top: MediaQuery.of(context).size.height * 0.004,
                 left: MediaQuery.of(context).size.height * 0.004,
                 child: Container(
-                  padding: EdgeInsets.all(5),
+                  padding: EdgeInsets.fromLTRB(10, 3, 3, 0),
                   width: MediaQuery.of(context).size.width * 0.884,
                   height: MediaQuery.of(context).size.height * 0.075,
                   decoration: BoxDecoration(
@@ -65,7 +85,7 @@ class _HistoryListState extends State<HistoryList> {
                       Container(
                         height: 55,
                         width: 55,
-                        child: ProfileImage(image: Image.asset(AppIcons.meka_sudal),), // 같이 간 펫
+                        child: ProfileImage(image: Image.asset(AppIcons.meka_sudal), isPressed: false,), // 같이 간 펫
                       ),
                       Positioned(
                         left: MediaQuery.of(context).size.width * 0.19,
@@ -123,12 +143,22 @@ class _HistoryListState extends State<HistoryList> {
                               },
                             );
                           },
-                          child: Container(
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.white,
-                              size: MediaQuery.of(context).size.width * 0.13,
-                            ),
+                          onTapDown: _onTapDown,
+                          onTapUp: _onTapUp,
+                          onTapCancel: _onTapCancel,
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: MediaQuery.of(context).size.height * 0.051,
+                              ),
+                              Text(
+                                '상세정보',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung50_white),
+                              )
+                            ],
                           ),
                         ),
                       ),

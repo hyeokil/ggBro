@@ -75,7 +75,7 @@ class PetModel with ChangeNotifier {
 
     if (response.statusCode == 200) {
       allPets = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
-      print(allPets);
+      print('올펫 $allPets');
       return "Success";
     } else {
       return "fail";

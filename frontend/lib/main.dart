@@ -10,6 +10,7 @@ import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/campaign_model.dart';
 import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
+import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/ranking_model.dart';
 import 'package:frontend/models/rescue_model.dart';
@@ -50,14 +51,17 @@ void main() async {
             create: (context) =>
                 QuestModel(Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
-            create: (context) =>
-                RankingModel(Provider.of<UserProvider>(context, listen: false))),
+            create: (context) => RankingModel(
+                Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
-            create: (context) =>
-                CampaignModel(Provider.of<UserProvider>(context, listen: false))),
+            create: (context) => CampaignModel(
+                Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
             create: (context) =>
                 MemberModel(Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) => PloggingModel(
+                Provider.of<UserProvider>(context, listen: false))),
         // ChangeNotifierProvider(create: (context) => AuthModel()),
       ],
       child: const MyApp(),

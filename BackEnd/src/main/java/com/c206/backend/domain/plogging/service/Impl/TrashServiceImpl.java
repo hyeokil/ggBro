@@ -203,16 +203,22 @@ public class TrashServiceImpl implements TrashService {
                 .currency(memberInfo.getCurrency() + currency)
                 .build();
         memberInfoRepository.save(newMemberInfo);
-        // pet 획득 여부 획득 확률 5%
-        boolean result = Math.random() < 0.05;
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberError.NOT_FOUND_MEMBER));
+        List<MemberPet> memberPets = memberPetRepository.findByMemberIdAndPetPetType(memberId,PetType.NORMAL);
+        List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
+        // pet 획득 여부 획득 확률 5%
+        boolean result = Math.random() < 0.05;
+        // 펫 구출과는 조금 다르다
+        // 펫구출시 모든 펫을 소지중이면 모두 에러로 보낸다
+        // 하지만 플로깅시에는 쓰레기 종류를 반환해야한다
+        // 따라서 펫 구출에 실패했다고 하고 에러로 보내지 않는다
+        if (memberPets.size() == pets.size()) {
+            result = false;
+        }
         if (result) {
-            List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
-            List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
             memberPetServiceImpl.createMemberPet(memberPets, pets, member);
         }
-
         return new CreateTrashResponseDto(
             trashType,
             value,

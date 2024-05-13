@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/plogging/finishplogging/component/finish_clear_monster_content.dart';
 import 'package:frontend/screens/plogging/finishplogging/component/finish_clear_monster_title.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class FinishPloggingDialog extends StatefulWidget {
   const FinishPloggingDialog({
@@ -17,6 +19,8 @@ class FinishPloggingDialog extends StatefulWidget {
 }
 
 class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
+
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -49,6 +53,10 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                 ),
                 GestureDetector(
                   onTap: () {
+
+                    var main = Provider.of<MainProvider>(context, listen: false);
+                    main.setIsTutorialPloggingFinish();
+
                     Navigator.of(context).pop();
                   },
                   child: Container(

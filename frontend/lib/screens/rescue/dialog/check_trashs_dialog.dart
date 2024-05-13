@@ -81,7 +81,12 @@ class _CheckTrashsDialogState extends State<CheckTrashsDialog>
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
+    return GestureDetector(
+      onTap: () {
+        if (_isFinish) {
+          Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(

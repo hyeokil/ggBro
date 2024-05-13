@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.IThrottledTemplateProcessor;
 
 import java.util.List;
 import java.util.Optional;
@@ -143,7 +144,7 @@ public class MemberServiceImpl implements MemberService{
         List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(memberId);
         int totalTrashNormal = 0, totalTrashPlastic = 0, totalTrashCan = 0, totalTrashGlass = 0;
         for(MemberPetListResponseDto memberPetItem : memberPetList){
-            MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId());
+            MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId(), false);
             totalTrashNormal += memberPetDetail.getNormal();
             totalTrashNormal += memberPetDetail.getPlastic();
             totalTrashCan += memberPetDetail.getCan();
@@ -173,13 +174,24 @@ public class MemberServiceImpl implements MemberService{
         }
 
         try{
-            MemberPetDetailResponseDto MemberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, profilePetId);
+            MemberPetDetailResponseDto MemberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, profilePetId, false);
         }catch (Exception e){
             throw new PetException(PetError.NOT_FOUND_PET);
         }
 
         memberInfo.updateProfilePetId(profilePetId);
         memberInfoRepository.save(memberInfo);
+        return true;
+    }
+
+    @Override
+    public boolean updateMemberTutorial(Long memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberError.NOT_FOUND_MEMBER)
+        );
+        member.updateMemberTutorial();
+
         return true;
     }
 

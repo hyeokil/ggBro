@@ -36,12 +36,33 @@ class _TopBarState extends State<TopBar> {
     mainProvider.menuSelected(selected);
   }
 
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var CurrentProfileImage = Provider.of<UserProvider>(context, listen: true).getProfileImage();
+    var currentProfileImage =
+        Provider.of<UserProvider>(context, listen: true).getProfileImage();
     final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
 
-    return Container(
+    return SizedBox(
       height: 100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -67,14 +88,19 @@ class _TopBarState extends State<TopBar> {
                 selectedMenu('profile');
               }
             },
+            onTapDown: _onTapDown,
+            onTapUp: _onTapUp,
+            onTapCancel: _onTapCancel,
             child: ProfileImage(
-              image: CurrentProfileImage == 0
+              image: currentProfileImage == 0
                   ? Image.asset(AppIcons.earth_1)
-                  : Image.network('${allPets[CurrentProfileImage - 1]['image']}'),
+                  : Image.network(
+                      '${allPets[currentProfileImage - 1]['image']}'),
+              isPressed : _isPressed,
             ),
           ),
-          GgingBar(),
-          Setting(),
+          const GgingBar(),
+          const Setting(),
         ],
       ),
     );

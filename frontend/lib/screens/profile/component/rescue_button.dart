@@ -4,7 +4,12 @@ import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class RescueButton extends StatefulWidget {
-  const RescueButton({super.key});
+  final bool isPressed;
+
+  const RescueButton({
+    super.key,
+    required this.isPressed,
+  });
 
   @override
   State<RescueButton> createState() => _AchievementButtonState();
@@ -20,7 +25,7 @@ class _AchievementButtonState extends State<RescueButton> {
         color: AppColors.rescueButton,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(width: 3, color: Colors.white),
-        boxShadow: [
+        boxShadow: widget.isPressed ? [] : [
           BoxShadow(
             color: AppColors.basicgray.withOpacity(0.5),
             offset: Offset(0, 4),

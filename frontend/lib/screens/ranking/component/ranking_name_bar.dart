@@ -4,14 +4,18 @@ import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/screens/component/topbar/profile_image.dart';
+import 'package:provider/provider.dart';
 
 class RankingNameBar extends StatefulWidget {
   final String nickName;
+  final int profile;
 
   const RankingNameBar({
     super.key,
     required this.nickName,
+    required this.profile,
   });
 
   @override
@@ -21,6 +25,8 @@ class RankingNameBar extends StatefulWidget {
 class _RankingNameBarState extends State<RankingNameBar> {
   @override
   Widget build(BuildContext context) {
+    final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
+
     return Container(
       color: Colors.transparent,
       width: MediaQuery.of(context).size.width * 0.25,
@@ -29,7 +35,10 @@ class _RankingNameBarState extends State<RankingNameBar> {
         children: [
           Positioned(
             child: ProfileImage(
-              image: Image.asset(AppIcons.meka_sudal),
+              image: widget.profile == 0
+                  ? Image.asset(AppIcons.transparent)
+                  : Image.network('${allPets[widget.profile - 1]['image']}'),
+              isPressed: false,
             ),
             left: MediaQuery.of(context).size.width * 0.045,
           ),
