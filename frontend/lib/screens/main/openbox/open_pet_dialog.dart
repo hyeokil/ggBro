@@ -6,6 +6,7 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/user_provider.dart';
+import 'package:frontend/screens/tutorial/introduce_main_profile_tutorial.dart';
 import 'package:provider/provider.dart';
 
 class OpenPetDialog extends StatefulWidget {
@@ -191,15 +192,18 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               await pet.updateNickName(
                                   accessToken, -1, nickName);
                               await pet.getPetDetail(accessToken, -1);
-                              if (memberTutorial == false) {
-                                final member = Provider.of<MemberModel>(context,
-                                    listen: false);
-                                member.finishTutorial(accessToken);
-                                userProvider.setTutorial(true);
-                                userProvider.setMemberTutorial(true);
-                              }
+
+                              userProvider.setTutorial(true);
 
                               Navigator.of(context).pop();
+                              if (memberTutorial == false) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return IntroduceMainProfileTutorial();
+                                  },
+                                );
+                              }
                             },
                             onTapDown: _onTapDown,
                             onTapUp: _onTapUp,

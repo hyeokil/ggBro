@@ -58,6 +58,14 @@ class _GoPloggingTutorialDialogState extends State<GoPloggingTutorialDialog>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _animationController_earth!.dispose();
+    _animationController_speak_bubble!.dispose();
+    _animationController_ready_button!.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
