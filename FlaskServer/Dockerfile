@@ -21,4 +21,4 @@ ENV FLASK_RUN_HOST=0.0.0.0
 EXPOSE 5000
 
 # Flask 서버 실행
-CMD ["flask", "run"]
+CMD ["python", "app.py"]
