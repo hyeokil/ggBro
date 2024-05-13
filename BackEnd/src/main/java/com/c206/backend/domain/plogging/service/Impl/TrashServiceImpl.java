@@ -79,7 +79,7 @@ public class TrashServiceImpl implements TrashService {
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
             formData.add("url", imageUrl);
             Map<String, String> response = webClient.post()
-                    .uri("/predict")
+                    .uri("")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(formData)
                     .retrieve()
