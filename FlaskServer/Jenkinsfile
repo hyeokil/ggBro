@@ -13,16 +13,6 @@ pipeline {
 
             }
         }
-        stage('Setup Environment') {
-            steps {
-                dir("${env.WORKSPACE}/FlaskServer"){
-                    script {
-                        sh "ls -al"
-                        sh "chmod +x ./gradlew"
-                    }
-                }
-            }
-        }
         stage("Build") {
             steps {
                 script {
@@ -68,7 +58,7 @@ pipeline {
                 script {
                     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'Docker-hub', usernameVariable: 'DOCKER_USER_ID', passwordVariable: 'DOCKER_USER_PASSWORD']]) {
                         try {
-                        sh "docker run -d --name ai -p 9002:8080 \
+                        sh "docker run -d --name ai -p 9002:5000 \
                         ${DOCKERHUB_REGISTRY}"
 //                             sh "docker-compose -f ${env.WORKSPACE}/docker-compose.yml up -d"
 
