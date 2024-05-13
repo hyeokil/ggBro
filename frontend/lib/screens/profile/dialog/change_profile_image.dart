@@ -108,7 +108,6 @@ class _ChangeProfileImageState extends State<ChangeProfileImage> {
           onTap: () async {
             final member = Provider.of<MemberModel>(context, listen: false);
             await member.updateProfileImage(accessToken, widget.index);
-            userProvider.setProfileImage(widget.index);
             Navigator.of(context).pop();
           },
           child: Container(
