@@ -36,7 +36,7 @@ class _RankingNameBarState extends State<RankingNameBar> {
           Positioned(
             child: ProfileImage(
               image: widget.profile == 0
-                  ? Image.asset(AppIcons.transparent)
+                  ? Image.asset(AppIcons.earth_3)
                   : Image.network('${allPets[widget.profile - 1]['image']}'),
               isPressed: false,
             ),

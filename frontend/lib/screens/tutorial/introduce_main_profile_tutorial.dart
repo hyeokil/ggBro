@@ -190,7 +190,7 @@ class _IntroduceMainProfileTutorialState
                           // 자식 위젯을 둥글게 클리핑
                           borderRadius: BorderRadius.circular(40),
                           // 여기서도 컨테이너의 borderRadius와 동일하게 설정
-                          child: Image.asset(AppIcons.earth_1), // 이곳에 프로필 이미지 위젯을 삽입
+                          child: Image.asset(AppIcons.earth_3), // 이곳에 프로필 이미지 위젯을 삽입
                         ),
                       ),
                     ),

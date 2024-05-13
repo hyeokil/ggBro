@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/models/history_model.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
 import 'package:frontend/screens/history/component/history_list.dart';
+import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -14,6 +16,8 @@ class HistoryScreen extends StatefulWidget {
 class _RankingState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
+    final histories = Provider.of<HistoryModel>(context, listen: true).getHistories();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
@@ -116,31 +118,30 @@ class _IntroduceMainMenuTutorialState extends State<IntroduceMainMenuTutorial>
               ),
             ),
             Positioned(
-              right: MediaQuery.of(context).size.width * 0.09,
-              top: MediaQuery.of(context).size.width * 0.24,
-              child: AnimatedBuilder(
-                animation: _scaleAnimation_menu!,
-                builder: (context, widget) {
-                  if (_scaleAnimation_menu != null) {
-                    return Transform.scale(
-                      scale: _scaleAnimation_menu!.value,
-                      child: widget,
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.white.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(width: 3, color: Colors.white),
-                  ),
-                  width: MediaQuery.of(context).size.width * 0.83,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Menu(
+              right: MediaQuery.of(context).size.width * 0.08,
+              top: MediaQuery.of(context).size.width * 0.245,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                width: MediaQuery.of(context).size.width * 0.84,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _scaleAnimation_menu!,
+                      builder: (context, widget) {
+                        if (_scaleAnimation_menu != null) {
+                          return Transform.scale(
+                            scale: _scaleAnimation_menu!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: Menu(
                         color: AppColors.basicpink,
                         shadowColor: AppColors.basicShadowPink,
                         icon: Icon(
@@ -151,10 +152,23 @@ class _IntroduceMainMenuTutorialState extends State<IntroduceMainMenuTutorial>
                         content: '주간 퀘스트',
                         isPressed: false,
                       ),
-                      // SizedBox(
-                      //   width: MediaQuery.of(context).size.width * 0.04,
-                      // ),
-                      Menu(
+                    ),
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.04,
+                    // ),
+                    AnimatedBuilder(
+                      animation: _scaleAnimation_menu!,
+                      builder: (context, widget) {
+                        if (_scaleAnimation_menu != null) {
+                          return Transform.scale(
+                            scale: _scaleAnimation_menu!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: Menu(
                         color: AppColors.basicgray,
                         shadowColor: AppColors.basicShadowGray,
                         icon: Icon(
@@ -165,10 +179,23 @@ class _IntroduceMainMenuTutorialState extends State<IntroduceMainMenuTutorial>
                         content: '랭킹',
                         isPressed: false,
                       ),
-                      // SizedBox(
-                      //   width: MediaQuery.of(context).size.width * 0.04,
-                      // ),
-                      Menu(
+                    ),
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.04,
+                    // ),
+                    AnimatedBuilder(
+                      animation: _scaleAnimation_menu!,
+                      builder: (context, widget) {
+                        if (_scaleAnimation_menu != null) {
+                          return Transform.scale(
+                            scale: _scaleAnimation_menu!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: Menu(
                         color: AppColors.basicgreen,
                         shadowColor: AppColors.basicShadowGreen,
                         icon: Icon(
@@ -179,10 +206,23 @@ class _IntroduceMainMenuTutorialState extends State<IntroduceMainMenuTutorial>
                         content: '히스토리',
                         isPressed: false,
                       ),
-                      // SizedBox(
-                      //   width: MediaQuery.of(context).size.width * 0.04,
-                      // ),
-                      Menu(
+                    ),
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.04,
+                    // ),
+                    AnimatedBuilder(
+                      animation: _scaleAnimation_menu!,
+                      builder: (context, widget) {
+                        if (_scaleAnimation_menu != null) {
+                          return Transform.scale(
+                            scale: _scaleAnimation_menu!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: Menu(
                         color: AppColors.basicnavy,
                         shadowColor: AppColors.basicShadowNavy,
                         icon: Icon(
@@ -193,8 +233,8 @@ class _IntroduceMainMenuTutorialState extends State<IntroduceMainMenuTutorial>
                         content: '캠페인',
                         isPressed: false,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
