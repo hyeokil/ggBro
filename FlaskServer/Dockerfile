@@ -1,13 +1,11 @@
-# CUDA 지원이 포함된 Python 이미지 사용
-FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04
+# Python 이미지 사용
+FROM python:3.8.10
 
-# 필요한 시스템 라이브러리 및 Python 설치
+# 필요한 시스템 라이브러리 설치
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
-    python3-pip \
-    python3.8.10 \
-    && ln -s /usr/bin/python3.8 /usr/bin/python
+    python3-pip
 
 # 작업 디렉터리 설정
 WORKDIR /app
