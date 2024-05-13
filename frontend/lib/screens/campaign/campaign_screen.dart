@@ -80,6 +80,8 @@ class _RankingState extends State<CampaignScreen> {
                           child: CampaignList(
                             title: campaign[index]['title'],
                             image: campaign[index]['image'],
+                            startDate: campaign[index]['start_date'],
+                            endDate: campaign[index]['end_date'],
                           ),
                         );
                       },

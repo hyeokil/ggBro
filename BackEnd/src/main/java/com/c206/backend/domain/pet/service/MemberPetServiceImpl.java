@@ -43,11 +43,9 @@ public class MemberPetServiceImpl implements MemberPetService {
         for (Pet pet:pets) {
             petIdSet.add(pet.getId());
         }
-        System.out.println(petIdSet);
         for (MemberPet memberPet : memberPets) {
             petIdSet.remove(memberPet.getPet().getId());
         }
-        System.out.println(petIdSet);
         List<Long> petIdList = new ArrayList<>(petIdSet);
         if (petIdList.isEmpty()) {
             throw new PetException(PetError.PET_OWNERSHIP_COMPLETE);
@@ -84,18 +82,23 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId) {
+    public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId, boolean isRedis) {
         // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
         if (memberPetId == -1) {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
+
                 throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+
+        if(!Objects.equals(memberPet.getMember().getId(), memberId)){
+            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+        }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
 
@@ -145,15 +148,17 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .currency(memberInfo.getCurrency()-1000)
                 .build();
         memberInfoRepository.save(newMemberInfo);
-        boolean result = Math.random() < 0.5; //테스트용으로 값 변경해놓음. 원래 값은 0.1
-        if (result) {
-            List<MemberPet> memberPets = memberPetRepository.findByMemberId(memberId);
-            List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
-            createMemberPet(memberPets, pets, member);
-            return true;
-        } else {
-            return false;
+
+        List<MemberPet> memberPets = memberPetRepository.findByMemberIdAndPetPetType(memberId,PetType.NORMAL);
+        List<Pet> pets = petRepository.findByPetTypeIs(PetType.NORMAL);
+        if (memberPets.size() == pets.size()) {
+            throw new PetException(PetError.PET_OWNERSHIP_COMPLETE);
         }
+        boolean result = Math.random() < 0.1;
+        if (result) {
+            createMemberPet(memberPets, pets, member);
+        }
+        return result;
     }
 
     @Override

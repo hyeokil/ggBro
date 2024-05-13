@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
@@ -31,6 +32,26 @@ class _ChangePartnerDialogState extends State<ChangePartnerDialog> {
     pets = petModel.pets;
     userProvider = Provider.of<UserProvider>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+  }
+
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
   }
 
   @override
@@ -135,7 +156,11 @@ class _ChangePartnerDialogState extends State<ChangePartnerDialog> {
                       await pet.getPetDetail(
                           accessToken, pets[index]['member_pet_id']);
                       Navigator.of(context).pop();
+                      // Fluttertoast.showToast(msg: '${pets[index]['nickname']}');
                     },
+                    onTapDown: _onTapDown,
+                    onTapUp: _onTapUp,
+                    onTapCancel: _onTapCancel,
                     child: ProfileImage(
                       image: pets[index]['active'] == false
                           ? Image.asset(
@@ -144,6 +169,7 @@ class _ChangePartnerDialogState extends State<ChangePartnerDialog> {
                               height: 50,
                             )
                           : Image.network('${pets[index]['image']}'),
+                      isPressed: _isPressed,
                     ),
                   ),
                 );

@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 class ScanDeviceTile extends StatefulWidget {
   final BluetoothDevice device;
   final Function func;
+
   const ScanDeviceTile({
     super.key,
     required this.device,
@@ -21,14 +22,53 @@ class ScanDeviceTile extends StatefulWidget {
   State<ScanDeviceTile> createState() => _ScanDeviceTileState();
 }
 
-class _ScanDeviceTileState extends State<ScanDeviceTile> {
+class _ScanDeviceTileState extends State<ScanDeviceTile>
+    with TickerProviderStateMixin {
   final int maxRetries = 10; // 최대 재시도 횟수
   int retryCount = 0; // 현재 재시도 횟수
   bool isConnected = false;
 
+  AnimationController? _animationController_dot1;
+  Animation<double>? _scaleAnimation_dot1;
+  AnimationController? _animationController_dot2;
+  Animation<double>? _scaleAnimation_dot2;
+  AnimationController? _animationController_dot3;
+  Animation<double>? _scaleAnimation_dot3;
+
   @override
   void initState() {
     super.initState();
+
+    _animationController_dot1 = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+    _scaleAnimation_dot1 =
+        Tween<double>(begin: 0, end: 1).animate(_animationController_dot1!);
+
+    _animationController_dot2 = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+    _scaleAnimation_dot2 =
+        Tween<double>(begin: 0, end: 1).animate(_animationController_dot2!);
+
+    _animationController_dot3 = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this);
+    _scaleAnimation_dot3 =
+        Tween<double>(begin: 0, end: 1).animate(_animationController_dot3!);
+
+    _animationController_dot1!.repeat(reverse: true);
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _animationController_dot2!.repeat(reverse: true);
+    });
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      _animationController_dot3!.repeat(reverse: true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController_dot1!.dispose();
+    _animationController_dot2!.dispose();
+    _animationController_dot3!.dispose();
+    super.dispose();
   }
 
   @override
@@ -64,11 +104,75 @@ class _ScanDeviceTileState extends State<ScanDeviceTile> {
                   style: CustomFontStyle.getTextStyle(
                       context, CustomFontStyle.yeonSung60_white),
                 ),
-                Text(
-                  isConnected ? '연결중.....' : '',
-                  style: CustomFontStyle.getTextStyle(
-                      context, CustomFontStyle.yeonSung60_white),
-                )
+                isConnected
+                    ? Row(
+                        children: [
+                          Text(
+                            '연결중',
+                            style: CustomFontStyle.getTextStyle(
+                                context, CustomFontStyle.yeonSung60_white),
+                          ),
+                          AnimatedBuilder(
+                            animation: _scaleAnimation_dot1!,
+                            builder: (context, widget) {
+                              if (_scaleAnimation_dot1 != null) {
+                                return Transform.scale(
+                                  scale: _scaleAnimation_dot1!.value,
+                                  child: widget,
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
+                            child: Text(
+                              '.',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung60_white),
+                            ),
+                          ),
+                          AnimatedBuilder(
+                            animation: _scaleAnimation_dot2!,
+                            builder: (context, widget) {
+                              if (_scaleAnimation_dot2 != null) {
+                                return Transform.scale(
+                                  scale: _scaleAnimation_dot2!.value,
+                                  child: widget,
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
+                            child: Text(
+                              '.',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung60_white),
+                            ),
+                          ),
+                          AnimatedBuilder(
+                            animation: _scaleAnimation_dot3!,
+                            builder: (context, widget) {
+                              if (_scaleAnimation_dot3 != null) {
+                                return Transform.scale(
+                                  scale: _scaleAnimation_dot3!.value,
+                                  child: widget,
+                                );
+                              } else {
+                                return Container();
+                              }
+                            },
+                            child: Text(
+                              '.',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung60_white),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Text(
+                        '',
+                        style: CustomFontStyle.getTextStyle(
+                            context, CustomFontStyle.yeonSung60_white),
+                      )
               ],
             ),
           ),

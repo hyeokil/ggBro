@@ -122,9 +122,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
     initBle();
   }
 
+  // 다이얼로그 끄면 스캔 멈추게
   @override
   void dispose() {
     super.dispose();
+    FlutterBluePlus.stopScan();
   }
 
   void initBle() {
@@ -164,7 +166,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
       var subscription = FlutterBluePlus.scanResults.listen((results) {
         setState(() {
           scanResults = results
-              .where((result) => result.device.advName.isNotEmpty)
+              .where((result) => result.device.advName == 'GingStick')
               .toList();
         });
         for (ScanResult result in results) {
