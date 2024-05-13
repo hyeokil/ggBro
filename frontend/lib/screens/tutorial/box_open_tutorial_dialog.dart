@@ -60,13 +60,13 @@ class _BoxOpenTutorialDialogState extends State<BoxOpenTutorialDialog>
             Positioned(
               top: MediaQuery.of(context).size.height * 0.26,
               left: MediaQuery.of(context).size.width * 0.15,
-              child: buttonCheck ? Container(
+              child: Container(
                 color: Colors.transparent,
                 child: Center(
                   child: Image.asset(AppIcons.intro_box,
                       width: MediaQuery.of(context).size.width * 0.7),
                 ),
-              ) : Container(),
+              ),
             ),
             Positioned(
               bottom: 0,

@@ -69,4 +69,4 @@ aws:
 
 # FLASK
 flask:
-  server-url: http://k10c206.p.ssafy.io:5000/predict # 젠킨스 환경변수 추가
+  server-url: https://k10c206.p.ssafy.io/predict # 젠킨스 환경변수 추가
