@@ -98,7 +98,7 @@ public class TrashServiceImpl implements TrashService {
         memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress(progress);
     }
 
-    private void  updateMemberQuest(Long memberId, Long questId) {
+    public void  updateMemberQuest(Long memberId, Long questId) {
         MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndQuestIdOrderByIdDesc(memberId,questId);
         if (memberQuest!=null) {
             memberQuest.updateProgress();

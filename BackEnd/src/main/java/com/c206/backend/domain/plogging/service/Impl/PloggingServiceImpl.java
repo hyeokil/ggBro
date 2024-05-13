@@ -11,6 +11,7 @@ import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.plogging.dto.LocationInfo;
 import com.c206.backend.domain.plogging.dto.request.FinishPloggingRequestDto;
+import com.c206.backend.domain.plogging.dto.response.FinishPloggingResponseDto;
 import com.c206.backend.domain.plogging.dto.response.GetTrashResponseDto;
 import com.c206.backend.domain.plogging.entity.Plogging;
 import com.c206.backend.domain.plogging.entity.PloggingRoute;
@@ -61,7 +62,7 @@ public class PloggingServiceImpl implements PloggingService {
     }
 
     @Override
-    public GetTrashResponseDto finishPlogging(Long ploggingId, FinishPloggingRequestDto finishPloggingRequestDto) {
+    public FinishPloggingResponseDto finishPlogging(Long ploggingId, FinishPloggingRequestDto finishPloggingRequestDto) {
         List<Object[]> results = trashRepository.countTrashByPloggingId(ploggingId);
         int normal=0,plastic = 0,can=0,glass=0;
         for (Object[] result : results) {
@@ -79,8 +80,9 @@ public class PloggingServiceImpl implements PloggingService {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         plogging.updateTime(now.format(formatter));
-//       플로깅 1회 업적 진행상황 동기화
+//       플로깅 1회 업적, 퀘스트 진행상황 동기화
         trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),1L,1);
+        trashServiceImpl.updateMemberQuest(plogging.getMember().getId(),1L);
 //        플로깅한 거리
         trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),
                 2L,
@@ -93,11 +95,12 @@ public class PloggingServiceImpl implements PloggingService {
                     .longitude(path.getLongitude())
                     .build());
         }
-        return new GetTrashResponseDto(
+        return new FinishPloggingResponseDto(
                 normal,
                 plastic,
                 can,
-                glass
+                glass,
+                plogging.getTime()
         );
     }
 }
