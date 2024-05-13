@@ -120,12 +120,12 @@ class _CampaignListState extends State<CampaignList> {
                               Icon(
                                 Icons.search,
                                 color: Colors.white,
-                                size: MediaQuery.of(context).size.height * 0.04,
+                                size: MediaQuery.of(context).size.height * 0.051,
                               ),
                               Text(
-                                '포스터',
+                                '상세정보',
                                 style: CustomFontStyle.getTextStyle(
-                                    context, CustomFontStyle.yeonSung60_white),
+                                    context, CustomFontStyle.yeonSung50_white),
                               )
                             ],
                           ),

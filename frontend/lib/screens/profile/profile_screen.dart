@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/models/achievement_model.dart';
@@ -42,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     petModel = Provider.of<PetModel>(context, listen: false);
     accessToken = userProvider.getAccessToken();
-    allPets = petModel.allPets;
+    allPets = petModel.getAllPet();
   }
 
   void selectedMenu(String selected) {
@@ -166,7 +164,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTapDown: _onAchievementTapDown,
                             onTapUp: _onAchievementTapUp,
                             onTapCancel: _onAchievementTapCancel,
-                            child: AchievementButton(isPressed : _isAchievementPressed),
+                            child: AchievementButton(
+                                isPressed: _isAchievementPressed),
                           ),
                         ),
                         Positioned(

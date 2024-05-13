@@ -6,7 +6,6 @@ import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
-import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart';
 import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:frontend/screens/tutorial/bluetooth_connect_tutorial_dialog.dart';
@@ -73,8 +72,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
   }
 
   goNext() {
-    print('가보자');
-    context.go('/ploggingProgress');
+    context.push('/ploggingProgress');
   }
 
   bool _isPressed = false;
