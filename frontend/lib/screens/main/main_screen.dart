@@ -7,6 +7,7 @@ import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/campaign_model.dart';
+import 'package:frontend/models/history_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/ranking_model.dart';
@@ -335,11 +336,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         //   width: MediaQuery.of(context).size.width * 0.04,
                         // ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             if (!_isButtonDisabled) {
                               setState(() {
                                 _isButtonDisabled = true; // 버튼 비활성화
                               });
+                              final history = Provider.of<HistoryModel>(
+                                  context,
+                                  listen: false);
+                              await history.getHistory(accessToken);
                               context.push('/history').then((value) {
                                 // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
                                 setState(() {

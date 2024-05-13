@@ -117,7 +117,7 @@ class _IntroduceMainSettingTutorialState
             ),
             Positioned(
               right: MediaQuery.of(context).size.width * 0.01,
-              top: MediaQuery.of(context).size.width * 0.04,
+              top: MediaQuery.of(context).size.width * 0.045,
               child: AnimatedBuilder(
                 animation: _scaleAnimation_setting!,
                 builder: (context, widget) {
