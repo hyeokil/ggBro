@@ -6,10 +6,12 @@ import com.c206.backend.domain.member.exception.MemberError;
 import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import com.c206.backend.domain.member.service.RedisService;
+import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.exception.PetError;
 import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
+import com.c206.backend.domain.pet.service.MemberPetService;
 import com.c206.backend.domain.plogging.dto.LocationInfo;
 import com.c206.backend.domain.plogging.dto.request.FinishPloggingRequestDto;
 import com.c206.backend.domain.plogging.dto.response.FinishPloggingResponseDto;
@@ -45,6 +47,7 @@ public class PloggingServiceImpl implements PloggingService {
     private final PloggingRouteRepository ploggingRouteRepository;
     private final TrashServiceImpl trashServiceImpl;
     private final RedisService redisService;
+    private final MemberPetService memberPetService;
 
     @Override
     public Long createPlogging(Long memberPetId, Long memberId) {
@@ -54,7 +57,9 @@ public class PloggingServiceImpl implements PloggingService {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
-                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+                List<MemberPetListResponseDto> mPList = memberPetService.getMemberPetList(memberId);
+                memberPetId = mPList.get(0).getMemberPetId();
+//                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
