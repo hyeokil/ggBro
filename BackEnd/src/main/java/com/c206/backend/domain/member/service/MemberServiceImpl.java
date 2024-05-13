@@ -15,6 +15,7 @@ import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
+import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
 import com.c206.backend.domain.pet.entity.MemberPet;
 import com.c206.backend.domain.pet.entity.Pet;
 import com.c206.backend.domain.pet.exception.PetError;
@@ -173,11 +174,28 @@ public class MemberServiceImpl implements MemberService{
             throw new MemberException(MemberError.NOT_FOUND_MEMBER);
         }
 
+
+        List<PetListResponseDto> petList = memberPetService.getPetList(memberId);
         try{
-            MemberPetDetailResponseDto MemberPetDetailResponseDto = memberPetService.getMemberPetDetail(memberId, profilePetId, false);
+            petList = memberPetService.getPetList(memberId);
         }catch (Exception e){
+            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+        }
+
+
+        for(PetListResponseDto petItem : petList){
+            System.out.println(petItem.getName()+" "+petItem.isHave()+" "+ petItem.isActive());
+        }
+
+        if(profilePetId <= 0 || profilePetId > 4){
             throw new PetException(PetError.NOT_FOUND_PET);
         }
+
+        if(!petList.get(profilePetId.intValue() - 1).isActive()){
+            throw new PetException(PetError.NOT_ACTIVE_PET);
+        }
+
+
 
         memberInfo.updateProfilePetId(profilePetId);
         memberInfoRepository.save(memberInfo);
