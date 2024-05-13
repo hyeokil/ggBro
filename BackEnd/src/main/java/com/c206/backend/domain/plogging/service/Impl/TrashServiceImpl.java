@@ -39,6 +39,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayInputStream;
@@ -74,10 +76,12 @@ public class TrashServiceImpl implements TrashService {
 
     private TrashType classifyTrash(String imageUrl) {
         try {
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("url", imageUrl);
             Map<String, String> response = webClient.post()
                     .uri("/predict")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue("{\"url\": \"" + imageUrl + "\"}")
+                    .bodyValue(formData)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                     .block(); // 동기 처리, 비동기로 변경 가능
