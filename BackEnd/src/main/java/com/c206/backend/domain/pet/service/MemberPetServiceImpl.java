@@ -88,8 +88,9 @@ public class MemberPetServiceImpl implements MemberPetService {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
-
-                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+                List<MemberPetListResponseDto> mPList = getMemberPetList(memberId);
+                memberPetId = mPList.get(0).getMemberPetId();
+//                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
@@ -186,7 +187,9 @@ public class MemberPetServiceImpl implements MemberPetService {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
-                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+                List<MemberPetListResponseDto> mPList = getMemberPetList(memberId);
+                memberPetId = mPList.get(0).getMemberPetId();
+//                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
@@ -210,7 +213,9 @@ public class MemberPetServiceImpl implements MemberPetService {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
             } catch (Exception e){
-                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
+                List<MemberPetListResponseDto> mPList = getMemberPetList(memberId);
+                memberPetId = mPList.get(0).getMemberPetId();
+//                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 

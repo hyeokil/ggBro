@@ -32,7 +32,7 @@ public class Plogging extends BaseEntity {
     private int distance;
 
     public void updateTime(String time) {
-        this.time = time;
+        this.time += time;
     }
 
     public void updateDistance(int distance) {

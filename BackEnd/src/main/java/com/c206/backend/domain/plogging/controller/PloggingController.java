@@ -4,6 +4,7 @@ import com.c206.backend.domain.plogging.dto.request.CreateTrashRequestDto;
 import com.c206.backend.domain.plogging.dto.request.FinishPloggingRequestDto;
 import com.c206.backend.domain.plogging.dto.request.GetTrashRequestDto;
 import com.c206.backend.domain.plogging.dto.response.CreateTrashResponseDto;
+import com.c206.backend.domain.plogging.dto.response.FinishPloggingResponseDto;
 import com.c206.backend.domain.plogging.dto.response.GetTrashResponseDto;
 import com.c206.backend.domain.plogging.service.PloggingService;
 import com.c206.backend.domain.plogging.service.TrashService;
@@ -56,10 +57,10 @@ public class PloggingController {
     }
 
     @PostMapping("/finish/{ploggingId}")
-    public ResponseEntity<Message<GetTrashResponseDto>> finishPlogging(
+    public ResponseEntity<Message<FinishPloggingResponseDto>> finishPlogging(
             @PathVariable("ploggingId") Long ploggingId,
             @RequestBody FinishPloggingRequestDto finishPloggingRequestDto) {
-        GetTrashResponseDto getTrashResponseDto = ploggingService.finishPlogging(ploggingId, finishPloggingRequestDto);
-        return ResponseEntity.ok().body(Message.success(getTrashResponseDto));
+        FinishPloggingResponseDto finishPloggingResponseDto = ploggingService.finishPlogging(ploggingId, finishPloggingRequestDto);
+        return ResponseEntity.ok().body(Message.success(finishPloggingResponseDto));
     }
 }

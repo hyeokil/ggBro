@@ -4,8 +4,16 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/member_model.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/main/openbox/open_pet_dialog.dart';
+import 'package:frontend/screens/tutorial/introduce_main_menu_tutorial.dart';
+import 'package:frontend/screens/tutorial/introduce_main_pet_nickname_tutorial.dart';
+import 'package:frontend/screens/tutorial/introduce_main_pet_tutorial.dart';
+import 'package:frontend/screens/tutorial/introduce_main_profile_tutorial.dart';
+import 'package:frontend/screens/tutorial/introduce_main_setting_tutorial.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class OpenBoxDialog extends StatefulWidget {
   final String image;
@@ -21,12 +29,20 @@ class OpenBoxDialog extends StatefulWidget {
 
 class _OpenBoxDialogState extends State<OpenBoxDialog>
     with TickerProviderStateMixin {
+  late UserProvider userProvider;
+  late String accessToken;
+  late bool memberTutorial;
+
   AnimationController? _animationController_box;
   Animation<double>? _rotateAnimation_box;
 
   @override
   void initState() {
     super.initState();
+
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
+    memberTutorial = userProvider.getMemberTutorial();
 
     _animationController_box = AnimationController(
         duration: const Duration(milliseconds: 500), vsync: this);
