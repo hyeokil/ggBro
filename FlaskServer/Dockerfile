@@ -8,7 +8,7 @@ WORKDIR /app
 COPY yolov5/requirements.txt .
 
 # 필요한 패키지 설치
-RUN python -m pip install --upgrade pip 
+RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 나머지 애플리케이션 파일 복사
