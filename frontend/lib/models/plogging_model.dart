@@ -52,7 +52,8 @@ class PloggingModel with ChangeNotifier {
     print(
         'classificationTrash request : $url, headers : $headers body : $body');
     final response = await http.post(url, headers: headers, body: body);
-
+    print(
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataHeaders]"]}');
     print(
         'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
 

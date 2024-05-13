@@ -246,14 +246,16 @@ class _ReadyMapState extends State<ReadyMap> {
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: _isPressed ? [] : [
-                          BoxShadow(
-                            color: AppColors.basicgray.withOpacity(0.5),
-                            offset: const Offset(0, 4),
-                            blurRadius: 1,
-                            spreadRadius: 1,
-                          )
-                        ],
+                        boxShadow: _isPressed
+                            ? []
+                            : [
+                                BoxShadow(
+                                  color: AppColors.basicgray.withOpacity(0.5),
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
+                                )
+                              ],
                       ),
                       child: Stack(
                         children: [

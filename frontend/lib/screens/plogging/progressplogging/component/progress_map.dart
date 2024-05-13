@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
@@ -42,7 +44,8 @@ class _ProgressMapState extends State<ProgressMap> {
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
   bool isSelectedTrashTong = false;
-  double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
+  final double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
+  List<NMarker> trashTongs = []; // 쓰레기통 마커 변수
 
   // 블루투스용 변수들
   late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
@@ -50,12 +53,14 @@ class _ProgressMapState extends State<ProgressMap> {
   late StreamSubscription<List<int>> blueSubscription;
   int trashId = 0;
   List<int> imageResult = []; // 블루투스로 데이터 받을 때 저장 변수
+  List<int> imageBytes = []; // 이미지 넘기는 변수
   // String base64String = '';
 
   // api 응답 관련 변수
   late PloggingModel ploggingModel;
   late int ploggingId;
   late String accessToken, displayMonster;
+  late Map<String, dynamic> classificationData;
   bool isKill = false;
   int plastic = 0, can = 0, glass = 0, normal = 0;
 
@@ -72,8 +77,6 @@ class _ProgressMapState extends State<ProgressMap> {
     totalDistance = 0;
     getPathLocation();
     realTimePath();
-    createTrashtongMarkers();
-    updateMarkers();
   }
 
   // 위젯 제거 될 때 controller 제거, Stream 구독 취소
@@ -100,7 +103,9 @@ class _ProgressMapState extends State<ProgressMap> {
       //       return const BluetoothConnectedDialog();
       //     });
     }
+
     List<BluetoothService> services = await device.discoverServices();
+
     for (BluetoothService service in services) {
       if (service.uuid == Guid('6E400001-B5A3-F393-E0A9-E50E24DCCA9E')) {
         for (BluetoothCharacteristic characteristic
@@ -116,14 +121,12 @@ class _ProgressMapState extends State<ProgressMap> {
               // 0이면서 쓰레기 데이터가 비어있지 않다면 데이터 합쳐서 쓰레기 줍기 api 요청
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
+                  imageBytes.addAll(imageResult);
                   // base64String = base64Encode(imageResult); base64 encode해서 보낼 경우 사용
-                  // 쓰레기 판별 API
                   String monsterIcon = '';
-                  ploggingModel.classificationTrash(
-                      accessToken, trashLatitude, trashLongitude, imageResult);
                   imageResult.clear();
-                  Map<String, dynamic> classificationData =
-                      ploggingModel.getClassificationData();
+                  // 쓰레기 판별 함수 실행
+                  getClassficationData();
                   switch (classificationData['trash_type']) {
                     case 'NORMAL':
                       normal += 1;
@@ -149,7 +152,7 @@ class _ProgressMapState extends State<ProgressMap> {
                       return; // 판별하지 못했다면 마커 찍지 X
                   }
                   isKill = true;
-                  Future.delayed(Duration(seconds: 3), () {
+                  Future.delayed(const Duration(seconds: 3), () {
                     isKill = false;
                     setState(() {});
                   });
@@ -163,6 +166,7 @@ class _ProgressMapState extends State<ProgressMap> {
                   );
                   trashMarker.setGlobalZIndex(trashId);
                   _mapController!.addOverlay(trashMarker);
+
                   setState(() {});
                 }
                 return;
@@ -188,6 +192,13 @@ class _ProgressMapState extends State<ProgressMap> {
         }
       }
     }
+  }
+
+  void getClassficationData() async {
+    await ploggingModel.classificationTrash(
+        accessToken, trashLatitude, trashLongitude, imageBytes);
+    imageBytes.clear();
+    classificationData = ploggingModel.getClassificationData();
   }
 
   getTrashLocation() async {
@@ -260,114 +271,57 @@ class _ProgressMapState extends State<ProgressMap> {
     setState(() {
       isSelectedTrashTong = !isSelectedTrashTong;
     });
+    updateMarkers();
   }
-
-  void onCameraIdle() {
-    if (_mapController == null) return;
-
-    _mapController!.getCameraPosition().then((position) {
-      // 유의미한 변화 확인
-      if ((position.target.latitude - latitude).abs() > 0.0001 ||
-          (position.target.longitude - longitude).abs() > 0.0001 ||
-          (position.zoom - _currentZoom).abs() > 0.5) {
-        setState(() {
-          latitude = position.target.latitude;
-          longitude = position.target.longitude;
-          _currentZoom = position.zoom;
-        });
-        updateMarkers(); // 마커 업데이트
-      }
-    });
-  }
-
-  String getClusterKey(Map<String, dynamic> data) {
-    // 클러스터 키 생성 로직, 예: 위치를 기반으로 그리드 생성
-    int gridLat = (double.parse(data['위도']) * 10).floor();
-    int gridLng = (double.parse(data['경도']) * 10).floor();
-    return "$gridLat:$gridLng";
-  }
-
-  Map<String, List<NMarker>> clusters = {};
 
   void createTrashtongMarkers() async {
     if (_mapController == null || !_isLocationLoaded) return;
 
     var jsonData = await readJsonData();
 
-    if (isSelectedTrashTong) {
-      for (var data in jsonData) {
-        var key = getClusterKey(data);
-        if (!clusters.containsKey(key)) {
-          clusters[key] = [];
-        }
-        clusters[key]!.add(
-          NMarker(
-            id: '${data['연번']}_${data['세부위치']}',
-            position: NLatLng(
-              double.parse(data['위도']),
-              double.parse(data['경도']),
-            ),
-            icon: const NOverlayImage.fromAssetImage(AppIcons.trash_tong),
-            size: const NSize(30, 40),
+    for (var data in jsonData) {
+      trashTongs.add(
+        NMarker(
+          id: '${data['연번']}_${data['세부위치']}',
+          position: NLatLng(
+            double.parse(data['위도']),
+            double.parse(data['경도']),
           ),
-        );
+          icon: const NOverlayImage.fromAssetImage(AppIcons.trash_tong),
+          size: const NSize(30, 40),
+        ),
+      );
+    }
+    // 개별 마커 표시
+    for (NMarker trashTong in trashTongs) {
+      trashTong.setMinZoom(13);
+      trashTong.setIsVisible(isSelectedTrashTong);
+      _mapController!.addOverlay(trashTong);
+      final onMarkerInfoWindow = NInfoWindow.onMarker(
+        id: trashTong.info.id,
+        text: trashTong.info.id.split('_')[1],
+      );
+
+      trashTong.setOnTapListener(
+        (NMarker trashTong) async => {
+          if (await trashTong.hasOpenInfoWindow())
+            {onMarkerInfoWindow.close()}
+          else
+            {trashTong.openInfoWindow(onMarkerInfoWindow)}
+        },
+      );
+    }
+  }
+
+  void updateMarkers() {
+    // 쓰레기통 마커 업데이트
+    if (_currentZoom < 13 && trashTongs.length > 1) {
+    } else {
+      // 개별 마커 표시
+      for (final trashTong in trashTongs) {
+        trashTong.setIsVisible(isSelectedTrashTong);
       }
     }
-  }
-
-  void updateMarkers() async {
-    // 클러스터 또는 개별 마커 표시
-    clusters.forEach(
-      (key, markers) {
-        if (_currentZoom < 13 && markers.length > 1) {
-          // 클러스터 표시
-          displayClusterMarker(markers);
-        } else {
-          // 개별 마커 표시
-          for (final marker in markers) {
-            marker.setMinZoom(13);
-            marker.setIsVisible(isSelectedTrashTong);
-            _mapController!.addOverlay(marker);
-            final onMarkerInfoWindow = NInfoWindow.onMarker(
-              id: marker.info.id,
-              text: marker.info.id.split('_')[1],
-            );
-
-            marker.setOnTapListener(
-              (NMarker marker) async => {
-                if (await marker.hasOpenInfoWindow())
-                  {onMarkerInfoWindow.close()}
-                else
-                  {marker.openInfoWindow(onMarkerInfoWindow)}
-              },
-            );
-          }
-        }
-      },
-    );
-  }
-
-  void displayClusterMarker(List<NMarker> markers) {
-    // 클러스터 대표 마커 표시
-    var centerLat = 0.0;
-    var centerLng = 0.0;
-    for (var marker in markers) {
-      centerLat += marker.position.latitude;
-      centerLng += marker.position.longitude;
-    }
-    centerLat /= markers.length;
-    centerLng /= markers.length;
-
-    NMarker clusterMarker = NMarker(
-      id: "cluster_${markers[0].info.id}",
-      position: NLatLng(centerLat, centerLng),
-      icon: const NOverlayImage.fromAssetImage(AppIcons.trash_tong),
-      // 클러스터 아이콘 설정
-      size: const NSize(90, 90),
-      caption: NOverlayCaption(text: '${markers.length}', textSize: 20),
-    );
-    clusterMarker.setMaxZoom(13);
-    _mapController!.addOverlay(clusterMarker);
   }
 
   void showFinishPloggingDialog() {
@@ -377,7 +331,11 @@ class _ProgressMapState extends State<ProgressMap> {
       builder: (BuildContext context) {
         return const FinishPloggingDialog();
       },
-    ).then((value) => context.pushReplacement('/main'));
+    ).then((value) {
+      var petModel = Provider.of<PetModel>(context, listen: false);
+      petModel.getPetDetail(accessToken, -1);
+      context.pushReplacement('/main');
+    });
   }
 
   @override
@@ -401,9 +359,9 @@ class _ProgressMapState extends State<ProgressMap> {
 
                   _mapController!
                       .setLocationTrackingMode(NLocationTrackingMode.face);
-                  updateMarkers(); // 지도 준비 완료 후 마커 업데이트 호출
+
+                  createTrashtongMarkers();
                 },
-                onCameraIdle: onCameraIdle,
                 options: NaverMapViewOptions(
                     // minZoom: 13,
                     // maxZoom: 16,
@@ -416,6 +374,7 @@ class _ProgressMapState extends State<ProgressMap> {
                         bearing: 0,
                         tilt: 45)),
               ),
+
               // 이미지 확인용 코드
               // Positioned(
               //     child: base64String.isEmpty
@@ -426,65 +385,79 @@ class _ProgressMapState extends State<ProgressMap> {
               //           )
               //         : Image.memory(base64.decode(base64String))),
               Positioned(
-                bottom: MediaQuery.of(context).size.height * 0.01,
-                left: 0,
+                bottom: 0,
+                left: MediaQuery.of(context).size.width * 0.25,
+                right: MediaQuery.of(context).size.width * 0.25,
                 child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isTrashTotal = !isTrashTotal;
-                    });
+                  onVerticalDragUpdate: (value) {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: ((context) {
+                          return TotalTrash(
+                            plastic: plastic,
+                            can: can,
+                            glass: glass,
+                            normal: normal,
+                          );
+                        }));
                   },
-                  child: isTrashTotal
-                      ? TotalTrash(
-                          plastic: plastic,
-                          can: can,
-                          glass: glass,
-                          normal: normal,
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: ((context) {
+                          return StatefulBuilder(builder:
+                              (BuildContext context, StateSetter bottomState) {
+                            return TotalTrash(
+                              plastic: plastic,
+                              can: can,
+                              glass: glass,
+                              normal: normal,
+                            );
+                          });
+                        }));
+                  },
+                  child: isKill
+                      ? Container(
+                          width: MediaQuery.of(context).size.width * 0.37,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: AppColors.basicgray.withOpacity(0.2),
+                                    blurRadius: 1,
+                                    spreadRadius: 1)
+                              ]),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  '$displayMonster + 1',
+                                  style: CustomFontStyle.getTextStyle(
+                                    context,
+                                    CustomFontStyle.yeonSung60,
+                                  ),
+                                ),
+                              ]),
                         )
-                      : isKill
-                          ? Container(
-                              width: MediaQuery.of(context).size.width * 0.37,
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              decoration: BoxDecoration(
-                                  color: AppColors.white,
-                                  borderRadius: BorderRadius.circular(30),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    Text(
-                                      '$displayMonster + 1',
-                                      style: CustomFontStyle.getTextStyle(
-                                        context,
-                                        CustomFontStyle.yeonSung60,
-                                      ),
-                                    ),
-                                  ]),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: const Center(
-                                child: Icon(Icons.my_location),
-                              ),
-                            ),
+                      : Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20)),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: AppColors.basicgray.withOpacity(0.2),
+                                    blurRadius: 1,
+                                    spreadRadius: 1)
+                              ]),
+                          height: MediaQuery.of(context).size.height * 0.04,
+                          child: const Center(
+                            child: Text('총 처치 현황'),
+                          ),
+                        ),
                 ),
               ),
               Positioned(
@@ -582,8 +555,12 @@ class _ProgressMapState extends State<ProgressMap> {
                                   ]),
                               height: MediaQuery.of(context).size.height * 0.06,
                               width: MediaQuery.of(context).size.height * 0.06,
-                              child: const Center(
-                                child: Icon(Icons.close),
+                              child: Center(
+                                child: Text(
+                                  '종 료',
+                                  style: CustomFontStyle.getTextStyle(context,
+                                      CustomFontStyle.yeonSung70_white),
+                                ),
                               ),
                             ),
                           ),
