@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
@@ -188,12 +186,14 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                           GestureDetector(
                             onTap: () async {
                               final pet =
-                              Provider.of<PetModel>(context, listen: false);
+                                  Provider.of<PetModel>(context, listen: false);
                               String nickName = _nickNameController.text;
-                              await pet.updateNickName(accessToken, -1, nickName);
+                              await pet.updateNickName(
+                                  accessToken, -1, nickName);
                               await pet.getPetDetail(accessToken, -1);
                               if (memberTutorial == false) {
-                                final member = Provider.of<MemberModel>(context, listen: false);
+                                final member = Provider.of<MemberModel>(context,
+                                    listen: false);
                                 member.finishTutorial(accessToken);
                                 userProvider.setTutorial(true);
                                 userProvider.setMemberTutorial(true);
@@ -212,14 +212,16 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                                 borderRadius: BorderRadius.circular(20),
                                 border:
                                     Border.all(width: 3, color: Colors.white),
-                                boxShadow: _isPressed ? [] : [
-                                  BoxShadow(
-                                      color: AppColors.basicShadowGray
-                                          .withOpacity(0.5),
-                                      offset: const Offset(0, 4),
-                                      blurRadius: 1,
-                                      spreadRadius: 1)
-                                ],
+                                boxShadow: _isPressed
+                                    ? []
+                                    : [
+                                        BoxShadow(
+                                            color: AppColors.basicShadowGray
+                                                .withOpacity(0.5),
+                                            offset: const Offset(0, 4),
+                                            blurRadius: 1,
+                                            spreadRadius: 1)
+                                      ],
                               ),
                               child: Center(
                                 child: Text(

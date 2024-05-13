@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/models/achievement_model.dart';
@@ -166,7 +164,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTapDown: _onAchievementTapDown,
                             onTapUp: _onAchievementTapUp,
                             onTapCancel: _onAchievementTapCancel,
-                            child: AchievementButton(isPressed : _isAchievementPressed),
+                            child: AchievementButton(
+                                isPressed: _isAchievementPressed),
                           ),
                         ),
                         Positioned(
