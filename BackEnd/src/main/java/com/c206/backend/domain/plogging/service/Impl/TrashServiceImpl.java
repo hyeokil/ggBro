@@ -94,8 +94,8 @@ public class TrashServiceImpl implements TrashService {
     }
 
 
-    private void  updateMemberAchievement(Long memberId, Long achievementId) {
-        memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress();
+    public void  updateMemberAchievement(Long memberId, Long achievementId,int progress) {
+        memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress(progress);
     }
 
     private void  updateMemberQuest(Long memberId, Long questId) {
@@ -170,22 +170,22 @@ public class TrashServiceImpl implements TrashService {
             case NORMAL -> {
                 exp = 55 ;
                 value=petActive ? 100 : 50;memberPet.addNormal();
-                updateMemberAchievement(memberId, 4L);
+                updateMemberAchievement(memberId, 4L,1);
                 updateMemberQuest(memberId,3L);}
             case PLASTIC -> {
                 exp = 66;
                 value=petActive ? 110 : 60;memberPet.addPlastic();
-                updateMemberAchievement(memberId, 5L);
+                updateMemberAchievement(memberId, 5L,1);
                 updateMemberQuest(memberId,2L);}
             case CAN -> {
                 exp = 111;
                 value=petActive ? 160 : 100;memberPet.addCan();
-                updateMemberAchievement(memberId, 6L);
+                updateMemberAchievement(memberId, 6L,1);
                 updateMemberQuest(memberId,5L);}
             case GLASS -> {
                 exp = 199;
                 value =petActive ? 270 : 200;memberPet.addGlass();
-                updateMemberAchievement(memberId, 7L);
+                updateMemberAchievement(memberId, 7L,1);
                 updateMemberQuest(memberId,4L);}
         };
 

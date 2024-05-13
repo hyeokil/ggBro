@@ -41,6 +41,7 @@ public class PloggingServiceImpl implements PloggingService {
     private final PloggingRepository ploggingRepository;
     private final TrashRepository trashRepository;
     private final PloggingRouteRepository ploggingRouteRepository;
+    private final TrashServiceImpl trashServiceImpl;
 
     @Override
     public Long createPlogging(Long memberPetId, Long memberId) {
@@ -74,6 +75,17 @@ public class PloggingServiceImpl implements PloggingService {
         }
         Plogging plogging = ploggingRepository.findById(ploggingId).orElseThrow(()
                 -> new PloggingException(PloggingError.NOT_FOUND_PLOGGING));
+        plogging.updateDistance(finishPloggingRequestDto.getDistance());
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        plogging.updateTime(now.format(formatter));
+//       플로깅 1회 업적 진행상황 동기화
+        trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),1L,1);
+//        플로깅한 거리
+        trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),
+                2L,
+                finishPloggingRequestDto.getDistance());
+
         for (LocationInfo path : finishPloggingRequestDto.getPath()) {
             ploggingRouteRepository.save(PloggingRoute.builder()
                     .plogging(plogging)
