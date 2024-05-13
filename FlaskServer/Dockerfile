@@ -4,8 +4,9 @@ FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu20.04
 # 필요한 시스템 라이브러리 및 Python 설치
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
+    libglib2.0-0 \
     python3-pip \
-    python3.8 \
+    python3.8.10 \
     && ln -s /usr/bin/python3.8 /usr/bin/python
 
 # 작업 디렉터리 설정
