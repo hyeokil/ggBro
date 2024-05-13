@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/member_model.dart';
@@ -30,23 +31,84 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late MainProvider mainProvider;
   late UserProvider userProvider;
+  late PetModel petModel;
   late String accessToken;
+  late List allPets = [];
 
   @override
   void initState() {
     super.initState();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    petModel = Provider.of<PetModel>(context, listen: false);
     accessToken = userProvider.getAccessToken();
+    allPets = petModel.getAllPet();
   }
 
   void selectedMenu(String selected) {
     mainProvider.menuSelected(selected);
   }
 
+  bool _isPressed = false;
+  bool _isAchievementPressed = false;
+  bool _isRescuePressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onAchievementTapDown(TapDownDetails details) {
+    setState(() {
+      _isAchievementPressed = true;
+    });
+  }
+
+  void _onAchievementTapUp(TapUpDetails details) {
+    setState(() {
+      _isAchievementPressed = false;
+    });
+  }
+
+  void _onAchievementTapCancel() {
+    setState(() {
+      _isAchievementPressed = false;
+    });
+  }
+
+  void _onRescueTapDown(TapDownDetails details) {
+    setState(() {
+      _isRescuePressed = true;
+    });
+  }
+
+  void _onRescueTapUp(TapUpDetails details) {
+    setState(() {
+      _isRescuePressed = false;
+    });
+  }
+
+  void _onRescueTapCancel() {
+    setState(() {
+      _isRescuePressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
     final member = Provider.of<MemberModel>(context, listen: true).getMember();
 
     return SafeArea(
@@ -80,8 +142,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           right: 0,
                           bottom: 0,
                           child: ProfilePet(
-                            // profilePetImage: member['profile_pet_id'],
-                          ),
+                              // profilePetImage: member['profile_pet_id'],
+                              ),
                         ),
                         ProfileClearMonster(
                           member: member,
@@ -101,7 +163,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                               );
                             },
-                            child: AchievementButton(),
+                            onTapDown: _onAchievementTapDown,
+                            onTapUp: _onAchievementTapUp,
+                            onTapCancel: _onAchievementTapCancel,
+                            child: AchievementButton(isPressed : _isAchievementPressed),
                           ),
                         ),
                         Positioned(
@@ -112,7 +177,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context.push('/rescue');
                               selectedMenu('rescue');
                             },
-                            child: RescueButton(),
+                            onTapDown: _onRescueTapDown,
+                            onTapUp: _onRescueTapUp,
+                            onTapCancel: _onRescueTapCancel,
+                            child: RescueButton(isPressed: _isRescuePressed),
                           ),
                         ),
                       ],
@@ -143,6 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: ProfileImage(
                                 image:
                                     Image.network('${allPets[index]['image']}'),
+                                isPressed: _isPressed,
                               ),
                             ),
                             allPets[index]['active'] && allPets[index]['have']
@@ -158,22 +227,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         },
                                       );
                                     },
+                                    // onTapDown: _onTapDown,
+                                    // onTapUp: _onTapUp,
+                                    // onTapCancel: _onTapCancel,
                                     child: Container(
                                       color: Colors.transparent,
                                     ),
                                   )
-                                : Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(40),
-                                    ),
-                                    height: MediaQuery.of(context).size.height *
-                                        0.08, // 각 항목의 높이 설정
-                                    width: MediaQuery.of(context).size.height *
-                                        0.08, // 각 항목의 너비 설정
-                                    child: Icon(
-                                      Icons.lock,
-                                      color: Colors.white,
+                                : GestureDetector(
+                                    onTap: () {
+                                      Fluttertoast.showToast(
+                                          msg: '펫을 획득 해주세요!');
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.08, // 각 항목의 높이 설정
+                                      width:
+                                          MediaQuery.of(context).size.height *
+                                              0.08, // 각 항목의 너비 설정
+                                      child: Icon(
+                                        Icons.lock,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   )
                           ],

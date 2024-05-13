@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster_content.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster_title.dart';
 
@@ -37,23 +38,40 @@ class _ClearMonsterState extends State<ClearMonster> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ClearMonsterTitle(),
-          ClearMonsterContent(
-            color: AppColors.basicpink,
-            content: '플라몽',
-            count: widget.pet['plastic'],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ClearMonsterContent(
+                monster: Image.asset(AppIcons.plamong),
+                color: AppColors.basicgreen,
+                content: '플라몽',
+                count: widget.pet['plastic'],
+              ),
+              ClearMonsterContent(
+                monster: Image.asset(AppIcons.pocanmong),
+                color: AppColors.basicgray,
+                content: '포 캔몽',
+                count: widget.pet['can'],
+              ),
+            ],
           ),
-          ClearMonsterContent(
-              color: AppColors.basicgray,
-              content: '포 캔몽',
-              count: widget.pet['can']),
-          ClearMonsterContent(
-              color: AppColors.basicgreen,
-              content: '율몽',
-              count: widget.pet['glass']),
-          ClearMonsterContent(
-              color: AppColors.basicnavy,
-              content: '미쪼몬',
-              count: widget.pet['normal']),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ClearMonsterContent(
+                monster: Image.asset(AppIcons.yulmong),
+                color: AppColors.basicpink,
+                content: '율몽',
+                count: widget.pet['glass'],
+              ),
+              ClearMonsterContent(
+                monster: Image.asset(AppIcons.mizzomon),
+                color: AppColors.basicnavy,
+                content: '미쪼몬',
+                count: widget.pet['normal'],
+              ),
+            ],
+          ),
         ],
       ),
     );

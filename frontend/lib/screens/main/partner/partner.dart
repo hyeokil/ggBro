@@ -24,6 +24,7 @@ class Partner extends StatefulWidget {
 class _PartnerState extends State<Partner> {
   late UserProvider userProvider;
   late String accessToken;
+  bool _isButtonDisabled = false;
 
   @override
   void initState() {
@@ -36,6 +37,10 @@ class _PartnerState extends State<Partner> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
+      if (!_isButtonDisabled) {
+        setState(() {
+          _isButtonDisabled = true; // 버튼 비활성화
+        });
         final pet = Provider.of<PetModel>(context, listen: false);
         await pet.getPets(accessToken);
         showDialog(
@@ -43,6 +48,10 @@ class _PartnerState extends State<Partner> {
           builder: (BuildContext context) {
             return const ChangePartnerDialog();
           },
+        ).then(
+              (value) => setState(() {
+            _isButtonDisabled = false;
+          }),
         );
         // showDialog(
         //   context: context,
@@ -50,7 +59,7 @@ class _PartnerState extends State<Partner> {
         //     return const OpenBoxDialog();
         //   },
         // );
-      },
+      }},
       child: Container(
         width: widget.isPet
             ? MediaQuery.of(context).size.height * 0.95

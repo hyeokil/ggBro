@@ -6,11 +6,15 @@ import 'package:frontend/screens/campaign/dialog/campaign_detail_dialog.dart';
 class CampaignList extends StatefulWidget {
   final String title;
   final String image;
+  final String startDate;
+  final String endDate;
 
   const CampaignList({
     super.key,
     required this.title,
     required this.image,
+    required this.startDate,
+    required this.endDate,
   });
 
   @override
@@ -18,6 +22,26 @@ class CampaignList extends StatefulWidget {
 }
 
 class _CampaignListState extends State<CampaignList> {
+  bool _isPressed = false;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
+  void _onTapCancel() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -29,6 +53,9 @@ class _CampaignListState extends State<CampaignList> {
           },
         );
       },
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
       child: Column(
         children: [
           Stack(
@@ -40,7 +67,7 @@ class _CampaignListState extends State<CampaignList> {
                   color: AppColors.basicShadowNavy,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(width: 3, color: Colors.white),
-                  boxShadow: [
+                  boxShadow: _isPressed ? [] : [
                     BoxShadow(
                       color: AppColors.basicgray.withOpacity(0.5),
                       offset: Offset(0, 4),
@@ -62,24 +89,49 @@ class _CampaignListState extends State<CampaignList> {
                     color: AppColors.basicnavy,
                     borderRadius: BorderRadius.circular(7),
                   ),
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${widget.title}',
-                          style: CustomFontStyle.getTextStyle(
-                              context, CustomFontStyle.yeonSung90_white),
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '${widget.title}',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung90_white),
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '기간 : ${widget.startDate.split('T').first} ~ ${widget.endDate.split('T').first}',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung55_white),
+                            ),
+                          ),
+                        ],
                       ),
-                      // Container(
-                      //   alignment: Alignment.centerLeft,
-                      //   child: Text(
-                      //     '${widget.period}',
-                      //     style: CustomFontStyle.getTextStyle(
-                      //         context, CustomFontStyle.yeonSung55_white),
-                      //   ),
-                      // ),
+                      Row(
+                        children: [
+                          Column(
+                            children: [
+                              Icon(
+                                Icons.search,
+                                color: Colors.white,
+                                size: MediaQuery.of(context).size.height * 0.051,
+                              ),
+                              Text(
+                                '상세정보',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung50_white),
+                              )
+                            ],
+                          ),
+                          SizedBox(width: MediaQuery.of(context).size.width * 0.02,)
+                        ],
+                      ),
                     ],
                   ),
                 ),

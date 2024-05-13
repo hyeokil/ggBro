@@ -55,7 +55,7 @@ class _RankingListState extends State<RankingList> {
             child: Container(
               height: MediaQuery.of(context).size.width * 0.105,
               width: 45,
-              child: ProfileImage(image: Image.asset(AppIcons.intro_animal_3),),
+              child: ProfileImage(image: Image.asset(AppIcons.intro_animal_3), isPressed: false,),
             ),
           ),
           Positioned(
