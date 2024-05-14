@@ -6,6 +6,7 @@ import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -24,8 +25,13 @@ class _ReadyMapState extends State<ReadyMap> {
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
   bool isSelectedTrashTong = false;
+  bool isSelectedMonster = false;
   double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
   bool _isCameraMoving = false;
+  late UserProvider userProvider;
+  late PloggingModel ploggingModel;
+  late String accessToken;
+  late Map<String, dynamic> trashLists;
 
   void _onCameraMoveStarted() {
     _isCameraMoving = true;
@@ -39,7 +45,10 @@ class _ReadyMapState extends State<ReadyMap> {
       longitude = position.longitude;
       _isLocationLoaded = true;
     });
-    // print('위치요 ${position.latitude}, ${position.longitude}');
+    print('위치요 ${position.latitude}, ${position.longitude}');
+    await ploggingModel.trashList(
+        accessToken, position.latitude, position.longitude, 50);
+    trashLists = ploggingModel.getTrashLists();
   }
 
   Future<List<dynamic>> readJsonData() async {
@@ -51,6 +60,9 @@ class _ReadyMapState extends State<ReadyMap> {
   @override
   void initState() {
     super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    ploggingModel = Provider.of<PloggingModel>(context, listen: false);
+    accessToken = userProvider.getAccessToken();
     getLocation();
   }
 
@@ -60,6 +72,12 @@ class _ReadyMapState extends State<ReadyMap> {
     });
     // print(isSelectedTrashTong);
     updateMarkers();
+  }
+
+  void monsterToggle() {
+    setState(() {
+      isSelectedMonster = !isSelectedMonster;
+    });
   }
 
   void _onCameraIdle() {
@@ -78,6 +96,50 @@ class _ReadyMapState extends State<ReadyMap> {
         updateMarkers(); // 마커 업데이트
       }
     });
+    print('위도: $latitude 경도: $longitude 줌: $_currentZoom');
+    var plogging = Provider.of<PloggingModel>(context, listen: false);
+
+    late int currentZoom = _currentZoom.round();
+    late int radius;
+
+    switch (currentZoom) {
+      case 6:
+        radius = 320000;
+        break;
+      case 7:
+        radius = 160000;
+        break;
+      case 8:
+        radius = 80000;
+        break;
+      case 9:
+        radius = 40000;
+        break;
+      case 10:
+        radius = 20000;
+        break;
+      case 11:
+        radius = 10000;
+        break;
+      case 12:
+        radius = 5000;
+        break;
+      case 13:
+        radius = 2500;
+        break;
+      case 14:
+        radius = 1250;
+        break;
+      case 15:
+        radius = 600;
+        break;
+      case 16:
+        radius = 150;
+        break;
+    }
+    print('현재줌: $currentZoom, 값: $radius');
+    plogging.trashList(accessToken, latitude, longitude, radius);
+    trashLists = plogging.getTrashLists();
   }
 
   String _getClusterKey(Map<String, dynamic> data) {
@@ -172,28 +234,52 @@ class _ReadyMapState extends State<ReadyMap> {
     _mapController!.addOverlay(clusterMarker);
   }
 
-  bool _isPressed = false;
+  bool _isTrashTongPressed = false;
+  bool _isMonsterPressed = false;
 
-  void _onTapDown(TapDownDetails details) {
+  void _onTrashTongTapDown(TapDownDetails details) {
     setState(() {
-      _isPressed = true;
+      _isTrashTongPressed = true;
     });
   }
 
-  void _onTapUp(TapUpDetails details) {
+  void _onTrashTongTapUp(TapUpDetails details) {
     setState(() {
-      _isPressed = false;
+      _isTrashTongPressed = false;
     });
   }
 
-  void _onTapCancel() {
+  void _onTrashTongTapCancel() {
     setState(() {
-      _isPressed = false;
+      _isTrashTongPressed = false;
+    });
+  }
+
+  void _onMonsterTapDown(TapDownDetails details) {
+    setState(() {
+      _isMonsterPressed = true;
+    });
+  }
+
+  void _onMonsterTapUp(TapUpDetails details) {
+    setState(() {
+      _isMonsterPressed = false;
+    });
+  }
+
+  void _onMonsterTapCancel() {
+    setState(() {
+      _isMonsterPressed = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // var trashLists = {};
+    // if (_isLocationLoaded) {
+    //   trashLists = Provider.of<PloggingModel>(context, listen: true).getTrashLists();
+    // }
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width * 0.9,
@@ -227,6 +313,8 @@ class _ReadyMapState extends State<ReadyMap> {
                       tilt: 0,
                     ),
                     locationButtonEnable: true,
+                    maxZoom: 16,
+                    minZoom: 6,
                   ),
                 ),
                 Positioned(
@@ -236,17 +324,19 @@ class _ReadyMapState extends State<ReadyMap> {
                     onTap: () {
                       trashTongToggle();
                     },
-                    onTapDown: _onTapDown,
-                    onTapUp: _onTapUp,
-                    onTapCancel: _onTapCancel,
+                    onTapDown: _onTrashTongTapDown,
+                    onTapUp: _onTrashTongTapUp,
+                    onTapCancel: _onTrashTongTapCancel,
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.37,
+                      width: isSelectedTrashTong
+                          ? MediaQuery.of(context).size.width * 0.18
+                          : MediaQuery.of(context).size.width * 0.37,
                       height: MediaQuery.of(context).size.height * 0.06,
                       decoration: BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: _isPressed
+                        boxShadow: _isTrashTongPressed
                             ? []
                             : [
                                 BoxShadow(
@@ -272,7 +362,7 @@ class _ReadyMapState extends State<ReadyMap> {
                             top: MediaQuery.of(context).size.height * 0.01,
                             right: MediaQuery.of(context).size.width * 0.02,
                             child: Text(
-                              '쓰레기통 위치 확인',
+                              isSelectedTrashTong ? '취소' : '쓰레기통 위치 확인',
                               style: CustomFontStyle.getTextStyle(
                                 context,
                                 CustomFontStyle.yeonSung60,
@@ -283,7 +373,226 @@ class _ReadyMapState extends State<ReadyMap> {
                       ),
                     ),
                   ),
-                )
+                ),
+                Positioned(
+                  top: MediaQuery.of(context).size.height * 0.08,
+                  right: MediaQuery.of(context).size.width * 0.02,
+                  child: GestureDetector(
+                    onTap: () {
+                      monsterToggle();
+                    },
+                    onTapDown: _onMonsterTapDown,
+                    onTapUp: _onMonsterTapUp,
+                    onTapCancel: _onMonsterTapCancel,
+                    child: Container(
+                      width: isSelectedMonster
+                          ? MediaQuery.of(context).size.width * 0.18
+                          : MediaQuery.of(context).size.width * 0.37,
+                      height: MediaQuery.of(context).size.height * 0.06,
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(width: 3, color: Colors.white),
+                        boxShadow: _isMonsterPressed
+                            ? []
+                            : [
+                                BoxShadow(
+                                  color: AppColors.basicgray.withOpacity(0.5),
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
+                                )
+                              ],
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            top: MediaQuery.of(context).size.height * 0.007,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.09,
+                              height: MediaQuery.of(context).size.height * 0.04,
+                              // color: Colors.black,
+                              child: Image.asset(AppIcons.mizzomon),
+                            ),
+                          ),
+                          Positioned(
+                            top: MediaQuery.of(context).size.height * 0.01,
+                            right: MediaQuery.of(context).size.width * 0.02,
+                            child: Text(
+                              isSelectedMonster ? '취소' : '몬스터 출몰 현황',
+                              style: CustomFontStyle.getTextStyle(
+                                context,
+                                CustomFontStyle.yeonSung60,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                isSelectedMonster
+                    ? Positioned(
+                        top: MediaQuery.of(context).size.height * 0.2,
+                        left: MediaQuery.of(context).size.height * 0.007,
+                        child: IgnorePointer(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(300),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Text(
+                                                '플라몽',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                              Text(
+                                                '${trashLists['plastic']}마리',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                              Text(
+                                                '처치',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                            ],
+                                          ),
+                                          Image.asset(
+                                            AppIcons.plamong,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.24,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            AppIcons.pocanmong,
+                                            width:
+                                                MediaQuery.of(context).size.width *
+                                                    0.25,
+                                          ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                '포 캔몽',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                              Text(
+                                                '${trashLists['can']}마리',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                              Text(
+                                                '처치',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            '율몽',
+                                            style: CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung70),
+                                          ),
+                                          Text(
+                                            '${trashLists['glass']}마리',
+                                            style: CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung70),
+                                          ),
+                                          Text(
+                                            '처치',
+                                            style: CustomFontStyle.getTextStyle(
+                                                context,
+                                                CustomFontStyle.yeonSung70),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            AppIcons.yulmong,
+                                            width:
+                                                MediaQuery.of(context).size.width *
+                                                    0.25,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            AppIcons.mizzomon,
+                                            width:
+                                                MediaQuery.of(context).size.width *
+                                                    0.24,
+                                          ),
+                                          Column(
+                                            children: [
+                                              Text(
+                                                '미쪼몬',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                              Text(
+                                                '${trashLists['normal']}마리',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                              Text(
+                                                '처치',
+                                                style: CustomFontStyle.getTextStyle(
+                                                    context,
+                                                    CustomFontStyle.yeonSung70),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container()
               ],
             )
           : const Center(

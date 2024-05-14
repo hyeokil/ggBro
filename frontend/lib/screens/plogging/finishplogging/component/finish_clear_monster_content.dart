@@ -5,22 +5,25 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 class FinishClearMonsterContent extends StatefulWidget {
   final Color color;
   final String content;
+  final int count;
 
   const FinishClearMonsterContent({
     super.key,
     required this.color,
     required this.content,
+    required this.count,
   });
 
   @override
-  State<FinishClearMonsterContent> createState() => _FinishClearMonsterContent();
+  State<FinishClearMonsterContent> createState() =>
+      _FinishClearMonsterContent();
 }
 
 class _FinishClearMonsterContent extends State<FinishClearMonsterContent> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width * 0.8,
       height: MediaQuery.of(context).size.height * 0.05,
       decoration: BoxDecoration(
@@ -29,7 +32,7 @@ class _FinishClearMonsterContent extends State<FinishClearMonsterContent> {
         boxShadow: [
           BoxShadow(
             color: AppColors.basicgray.withOpacity(0.5),
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
             blurRadius: 1,
             spreadRadius: 1,
           )
@@ -44,7 +47,7 @@ class _FinishClearMonsterContent extends State<FinishClearMonsterContent> {
                 context, CustomFontStyle.yeonSung60_white),
           ),
           Text(
-            '마리',
+            '${widget.count}마리',
             style: CustomFontStyle.getTextStyle(
                 context, CustomFontStyle.yeonSung60_white),
           )

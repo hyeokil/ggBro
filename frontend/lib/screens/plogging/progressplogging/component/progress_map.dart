@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
@@ -31,6 +30,8 @@ class ProgressMap extends StatefulWidget {
 class _ProgressMapState extends State<ProgressMap> {
   late MainProvider mainProvider;
   late UserProvider userProvider;
+  late PetModel petModel;
+  late Map<String, dynamic> currentPet;
 
   late BluetoothDevice device;
   late double latitude;
@@ -46,6 +47,7 @@ class _ProgressMapState extends State<ProgressMap> {
   bool isSelectedTrashTong = false;
   final double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
   List<NMarker> trashTongs = []; // 쓰레기통 마커 변수
+  List<Map<String, double>> path = []; // 종료 시 보내 줄 경로 정보
 
   // 블루투스용 변수들
   late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
@@ -54,21 +56,24 @@ class _ProgressMapState extends State<ProgressMap> {
   int trashId = 0;
   List<int> imageResult = []; // 블루투스로 데이터 받을 때 저장 변수
   List<int> imageBytes = []; // 이미지 넘기는 변수
-  // String base64String = '';
+  String base64String = '';
 
   // api 응답 관련 변수
   late PloggingModel ploggingModel;
   late int ploggingId;
-  late String accessToken, displayMonster;
-  late Map<String, dynamic> classificationData;
+  late String accessToken, displayMonster, monsterIcon;
+  late bool isExp;
   bool isKill = false;
-  int plastic = 0, can = 0, glass = 0, normal = 0;
+  int plastic = 0, can = 0, glass = 0, normal = 0, box = 0, value = 0;
 
   @override
   void initState() {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
     ploggingModel = Provider.of<PloggingModel>(context, listen: false);
+    petModel = Provider.of<PetModel>(context, listen: false);
+    currentPet = petModel.getCurrentPet();
+    isExp = !currentPet['active'];
     accessToken = userProvider.getAccessToken();
     startAPI();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
@@ -115,59 +120,19 @@ class _ProgressMapState extends State<ProgressMap> {
             _notifyChar = characteristic;
             await _notifyChar.setNotifyValue(true);
             blueSubscription = _notifyChar.onValueReceived.listen((event) {
-              // print('Received: ${event.length}');
+              // print('Received: ${String.fromCharCodes(event)} 길이 : ${event.length}');
 
               // 블루투스 연결 시 0 으로 데이터가 계속 넘어옴 0일 경우 return
               // 0이면서 쓰레기 데이터가 비어있지 않다면 데이터 합쳐서 쓰레기 줍기 api 요청
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
                   imageBytes.addAll(imageResult);
-                  // base64String = base64Encode(imageResult); base64 encode해서 보낼 경우 사용
-                  String monsterIcon = '';
-                  imageResult.clear();
-                  // 쓰레기 판별 함수 실행
-                  getClassficationData();
-                  switch (classificationData['trash_type']) {
-                    case 'NORMAL':
-                      normal += 1;
-                      displayMonster = '미쪼몽';
-                      monsterIcon = AppIcons.mizzomon;
-                      break;
-                    case 'CAN':
-                      can += 1;
-                      displayMonster = '포캔몽';
-                      monsterIcon = AppIcons.pocanmong;
-                      break;
-                    case 'PLASTIC':
-                      plastic += 1;
-                      displayMonster = '플라몽';
-                      monsterIcon = AppIcons.plamong;
-                      break;
-                    case 'GLASS':
-                      glass += 1;
-                      displayMonster = '율몽';
-                      monsterIcon = AppIcons.yulmong;
-                      break;
-                    default:
-                      return; // 판별하지 못했다면 마커 찍지 X
-                  }
-                  isKill = true;
-                  Future.delayed(const Duration(seconds: 3), () {
-                    isKill = false;
-                    setState(() {});
-                  });
-                  trashId += 1;
-                  NMarker trashMarker = NMarker(
-                    angle: 30,
-                    id: 'trash$trashId',
-                    position: NLatLng(trashLatitude, trashLongitude),
-                    icon: NOverlayImage.fromAssetImage(monsterIcon),
-                    size: const NSize(30, 40),
-                  );
-                  trashMarker.setGlobalZIndex(trashId);
-                  _mapController!.addOverlay(trashMarker);
-
+                  base64String = base64Encode(imageResult);
+                  print('총길이 ${base64String.length}');
                   setState(() {});
+                  imageResult.clear();
+                  // 쓰레기 판별 함수 실행 API 콜
+                  getClassficationData();
                 }
                 return;
               }
@@ -184,7 +149,6 @@ class _ProgressMapState extends State<ProgressMap> {
                 }
               }
               imageResult.addAll(result);
-
               print('결과물 길이 ${result.length}');
             });
             device.cancelWhenDisconnected(blueSubscription);
@@ -194,11 +158,66 @@ class _ProgressMapState extends State<ProgressMap> {
     }
   }
 
-  void getClassficationData() async {
-    await ploggingModel.classificationTrash(
+  getClassficationData() async {
+    String data = await ploggingModel.classificationTrash(
         accessToken, trashLatitude, trashLongitude, imageBytes);
     imageBytes.clear();
-    classificationData = ploggingModel.getClassificationData();
+    if (data == 'Success') {
+      Map<String, dynamic> classificationData =
+          ploggingModel.getClassificationData();
+      if (classificationData.isNotEmpty) {
+        switch (classificationData['trash_type']) {
+          case 'NORMAL':
+            normal += 1;
+            displayMonster = '미쪼몽';
+            monsterIcon = AppIcons.mizzomon;
+            value += int.parse(classificationData['value']);
+            break;
+          case 'CAN':
+            can += 1;
+            displayMonster = '포캔몽';
+            monsterIcon = AppIcons.pocanmong;
+
+            break;
+          case 'PLASTIC':
+            plastic += 1;
+            displayMonster = '플라몽';
+            monsterIcon = AppIcons.plamong;
+            break;
+          case 'GLASS':
+            glass += 1;
+            displayMonster = '율몽';
+            monsterIcon = AppIcons.yulmong;
+            break;
+          default:
+            return; // 판별하지 못했다면 마커 찍지 X
+        }
+        value += int.parse(classificationData['value']);
+        if (classificationData['rescue']) {
+          box += 1;
+        }
+        isKill = true;
+        Future.delayed(const Duration(seconds: 3), () {
+          isKill = false;
+          setState(() {});
+        });
+        trashId += 1;
+        NMarker trashMarker = NMarker(
+          angle: 30,
+          id: 'trash$trashId',
+          position: NLatLng(trashLatitude, trashLongitude),
+          icon: NOverlayImage.fromAssetImage(monsterIcon),
+          size: const NSize(30, 40),
+        );
+        trashMarker.setGlobalZIndex(trashId);
+        _mapController!.addOverlay(trashMarker);
+        setState(() {});
+      }
+
+      return ploggingModel.getClassificationData();
+    } else {
+      return;
+    }
   }
 
   getTrashLocation() async {
@@ -235,6 +254,8 @@ class _ProgressMapState extends State<ProgressMap> {
         latitude = position.latitude;
         longitude = position.longitude;
 
+        path.add(
+            {'latitude': position.latitude, 'longitude': position.longitude});
         _pathPoints.add(NLatLng(latitude, longitude)); // 받아온 위치 추가하는 부분
 
         double distanceInMeters = Geolocator.distanceBetween(
@@ -294,7 +315,7 @@ class _ProgressMapState extends State<ProgressMap> {
     }
     // 개별 마커 표시
     for (NMarker trashTong in trashTongs) {
-      trashTong.setMinZoom(13);
+      trashTong.setMinZoom(12);
       trashTong.setIsVisible(isSelectedTrashTong);
       _mapController!.addOverlay(trashTong);
       final onMarkerInfoWindow = NInfoWindow.onMarker(
@@ -329,7 +350,16 @@ class _ProgressMapState extends State<ProgressMap> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return const FinishPloggingDialog();
+        return FinishPloggingDialog(
+          totalDistance: totalDistance.floor(),
+          plastic: plastic,
+          glass: glass,
+          can: can,
+          normal: normal,
+          box: box,
+          value: value,
+          path: path,
+        );
       },
     ).then((value) {
       var petModel = Provider.of<PetModel>(context, listen: false);
@@ -345,6 +375,32 @@ class _ProgressMapState extends State<ProgressMap> {
       width: MediaQuery.of(context).size.width,
       child: _isLocationLoaded
           ? Stack(children: [
+              isKill
+                  ? Stack(
+                      children: [
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.004,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.09,
+                            height: MediaQuery.of(context).size.height * 0.04,
+                            // color: Colors.black,
+                            child: Image.asset(monsterIcon),
+                          ),
+                        ),
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.01,
+                          right: MediaQuery.of(context).size.width * 0.02,
+                          child: Text(
+                            '$displayMonster + 1',
+                            style: CustomFontStyle.getTextStyle(
+                              context,
+                              CustomFontStyle.yeonSung60,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  : Container(),
               NaverMap(
                 onMapReady: (controller) {
                   _mapController = controller; // 지도 컨트롤러 초기화
@@ -376,20 +432,20 @@ class _ProgressMapState extends State<ProgressMap> {
               ),
 
               // 이미지 확인용 코드
-              // Positioned(
-              //     child: base64String.isEmpty
-              //         ? Image.asset(
-              //             AppIcons.trash_tong,
-              //             height: MediaQuery.of(context).size.height * 0.05,
-              //             width: MediaQuery.of(context).size.height * 0.05,
-              //           )
-              //         : Image.memory(base64.decode(base64String))),
+              Positioned(
+                  child: base64String.isEmpty
+                      ? Image.asset(
+                          AppIcons.trash_tong,
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          width: MediaQuery.of(context).size.height * 0.05,
+                        )
+                      : Image.memory(base64.decode(base64String))),
               Positioned(
                 bottom: 0,
-                left: MediaQuery.of(context).size.width * 0.25,
-                right: MediaQuery.of(context).size.width * 0.25,
+                left: MediaQuery.of(context).size.width * 0.2,
+                right: MediaQuery.of(context).size.width * 0.2,
                 child: GestureDetector(
-                  onVerticalDragUpdate: (value) {
+                  onVerticalDragUpdate: (e) {
                     showModalBottomSheet(
                         context: context,
                         builder: ((context) {
@@ -398,6 +454,9 @@ class _ProgressMapState extends State<ProgressMap> {
                             can: can,
                             glass: glass,
                             normal: normal,
+                            value: value,
+                            box: box,
+                            isExp: isExp,
                           );
                         }));
                   },
@@ -412,6 +471,9 @@ class _ProgressMapState extends State<ProgressMap> {
                               can: can,
                               glass: glass,
                               normal: normal,
+                              value: value,
+                              box: box,
+                              isExp: isExp,
                             );
                           });
                         }));
@@ -455,7 +517,7 @@ class _ProgressMapState extends State<ProgressMap> {
                               ]),
                           height: MediaQuery.of(context).size.height * 0.04,
                           child: const Center(
-                            child: Text('총 처치 현황'),
+                            child: Text('원정 집계 현황'),
                           ),
                         ),
                 ),

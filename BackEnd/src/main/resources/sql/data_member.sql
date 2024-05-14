@@ -4,20 +4,25 @@ INSERT INTO `member` (
                      ,`email`
                      ,`nickname`
                      ,`password`
+                     ,`is_tutorial`
+
 
 
 )
 VALUES (
          NOW()
        ,NOW()
-       ,'test1@test.com'
-       ,'테스트 1'
+       ,'dummy1@dummy.com'
+       ,'dummy 1'
        ,'ssafy!123'
+       ,true
+
 )
      ,(
         NOW()
       ,NOW()
-      ,'test2@test.com'
-      ,'테스트 2'
+      ,'dummy2@dummy.com'
+      ,'dummy 2'
       ,'ssafy!123'
+      ,true
 );
