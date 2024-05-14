@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class HistoryDateList extends StatefulWidget {
-  const HistoryDateList({super.key});
+  final Map<String, dynamic> dateHistoryList;
+
+  const HistoryDateList({
+    super.key, required this.dateHistoryList,
+  });
 
   @override
   State<HistoryDateList> createState() => _HistoryDateListState();
@@ -10,6 +14,6 @@ class HistoryDateList extends StatefulWidget {
 class _HistoryDateListState extends State<HistoryDateList> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Text('${widget.dateHistoryList}');
   }
 }

@@ -33,7 +33,7 @@ class HistoryModel with ChangeNotifier {
     }
   }
 
-  List getHistories() {
+  List<dynamic> getHistories() {
     return histories;
   }
 }
