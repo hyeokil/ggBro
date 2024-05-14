@@ -80,7 +80,7 @@ public class TrashServiceImpl implements TrashService {
             formData.add("url", imageUrl);
             Map<String, String> response = webClient.post()
                     .uri("")
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .bodyValue(formData)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
