@@ -61,7 +61,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                     barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
-                      return BluetoothConnectedDialog(func: goNext);
+                      return BluetoothConnectedDialog(func: goNext, goPrevious: goPrevious,);
                     });
               });
             });
@@ -73,6 +73,11 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
 
   goNext() {
     context.push('/ploggingProgress');
+  }
+
+
+  goPrevious() {
+    context.push('/main');
   }
 
   bool _isPressed = false;
@@ -158,7 +163,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                         barrierDismissible: false,
                         context: context,
                         builder: (BuildContext context) {
-                          return BluetoothConnectedDialog(func: goNext);
+                          return BluetoothConnectedDialog(func: goNext, goPrevious: goPrevious,);
                         });
                   },
                   onTapDown: _onTapDown,

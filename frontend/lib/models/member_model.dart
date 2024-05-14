@@ -38,7 +38,7 @@ class MemberModel with ChangeNotifier {
   }
 
   Future<String> updateProfileImage(String accessToken, int profilePetId) async {
-    print(profilePetId);
+    print('프로필 $profilePetId');
     var url = Uri.https(address, "/api/v1/member/updateprofile/$profilePetId");
     final headers = {
       'Content-Type': 'application/json',
@@ -49,9 +49,10 @@ class MemberModel with ChangeNotifier {
 
     if (response.statusCode == 200) {
       Fluttertoast.showToast(msg: '변경이 완료되었습니다!');
+      userProvider.setProfileImage(profilePetId);
       return "Success";
     } else {
-      print("변경 실패");
+      Fluttertoast.showToast(msg: '변경 실패하였습니다!');
       return "fail";
     }
   }

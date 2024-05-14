@@ -37,7 +37,7 @@ def predict():
       
       # s3 불러오는 부분
 
-      s3_url = request.form['file'] # 변경하기
+      s3_url = request.form['url'] # 변경하기
       print("s3 url: ", s3_url)
 
       s3_image_name = s3_url[46:]
@@ -79,8 +79,7 @@ def predict():
       print("검출 개수: " + str(detected_count))
 
       message = {
-         "class": class_name, 
-         "count" : detected_count
+         "type": class_name
       }
 
       return message
