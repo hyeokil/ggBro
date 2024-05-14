@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class FinishClearMonsterTitle extends StatefulWidget {
-  const FinishClearMonsterTitle({super.key});
+  final String time;
+  const FinishClearMonsterTitle({super.key, required this.time});
 
   @override
-  State<FinishClearMonsterTitle> createState() => _FinishClearMonsterTitleState();
+  State<FinishClearMonsterTitle> createState() =>
+      _FinishClearMonsterTitleState();
 }
 
 class _FinishClearMonsterTitleState extends State<FinishClearMonsterTitle> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.only(left: 10),
       width: MediaQuery.of(context).size.width * 0.85,
       height: MediaQuery.of(context).size.height * 0.05,
       decoration: BoxDecoration(
@@ -22,7 +25,7 @@ class _FinishClearMonsterTitleState extends State<FinishClearMonsterTitle> {
         boxShadow: [
           BoxShadow(
             color: AppColors.basicgray.withOpacity(0.5),
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
             blurRadius: 1,
             spreadRadius: 1,
           )
@@ -33,10 +36,12 @@ class _FinishClearMonsterTitleState extends State<FinishClearMonsterTitle> {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.02,
           ),
-          Text(
-            '오전 11 : 00 ~ 오후 12 : 00',
-            style:
-                CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+          Center(
+            child: Text(
+              widget.time,
+              style: CustomFontStyle.getTextStyle(
+                  context, CustomFontStyle.yeonSung70),
+            ),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class CustomInput extends StatelessWidget {
   final TextEditingController controller;
@@ -7,6 +8,8 @@ class CustomInput extends StatelessWidget {
   final String? hint, label;
   final bool obscure;
   final Icon? icon;
+  final IconButton? suffixIcon;
+  final AutovalidateMode? autovalidateMode;
 
   const CustomInput({
     super.key,
@@ -17,36 +20,41 @@ class CustomInput extends StatelessWidget {
     this.hint,
     this.label,
     this.obscure = false,
+    this.suffixIcon,
+    this.autovalidateMode,
   });
   @override
   Widget build(BuildContext context) {
+    const outlineInputBorder = OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.all(
+          Radius.circular(20),
+        ));
     return Container(
-      // width: MediaQuery.of(context).size.width * 0.8,
-      width: MediaQuery.of(context).size.width * 0.8,
-      margin: const EdgeInsets.only(bottom: 20),
-      child: TextFormField(
-        validator: validator,
-        controller: controller,
-        obscureText: obscure,
-        keyboardType: keyboard,
-        decoration: InputDecoration(
-          icon: icon,
-          hintText: hint,
-          labelText: label,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-          filled: true,
-          fillColor: const Color.fromRGBO(225, 235, 200, 1),
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              )),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+        // width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.8,
+        margin: const EdgeInsets.only(bottom: 20),
+        child: TextFormField(
+          autovalidateMode: autovalidateMode,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          style:
+              CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+          validator: validator,
+          controller: controller,
+          obscureText: obscure,
+          keyboardType: keyboard,
+          decoration: InputDecoration(
+            suffixIcon: suffixIcon,
+            icon: icon,
+            hintText: hint,
+            labelText: label,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            filled: true,
+            fillColor: const Color.fromRGBO(225, 235, 200, 1),
+            border: outlineInputBorder,
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

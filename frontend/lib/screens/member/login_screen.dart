@@ -1,17 +1,13 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:open_settings/open_settings.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,8 +19,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  late TextEditingController _email = TextEditingController();
+  late TextEditingController _password = TextEditingController();
 
   String? _validatePassword(String? value) {
     final passwordRegex = RegExp(
@@ -48,31 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     // initConnectivity();
+    _email = TextEditingController();
+    _password = TextEditingController();
 
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  // Future<void> initConnectivity() async {
-  //   late List<ConnectivityResult> result;
-  //   // Platform messages may fail, so we use a try/catch PlatformException.
-  //   try {
-  //     result = await _connectivity.checkConnectivity();
-  //   } on PlatformException catch (e) {
-  //     // developer.log('Couldn\'t check connectivity status', error: e);
-  //     return;
-  //   }
-  //
-  //   // If the widget was removed from the tree while the asynchronous platform
-  //   // message was in flight, we want to discard the reply rather than calling
-  //   // setState to update our non-existent appearance.
-  //   if (!mounted) {
-  //     return Future.value(null);
-  //   }
-  //   print('여기');
-  //   return _updateConnectionStatus(result);
-  // }
 
   Future<void> _updateConnectionStatus(List<ConnectivityResult> result) async {
     setState(() {
@@ -87,7 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showDialogToTurnOnData() {
-    print('yest');
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -185,10 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          _email.text = '';
-                          _password.text = '';
-                        });
+                        _formKey.currentState!.reset();
+                        _email.clear();
+                        _password.clear();
                         context.push('/signUp');
                       },
                       child: const Text("회원가입"),
