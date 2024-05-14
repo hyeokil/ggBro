@@ -48,6 +48,7 @@ dependencies:
   http: ^1.2.1
   connectivity_plus: ^6.0.3
   open_settings: ^2.0.2
+  collection: ^1.18.0
 
 flutter_icons:
   android: true

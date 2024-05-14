@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/history_model.dart';
@@ -18,7 +19,17 @@ class _RankingState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final histories = Provider.of<HistoryModel>(context, listen: true).getHistories();
-    late List dateHistory;
+    List<dynamic> dateHistory = [];
+    dateHistory.addAll(histories);
+
+    var groupedByDate = groupBy(dateHistory, (dynamic p) {
+      return DateTime.parse(p['create_at']).toIso8601String().substring(0, 10); // 날짜만 추출
+    });
+
+    List<dynamic> dateFinalHistory = [];
+    for (String key in groupedByDate.keys) {
+      dateFinalHistory.add({key : groupedByDate['$key']});
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -46,11 +57,12 @@ class _RankingState extends State<HistoryScreen> {
                     height: MediaQuery.of(context).size.height * 0.82,
                     child: ListView.builder(
                       scrollDirection: Axis.vertical,
-                      itemCount: histories.length,
+                      itemCount: dateFinalHistory.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
                           // margin: EdgeInsets.only(bottom: 5),
                           child: HistoryDateList(
+                            dateHistoryList: dateFinalHistory[index],
                           ),
                         );
                       },
