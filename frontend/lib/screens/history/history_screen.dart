@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/history_model.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
+import 'package:frontend/screens/history/component/history_date_list.dart';
 import 'package:frontend/screens/history/component/history_list.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class _RankingState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final histories = Provider.of<HistoryModel>(context, listen: true).getHistories();
+    late List dateHistory;
 
     return SafeArea(
       child: Scaffold(
@@ -42,20 +44,16 @@ class _RankingState extends State<HistoryScreen> {
                   TopBar(),
                   Container(
                     height: MediaQuery.of(context).size.height * 0.82,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          HistoryList(),
-                          HistoryList(),
-                          HistoryList(),
-                          HistoryList(),
-                          HistoryList(),
-                          HistoryList(),
-                          HistoryList(),
-                          HistoryList(),
-                        ],
-                      ),
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: histories.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          // margin: EdgeInsets.only(bottom: 5),
+                          child: HistoryDateList(
+                          ),
+                        );
+                      },
                     ),
                   )
                 ],

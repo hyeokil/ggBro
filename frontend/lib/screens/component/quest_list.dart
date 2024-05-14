@@ -82,12 +82,12 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
             widget.questId == 1
                 ? '${widget.petNickName}과(와) 플로깅 ${widget.goal}회 하기'
                 : widget.questId == 2
-                    ? '플라몽 ${widget.goal}마리 처치 하기'
+                    ? '${widget.petNickName}과(와) 플라몽 ${widget.goal}마리 처치 하기'
                     : widget.questId == 3
-                        ? '미쪼몬 ${widget.goal}마리 처치 하기'
+                        ? '${widget.petNickName}과(와) 미쪼몬 ${widget.goal}마리 처치 하기'
                         : widget.questId == 4
-                            ? '율몽 ${widget.goal}마리 처치 하기'
-                            : '포 캔몽 ${widget.goal}마리 처치 하기',
+                            ? '${widget.petNickName}과(와) 율몽 ${widget.goal}마리 처치 하기'
+                            : '${widget.petNickName}과(와) 포 캔몽 ${widget.goal}마리 처치 하기',
             style: CustomFontStyle.getTextStyle(
                 context, CustomFontStyle.yeonSung60_white),
           ),
