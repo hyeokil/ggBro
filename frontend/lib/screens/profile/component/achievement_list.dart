@@ -61,7 +61,14 @@ class _AchievementListState extends State<AchievementList>
 
   @override
   Widget build(BuildContext context) {
-    final currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
+    final currency =
+        Provider.of<UserProvider>(context, listen: true).getCurrency();
+    late int GoalDistance;
+    late int ProgressDistance;
+    if (widget.index == 1) {
+      GoalDistance = (widget.goal / 1000).floor();
+      ProgressDistance = (widget.progress / 1000).round();
+    }
 
     return Stack(
       children: [
@@ -84,7 +91,7 @@ class _AchievementListState extends State<AchievementList>
             widget.index == 0
                 ? '플로깅 원정 ${widget.goal}회 출정하기'
                 : widget.index == 1
-                    ? '원정 거리 ${widget.goal}Km 주파'
+                    ? '원정 거리 ${GoalDistance}Km 주파'
                     : widget.index == 2
                         ? '펫 ${widget.goal}종 모집'
                         : widget.index == 3
@@ -104,7 +111,9 @@ class _AchievementListState extends State<AchievementList>
                 right: MediaQuery.of(context).size.width * 0.02,
                 child: Container(
                   child: Text(
-                    '${widget.progress}/${widget.goal}',
+                    widget.index == 1
+                        ? '$ProgressDistance/$GoalDistance'
+                        : '${widget.progress}/${widget.goal}',
                     style: CustomFontStyle.getTextStyle(
                         context, CustomFontStyle.yeonSung60_white),
                   ),

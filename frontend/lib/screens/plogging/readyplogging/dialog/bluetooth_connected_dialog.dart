@@ -5,11 +5,18 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/member_model.dart';
+import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class BluetoothConnectedDialog extends StatefulWidget {
   final Function func;
-  const BluetoothConnectedDialog({super.key, required this.func});
+  final Function goPrevious;
+
+  const BluetoothConnectedDialog({super.key, required this.func, required this.goPrevious});
 
   @override
   State<BluetoothConnectedDialog> createState() => _BluetoothConnecState();
@@ -99,6 +106,18 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                   );
                 }),
           ),
+          TextButton(
+            onPressed: () {
+              final userProvider = Provider.of<UserProvider>(context, listen: false);
+              userProvider.setTutorial(true);
+              var main = Provider.of<MainProvider>(context, listen: false);
+              main.setIsTutorialPloggingFinish();
+
+              Navigator.of(context).pop();
+              widget.goPrevious();
+            },
+            child: Text('다른기기 연결 방지를 위해 집게 블루투스만 표시됩니다.'),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -122,9 +141,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
     initBle();
   }
 
+  // 다이얼로그 끄면 스캔 멈추게
   @override
   void dispose() {
     super.dispose();
+    FlutterBluePlus.stopScan();
   }
 
   void initBle() {
@@ -164,7 +185,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
       var subscription = FlutterBluePlus.scanResults.listen((results) {
         setState(() {
           scanResults = results
-              .where((result) => result.device.advName.isNotEmpty)
+              .where((result) => result.device.advName == 'GingStick')
               .toList();
         });
         for (ScanResult result in results) {

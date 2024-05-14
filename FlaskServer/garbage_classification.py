@@ -44,7 +44,7 @@ def crop_image(file_path):
     # cmd = f"python yolov5/detect.py --weights {weights_path} --source image.jpg --save-txt"
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True) 
 
-    print(result)
+    # print(result)
 
     # 이미지 경로와 결과 파일 경로 설정
     # image_path = '/content/image.jpg'
@@ -78,6 +78,9 @@ def crop_image(file_path):
 
     count = len(objects)
     # print("객체 개수:", count)
+
+    if count == 0:
+        return count
 
     # 이미지 중앙과 가장 가까운 객체 찾기
     image_center = (width / 2, height / 2)
@@ -120,6 +123,13 @@ def classify_garbage(image_path):
 
     # Yolo 객체 탐지 및 Crop
     detected_cnt = crop_image(image_path)
+
+    if detected_cnt == 0:
+        predicted_class = 4
+        garbage_class_name = "NONE"
+
+        return predicted_class, garbage_class_name, detected_cnt
+
 
     cropped_image_path = './cropped_image.jpg'
 

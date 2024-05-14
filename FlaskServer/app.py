@@ -79,8 +79,7 @@ def predict():
       print("검출 개수: " + str(detected_count))
 
       message = {
-         "class": class_name, 
-         "count" : detected_count
+         "type": class_name
       }
 
       return message
