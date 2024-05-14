@@ -68,4 +68,32 @@ class PloggingModel with ChangeNotifier {
   getClassificationData() {
     return classificationData;
   }
+
+  late Map<String, dynamic> trashLists;
+
+  Future<String> trashList(
+      String accessToken, double latitude, double longitude, int radius) async {
+    var url = Uri.https(address, "/api/v1/plogging/trash/list");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode(
+        {'latitude': latitude, 'longitude': longitude, 'radius': radius});
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      trashLists = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      print('쓰레기 $trashLists');
+      return "Success";
+    } else {
+      print('안됨');
+      return "fail";
+    }
+  }
+
+  Map<String, dynamic> getTrashLists() {
+    return trashLists;
+  }
 }
