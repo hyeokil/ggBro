@@ -103,7 +103,7 @@ public class PloggingServiceImpl implements PloggingService {
         plogging.updateTime(now.format(formatter));
 //       플로깅 1회 업적, 퀘스트 진행상황 동기화
         trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),1L,1);
-        trashServiceImpl.updateMemberQuest(plogging.getMember().getId(),1L);
+        trashServiceImpl.updateMemberQuest(plogging.getMember().getId(),plogging.getMemberPet().getId(),1L);
 //        플로깅한 거리
         trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),
                 2L,

@@ -49,7 +49,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -102,8 +101,8 @@ public class TrashServiceImpl implements TrashService {
         memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress(progress);
     }
 
-    public void  updateMemberQuest(Long memberId, Long questId) {
-        MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndQuestIdOrderByIdDesc(memberId,questId);
+    public void  updateMemberQuest(Long memberId,Long memberPetId, Long questId) {
+        MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndQuestIdAndMemberPetIdOrderByIdDesc(memberId,memberPetId,questId);
         if (memberQuest!=null) {
             memberQuest.updateProgress();
         }
@@ -175,22 +174,22 @@ public class TrashServiceImpl implements TrashService {
                 exp = 55 ;
                 value=petActive ? 100 : 50;memberPet.addNormal();
                 updateMemberAchievement(memberId, 4L,1);
-                updateMemberQuest(memberId,3L);}
+                updateMemberQuest(memberId,memberPet.getId(),3L);}
             case PLASTIC -> {
                 exp = 66;
                 value=petActive ? 110 : 60;memberPet.addPlastic();
                 updateMemberAchievement(memberId, 5L,1);
-                updateMemberQuest(memberId,2L);}
+                updateMemberQuest(memberId,memberPet.getId(),2L);}
             case CAN -> {
                 exp = 111;
                 value=petActive ? 160 : 100;memberPet.addCan();
                 updateMemberAchievement(memberId, 6L,1);
-                updateMemberQuest(memberId,5L);}
+                updateMemberQuest(memberId,memberPet.getId(),5L);}
             case GLASS -> {
                 exp = 199;
                 value =petActive ? 270 : 200;memberPet.addGlass();
                 updateMemberAchievement(memberId, 7L,1);
-                updateMemberQuest(memberId,4L);}
+                updateMemberQuest(memberId,memberPet.getId(),4L);}
         };
 
         int currency = petActive ? 0 : value;
