@@ -27,8 +27,14 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      master:
+        host: localhost
+        port: 6379
+      slaves:
+        - host: localhost
+          port: 6380
+        - host: localhost
+          port: 6381
   springdoc:
     api-docs:
       enabled: true
