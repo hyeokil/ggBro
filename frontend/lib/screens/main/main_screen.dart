@@ -7,6 +7,7 @@ import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/campaign_model.dart';
+import 'package:frontend/models/history_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/ranking_model.dart';
@@ -15,6 +16,7 @@ import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/clearmonster/clear_monster.dart';
 import 'package:frontend/screens/component/menu.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
+import 'package:frontend/screens/main/component/evolution_bar.dart';
 import 'package:frontend/screens/main/component/exp_bar.dart';
 import 'package:frontend/screens/main/component/nickname_bar.dart';
 import 'package:frontend/screens/main/dialog/weekly_quest_dialog.dart';
@@ -23,6 +25,7 @@ import 'package:frontend/screens/main/partner/partner.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
 import 'package:frontend/screens/tutorial/box_open_tutorial_dialog.dart';
 import 'package:frontend/screens/tutorial/go_plogging_tutorial_dialog.dart';
+import 'package:frontend/screens/tutorial/introduce_main_profile_tutorial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +36,9 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
+  AnimationController? _animationController_evolution_button;
+  Animation<double>? _rotateAnimation_evolution_button;
   late MainProvider mainProvider;
   late UserProvider userProvider;
   late String accessToken;
@@ -55,6 +60,19 @@ class _MainScreenState extends State<MainScreen> {
     memberTutorial = userProvider.getMemberTutorial();
     isTutorialPloggingFinish = mainProvider.getIsTutorialPloggingFinish();
     getData();
+
+    _animationController_evolution_button = AnimationController(
+        duration: const Duration(milliseconds: 800), vsync: this);
+    _rotateAnimation_evolution_button = Tween<double>(begin: -0.1, end: 0.1)
+        .animate(_animationController_evolution_button!);
+
+    _animationController_evolution_button!.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController_evolution_button!.dispose();
+    super.dispose();
   }
 
   getData() async {
@@ -101,26 +119,11 @@ class _MainScreenState extends State<MainScreen> {
               );
             },
           ).then(
-            (value) => setState(() {}),
+            (value) {
+              setState(() {});
+            },
           );
         });
-      });
-    }
-
-    // 경험치 찼는지 판별
-    if (currentPet['active'] == false && currentPet['exp'] >= 300) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        petModel.openBox(accessToken, -1);
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return OpenBoxDialog(
-              image: currentPet['image'],
-            );
-          },
-        ).then(
-          (value) => setState(() {}),
-        );
       });
     }
   }
@@ -229,6 +232,8 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final pet = Provider.of<PetModel>(context, listen: true).getCurrentPet();
     final currentTutorial =
+        Provider.of<UserProvider>(context, listen: true).getTutorial();
+    final tutorial =
         Provider.of<UserProvider>(context, listen: true).getMemberTutorial();
 
     return SafeArea(
@@ -331,11 +336,15 @@ class _MainScreenState extends State<MainScreen> {
                         //   width: MediaQuery.of(context).size.width * 0.04,
                         // ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             if (!_isButtonDisabled) {
                               setState(() {
                                 _isButtonDisabled = true; // 버튼 비활성화
                               });
+                              final history = Provider.of<HistoryModel>(
+                                  context,
+                                  listen: false);
+                              await history.getHistory(accessToken);
                               context.push('/history').then((value) {
                                 // 페이지 이동이 완료되면 버튼을 다시 활성화합니다.
                                 setState(() {
@@ -402,7 +411,7 @@ class _MainScreenState extends State<MainScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.02,
                     ),
-                    currentTutorial == true
+                    tutorial == true
                         ? Partner(
                             image: pet['active']
                                 ? Image.network(
@@ -426,9 +435,28 @@ class _MainScreenState extends State<MainScreen> {
                             ? NickNameBar(
                                 nickName: pet['nickname'],
                               )
-                            : currentTutorial == false
-                                ? NickNameBar(nickName: '')
-                                : ExpBar(exp: pet['exp']),
+                            : pet['exp'] >= 1000
+                                ? AnimatedBuilder(
+                                    animation:
+                                        _animationController_evolution_button!,
+                                    builder: (context, widget) {
+                                      if (_rotateAnimation_evolution_button !=
+                                          null) {
+                                        return Transform.rotate(
+                                          angle:
+                                              _rotateAnimation_evolution_button!
+                                                  .value,
+                                          child: widget,
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
+                                    child: EvolutionBar(),
+                                  )
+                                : currentTutorial == false
+                                    ? NickNameBar(nickName: '')
+                                    : ExpBar(exp: pet['exp']),
                         GestureDetector(
                           onTap: () {
                             context.push('/ploggingReady');
@@ -488,7 +516,11 @@ class _MainScreenState extends State<MainScreen> {
                     ClearMonster(pet: pet),
                   ],
                 )
-              : CircularProgressIndicator(),
+              : Container(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
         ),
       ),
     );

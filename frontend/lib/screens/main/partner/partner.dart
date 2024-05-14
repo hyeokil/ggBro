@@ -61,6 +61,7 @@ class _PartnerState extends State<Partner> {
         // );
       }},
       child: Container(
+        // color: Colors.white,
         width: widget.isPet
             ? MediaQuery.of(context).size.height * 0.95
             : MediaQuery.of(context).size.height * 0.3,
