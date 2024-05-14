@@ -28,8 +28,14 @@ spring:
 
   data:
     redis:
-      host: k10c206.p.ssafy.io
-      port: 6379
+      master:
+        host: k10c206.p.ssafy.io
+        port: 6379
+      slaves:
+        - host: k10c206.p.ssafy.io
+          port: 6380
+        - host: k10c206.p.ssafy.io
+          port: 6381
   springdoc:
     api-docs:
       enabled: true
@@ -53,9 +59,15 @@ spring:
       mode: always
       data-locations:
         - 'classpath:/sql/data_pet.sql'
+        - 'classpath:/sql/data_quest.sql'
         - 'classpath:/sql/data_achievement.sql'
         - 'classpath:/sql/create_spatial_index.sql'
-        - 'classpath:/sql/data_quest.sql'
+        - 'classpath:/sql/data_member.sql'
+        - 'classpath:/sql/data_member_info.sql'
+        - 'classpath:/sql/data_member_pet.sql'
+        - 'classpath:/sql/data_member_achievement.sql'
+        - 'classpath:/sql/data_plogging.sql'
+        - 'classpath:/sql/data_trash.sql'
         - 'classpath:/data_notice.sql'
 
 
@@ -69,4 +81,4 @@ aws:
 
 # FLASK
 flask:
-  server-url: http://k10c206.p.ssafy.io:5000/predict # 젠킨스 환경변수 추가
+  server-url: https://k10c206.p.ssafy.io/predict # 젠킨스 환경변수 추가

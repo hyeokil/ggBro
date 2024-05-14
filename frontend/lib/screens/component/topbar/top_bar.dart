@@ -93,7 +93,7 @@ class _TopBarState extends State<TopBar> {
             onTapCancel: _onTapCancel,
             child: ProfileImage(
               image: currentProfileImage == 0
-                  ? Image.asset(AppIcons.earth_1)
+                  ? Image.asset(AppIcons.earth_3)
                   : Image.network(
                       '${allPets[currentProfileImage - 1]['image']}'),
               isPressed : _isPressed,

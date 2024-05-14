@@ -8,6 +8,7 @@ import 'package:frontend/core/theme/theme_data.dart';
 import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/campaign_model.dart';
+import 'package:frontend/models/history_model.dart';
 import 'package:frontend/models/member_model.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/plogging_model.dart';
@@ -55,6 +56,9 @@ void main() async {
                 Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
             create: (context) => CampaignModel(
+                Provider.of<UserProvider>(context, listen: false))),
+        ChangeNotifierProvider(
+            create: (context) => HistoryModel(
                 Provider.of<UserProvider>(context, listen: false))),
         ChangeNotifierProvider(
             create: (context) =>

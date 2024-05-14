@@ -68,6 +68,7 @@ class _RankingListState extends State<RankingLists> {
                     rank: index + 4,
                     nickName: widget.people[index]['nickname'],
                     score: widget.people[index]['exp'],
+                    profile: widget.people[index]['profile_pet_id'],
                   ),
                 );
               },

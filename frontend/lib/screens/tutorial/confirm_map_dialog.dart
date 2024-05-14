@@ -59,97 +59,105 @@ class _ConfirmMapDialogState extends State<ConfirmMapDialog>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (buttonCheck) {
-          Navigator.of(context).pop();
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.02,
-              left: MediaQuery.of(context).size.width * 0.05,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.02,
+            left: MediaQuery.of(context).size.width * 0.05,
+            child: Container(
+              color: Colors.white,
+              child: buttonCheck ? ReadyMap() : Container(),
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.02,
+            left: MediaQuery.of(context).size.width * 0.2,
+            child: AnimatedBuilder(
+              animation: _scaleAnimation_earth!,
+              builder: (context, widget) {
+                if (_scaleAnimation_earth != null) {
+                  return Transform.scale(
+                    scale: _scaleAnimation_earth!.value,
+                    child: widget,
+                  );
+                } else {
+                  return Container();
+                }
+              },
               child: Container(
-                color: Colors.white,
-                child: buttonCheck ? ReadyMap() : Container(),
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: Image.asset(AppIcons.earth_5),
               ),
             ),
-            Positioned(
-              bottom: MediaQuery.of(context).size.height * 0.02,
-              left: MediaQuery.of(context).size.width * 0.2,
-              child: AnimatedBuilder(
-                animation: _scaleAnimation_earth!,
-                builder: (context, widget) {
-                  if (_scaleAnimation_earth != null) {
-                    return Transform.scale(
-                      scale: _scaleAnimation_earth!.value,
-                      child: widget,
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  child: Image.asset(AppIcons.earth_5),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: MediaQuery.of(context).size.height * 0.2,
-              left: MediaQuery.of(context).size.width * 0.4,
-              child: AnimatedBuilder(
-                animation: _scaleAnimation_speak_bubble!,
-                builder: (context, widget) {
-                  if (_scaleAnimation_speak_bubble != null) {
-                    return Transform.scale(
-                      scale: _scaleAnimation_speak_bubble!.value,
-                      child: widget,
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  child: Stack(
-                    children: [
-                      Image.asset(AppIcons.intro_speak_bubble),
-                      Positioned(
-                        left: MediaQuery.of(context).size.width * 0.07,
-                        top: MediaQuery.of(context).size.height * 0.025,
-                        child: Container(
-                          child: Column(
-                            children: [
-                              Text(
-                                '지도를 보면 내 위치와',
-                                style: CustomFontStyle.getTextStyle(
-                                    context, CustomFontStyle.yeonSung70),
-                              ),
-                              Text(
-                                '내 주변 쓰레기통 정보를',
-                                style: CustomFontStyle.getTextStyle(
-                                    context, CustomFontStyle.yeonSung70),
-                              ),
-                              Text(
-                                '볼 수 있어!',
-                                style: CustomFontStyle.getTextStyle(
-                                    context, CustomFontStyle.yeonSung70),
-                              ),
-                            ],
-                          ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.2,
+            left: MediaQuery.of(context).size.width * 0.4,
+            child: AnimatedBuilder(
+              animation: _scaleAnimation_speak_bubble!,
+              builder: (context, widget) {
+                if (_scaleAnimation_speak_bubble != null) {
+                  return Transform.scale(
+                    scale: _scaleAnimation_speak_bubble!.value,
+                    child: widget,
+                  );
+                } else {
+                  return Container();
+                }
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Stack(
+                  children: [
+                    Image.asset(AppIcons.intro_speak_bubble),
+                    Positioned(
+                      left: MediaQuery.of(context).size.width * 0.07,
+                      top: MediaQuery.of(context).size.height * 0.025,
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Text(
+                              '지도를 보면 내 위치와',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung70),
+                            ),
+                            Text(
+                              '내 주변 쓰레기통 정보를',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung70),
+                            ),
+                            Text(
+                              '볼 수 있어!',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung70),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            bottom: 0,
+            child: GestureDetector(
+              onTap: () {
+                if (buttonCheck) {
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                width: MediaQuery.of(context).size.width * 1,
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

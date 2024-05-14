@@ -29,8 +29,8 @@ public class MemberAchievement extends BaseEntity {
 
     private int goalMultiply;
 
-    public void updateProgress() {
-        this.progress +=1;
+    public void updateProgress(int progress) {
+        this.progress +=progress;
     }
 
     public void updateGoalMultiply() {
