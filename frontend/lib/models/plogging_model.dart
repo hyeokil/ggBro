@@ -52,7 +52,8 @@ class PloggingModel with ChangeNotifier {
     print(
         'classificationTrash request : $url, headers : $headers body : $body');
     final response = await http.post(url, headers: headers, body: body);
-
+    print(
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataHeaders]"]}');
     print(
         'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
 
@@ -67,6 +68,34 @@ class PloggingModel with ChangeNotifier {
 
   getClassificationData() {
     return classificationData;
+  }
+
+  late Map<String, dynamic> finishData;
+
+  Future<String> finishPlogging(
+      String accessToken, List<Map<String, double>> path, int distance) async {
+    var url = Uri.https(address, "/api/v1/plogging/finish/$ploggingId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode({'path': path, 'distance': distance});
+    print(
+        'classificationTrash request : $url, headers : $headers body : $body');
+    final response = await http.post(url, headers: headers, body: body);
+    print(
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
+
+    if (response.statusCode == 200) {
+      finishData = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      return 'Success';
+    } else {
+      return 'Fail';
+    }
+  }
+
+  getFinishData() {
+    return finishData;
   }
 
   late Map<String, dynamic> trashLists;
