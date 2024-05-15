@@ -36,4 +36,28 @@ class HistoryModel with ChangeNotifier {
   List<dynamic> getHistories() {
     return histories;
   }
+
+  Map<String, dynamic> historyDetail = {};
+
+  Future<String> getHistoryDetail(String accessToken, int ploggingId) async {
+    var url = Uri.https(address, "/api/v1/history/detail/${ploggingId}");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+
+    final response = await http.get(url, headers: headers);
+    // print('응답 ${json.decode(utf8.decode(response.bodyBytes))}');
+    if (response.statusCode == 200) {
+      historyDetail = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      print('히스토리 디테일 $historyDetail');
+      return "Success";
+    } else {
+      return "fail";
+    }
+  }
+
+  Map<String, dynamic> getDetailHistory() {
+    return historyDetail;
+  }
 }
