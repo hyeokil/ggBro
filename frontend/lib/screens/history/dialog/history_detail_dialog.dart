@@ -171,7 +171,7 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
                       ? NaverMap(
                           onMapReady: (controller) {
                             _mapController = controller; // 지도 컨트롤러 초기화
-                            drawPath();
+                            drawPath(); // 경로 그리기
                           },
                           options: NaverMapViewOptions(
                               minZoom: 13,
