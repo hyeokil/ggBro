@@ -38,7 +38,7 @@ public class HistoryServiceImpl implements HistoryService{
     @Override
     public List<HistoryListResponseDTO> historyList(Long memberId) {
 
-        List<Plogging> ploggingList = ploggingRepository.findByMemberId(memberId);
+        List<Plogging> ploggingList = ploggingRepository.findByMemberIdOrderByCreatedAtDesc(memberId);
 
         List<HistoryListResponseDTO> historyList = new ArrayList<>();
 
@@ -86,7 +86,8 @@ public class HistoryServiceImpl implements HistoryService{
 
         for(Trash trashItem : trashList){
             TrashDTO trashDTO = new TrashDTO(
-                    trashItem.getLocation(),
+                    trashItem.getLocation().getY(),
+                    trashItem.getLocation().getX(),
                     trashItem.getTrashType(),
                     trashItem.getImage()
             );
