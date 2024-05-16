@@ -4,8 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/provider/main_provider.dart';
-import 'package:frontend/screens/plogging/progressplogging/progress_plogging.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ScanDeviceTile extends StatefulWidget {
@@ -24,7 +22,7 @@ class ScanDeviceTile extends StatefulWidget {
 
 class _ScanDeviceTileState extends State<ScanDeviceTile>
     with TickerProviderStateMixin {
-  final int maxRetries = 10; // 최대 재시도 횟수
+  final int maxRetries = 7; // 최대 재시도 횟수
   int retryCount = 0; // 현재 재시도 횟수
   bool isConnected = false;
 
@@ -203,7 +201,6 @@ class _ScanDeviceTileState extends State<ScanDeviceTile>
       Fluttertoast.showToast(msg: '${device.advName} 연결됨');
       var main = Provider.of<MainProvider>(context, listen: false);
       main.setDevice(device);
-      print('현재 루트 ${Navigator.of(context).widget.initialRoute}');
       Navigator.of(context).pop(); // 대화상자 닫기
       widget.func();
       // context.go('/ploggingProgress');

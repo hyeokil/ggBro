@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/provider/user_provider.dart';
@@ -189,10 +190,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                               }
                             },
-                            style: const ButtonStyle(),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.orange.shade100,
+                              backgroundColor: AppColors.basicShadowPink,
+                              textStyle: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung70),
+                            ),
                             child: const Text("로그인"),
                           ),
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.green.shade100,
+                                backgroundColor: AppColors.basicgreen,
+                                textStyle: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung70)),
                             onPressed: () {
                               _formKey.currentState!.reset();
                               _email.clear();

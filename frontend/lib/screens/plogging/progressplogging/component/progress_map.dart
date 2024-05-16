@@ -414,7 +414,8 @@ class _ProgressMapState extends State<ProgressMap> {
     ).then((_) {
       var petModel = Provider.of<PetModel>(context, listen: false);
       petModel.getPetDetail(accessToken, -1);
-      var currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
+      var currency =
+          Provider.of<UserProvider>(context, listen: true).getCurrency();
       userProvider.setCurrency(currency + value);
       context.pushReplacement('/main');
     });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class CustomInput extends StatelessWidget {
@@ -32,7 +33,7 @@ class CustomInput extends StatelessWidget {
         ));
     return Container(
         // width: MediaQuery.of(context).size.width * 0.8,
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.7,
         margin: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
           autovalidateMode: autovalidateMode,
@@ -48,6 +49,7 @@ class CustomInput extends StatelessWidget {
           decoration: InputDecoration(
             suffixIcon: suffixIcon,
             icon: icon,
+            iconColor: AppColors.basicnavy,
             hintText: hint,
             labelText: label,
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
