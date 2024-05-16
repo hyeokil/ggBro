@@ -9,7 +9,6 @@ public interface HistoryService {
 
     List<HistoryListResponseDto> historyList(Long memberId);
 
-
     HistoryDetailResponseDto historyDetail(Long memberId, Long ploggingId);
 
 }
