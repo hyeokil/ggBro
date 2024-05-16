@@ -49,6 +49,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -142,12 +143,12 @@ public class TrashServiceImpl implements TrashService {
         // 이미지 메타데이터 설정
         String imageUrl = uploadImageAndGetUrl(fileName, imageData);
         // 플라스크로 url 보내서 종류 받아오기 아래 주석
-        TrashType trashType = classifyTrash(imageUrl);
+//        TrashType trashType = classifyTrash(imageUrl);
         // 일단 랜덤으로 테스트  여기서 부터
-//        TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
-//        Random random = new Random();
-//        int randomIndex = random.nextInt(trashTypes.length);
-//        TrashType trashType = trashTypes[randomIndex]; // 여기까지 주석처리하고 134 번째줄 주석빼고 쓰면 됨
+        TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
+        Random random = new Random();
+        int randomIndex = random.nextInt(trashTypes.length);
+        TrashType trashType = trashTypes[randomIndex]; // 여기까지 주석처리하고 134 번째줄 주석빼고 쓰면 됨
         // 쓰레기 저장
         // Coordinate 객체를 사용하여 Point 생성
         GeometryFactory geometryFactory = new GeometryFactory();
