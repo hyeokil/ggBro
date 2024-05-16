@@ -44,14 +44,14 @@ void main() async {
               create: (context) =>
                   PetModel(Provider.of<UserProvider>(context, listen: false))),
           ChangeNotifierProvider(
-              create: (context) =>
-                  RescueModel(Provider.of<UserProvider>(context, listen: false))),
+              create: (context) => RescueModel(
+                  Provider.of<UserProvider>(context, listen: false))),
           ChangeNotifierProvider(
               create: (context) => AchievementModel(
                   Provider.of<UserProvider>(context, listen: false))),
           ChangeNotifierProvider(
-              create: (context) =>
-                  QuestModel(Provider.of<UserProvider>(context, listen: false))),
+              create: (context) => QuestModel(
+                  Provider.of<UserProvider>(context, listen: false))),
           ChangeNotifierProvider(
               create: (context) => RankingModel(
                   Provider.of<UserProvider>(context, listen: false))),
@@ -62,8 +62,8 @@ void main() async {
               create: (context) => HistoryModel(
                   Provider.of<UserProvider>(context, listen: false))),
           ChangeNotifierProvider(
-              create: (context) =>
-                  MemberModel(Provider.of<UserProvider>(context, listen: false))),
+              create: (context) => MemberModel(
+                  Provider.of<UserProvider>(context, listen: false))),
           ChangeNotifierProvider(
               create: (context) => PloggingModel(
                   Provider.of<UserProvider>(context, listen: false))),

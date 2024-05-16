@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
-import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/main_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
@@ -12,18 +12,18 @@ import 'package:provider/provider.dart';
 class FinishPloggingDialog extends StatefulWidget {
   final int totalDistance, plastic, can, glass, normal, value, box;
   final List<Map<String, double>> path;
-
-  const FinishPloggingDialog({
-    super.key,
-    required this.path,
-    required this.totalDistance,
-    required this.box,
-    required this.can,
-    required this.glass,
-    required this.normal,
-    required this.plastic,
-    required this.value,
-  });
+  final bool isExp;
+  const FinishPloggingDialog(
+      {super.key,
+      required this.path,
+      required this.totalDistance,
+      required this.can,
+      required this.glass,
+      required this.normal,
+      required this.plastic,
+      required this.value,
+      required this.box,
+      required this.isExp});
 
   @override
   State<FinishPloggingDialog> createState() => _FinishPloggingDialogState();
@@ -65,7 +65,7 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
           isLoadingData
               ? SizedBox(
                   // color: Colors.black,
-                  height: MediaQuery.of(context).size.height * 0.37,
+                  height: MediaQuery.of(context).size.height * 0.45,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -90,6 +90,54 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                         color: AppColors.basicnavy,
                         content: '미쪼몬',
                         count: widget.normal,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreen.shade50,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.basicgray.withOpacity(0.5),
+                              offset: const Offset(0, 4),
+                              blurRadius: 1,
+                              spreadRadius: 1,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Flexible(
+                              flex: 1,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  widget.isExp
+                                      ? const Text('EXP :')
+                                      : Image.asset(AppIcons.gging),
+                                  const Text('+'),
+                                  Text('${widget.value}'),
+                                ],
+                              ),
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Image.asset(AppIcons.intro_box),
+                                  const Text('+'),
+                                  Text('${widget.box}'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       GestureDetector(
                         onTap: () {

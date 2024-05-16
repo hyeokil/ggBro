@@ -1,12 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
-import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/models/campaign_model.dart';
 import 'package:frontend/models/history_model.dart';
 import 'package:frontend/models/pet_model.dart';
@@ -23,10 +19,8 @@ import 'package:frontend/screens/main/component/nickname_bar.dart';
 import 'package:frontend/screens/main/dialog/weekly_quest_dialog.dart';
 import 'package:frontend/screens/main/openbox/open_box_dialog.dart';
 import 'package:frontend/screens/main/partner/partner.dart';
-import 'package:frontend/screens/ranking/ranking_screen.dart';
 import 'package:frontend/screens/tutorial/box_open_tutorial_dialog.dart';
 import 'package:frontend/screens/tutorial/go_plogging_tutorial_dialog.dart';
-import 'package:frontend/screens/tutorial/introduce_main_profile_tutorial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
