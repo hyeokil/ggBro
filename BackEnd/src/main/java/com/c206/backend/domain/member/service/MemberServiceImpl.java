@@ -1,12 +1,9 @@
 package com.c206.backend.domain.member.service;
 
-import com.c206.backend.domain.achievement.dto.response.MemberAchievementListResponseDto;
 import com.c206.backend.domain.achievement.entity.Achievement;
 import com.c206.backend.domain.achievement.entity.MemberAchievement;
 import com.c206.backend.domain.achievement.repository.AchievementRepository;
 import com.c206.backend.domain.achievement.repository.MemberAchievementRepository;
-import com.c206.backend.domain.achievement.service.MemberAchievementService;
-import com.c206.backend.domain.member.dto.response.MemberInfoResponseDto;
 import com.c206.backend.domain.member.dto.response.MemberTrashCountResDto;
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.entity.MemberInfo;
@@ -16,17 +13,10 @@ import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
-import com.c206.backend.domain.pet.entity.MemberPet;
-import com.c206.backend.domain.pet.entity.Pet;
 import com.c206.backend.domain.pet.exception.PetError;
 import com.c206.backend.domain.pet.exception.PetException;
-import com.c206.backend.domain.pet.repository.MemberPetRepository;
-import com.c206.backend.domain.pet.repository.PetRepository;
 import com.c206.backend.domain.pet.service.MemberPetService;
-import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
-import com.c206.backend.domain.quest.exception.MemberQuestException;
-import com.c206.backend.domain.quest.service.QuestService;
-import com.c206.backend.global.jwt.CustomUserDetailsService;
+import com.c206.backend.domain.quest.service.MemberQuestService;
 import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
 import com.c206.backend.domain.member.repository.MemberRepository;
@@ -35,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.IThrottledTemplateProcessor;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +41,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberAchievementRepository memberAchievementRepository;
     private final MemberPetService memberPetService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final QuestService questService;
+    private final MemberQuestService memberQuestService;
     private final RedisService redisService;
 
     @Override
@@ -116,7 +105,7 @@ public class MemberServiceImpl implements MemberService{
             System.out.println("회원업적 지정성공");
 
             System.out.println("회원퀘스트 지정시작");
-            questService.addQuestList(member.getId());
+            memberQuestService.addQuestList(member.getId());
             System.out.println("회원퀘스트 지정성공");
 
             return true;

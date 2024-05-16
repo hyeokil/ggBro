@@ -1,8 +1,8 @@
 package com.c206.backend.domain.history.controller;
 
 
-import com.c206.backend.domain.history.dto.response.HistoryDetailResponseDTO;
-import com.c206.backend.domain.history.dto.response.HistoryListResponseDTO;
+import com.c206.backend.domain.history.dto.response.HistoryDetailResponseDto;
+import com.c206.backend.domain.history.dto.response.HistoryListResponseDto;
 import com.c206.backend.domain.history.service.HistoryService;
 import com.c206.backend.global.common.dto.Message;
 import com.c206.backend.global.jwt.CustomUserDetails;
@@ -33,7 +33,7 @@ public class HistoryController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
-        List<HistoryListResponseDTO> historyList = historyService.historyList(memberId);
+        List<HistoryListResponseDto> historyList = historyService.historyList(memberId);
 
         return ResponseEntity.ok().body(Message.success(historyList));
     }
@@ -46,7 +46,7 @@ public class HistoryController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
-        HistoryDetailResponseDTO historyDetailResponseDTO = historyService.historyDetail(memberId, ploggingId);
+        HistoryDetailResponseDto historyDetailResponseDTO = historyService.historyDetail(memberId, ploggingId);
 
         return ResponseEntity.ok().body(Message.success(historyDetailResponseDTO));
     }

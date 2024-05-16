@@ -2,10 +2,11 @@ package com.c206.backend.domain.quest.service;
 
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.entity.MemberInfo;
+import com.c206.backend.domain.member.exception.MemberError;
+import com.c206.backend.domain.member.exception.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import com.c206.backend.domain.pet.entity.MemberPet;
-import com.c206.backend.domain.pet.entity.Pet;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.quest.dto.response.MemberQuestListResponseDto;
 import com.c206.backend.domain.quest.entity.MemberQuest;
@@ -26,7 +27,7 @@ import java.util.*;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class QuestServiceImpl implements QuestService{
+public class MemberQuestServiceImpl implements MemberQuestService {
 
     private final MemberRepository memberRepository;
     private final QuestRepository questRepository;
@@ -55,7 +56,7 @@ public class QuestServiceImpl implements QuestService{
     }
 
     @Override
-    public int getQuestReward(Long memberId, Long memberQuestId) {
+    public Integer getQuestReward(Long memberId, Long memberQuestId) {
 
         // 퀘스트 없을때
         MemberQuest findedMemberQuest = memberQuestRepository.findById(memberQuestId).orElseThrow(()
@@ -72,12 +73,7 @@ public class QuestServiceImpl implements QuestService{
         }
 
         // isdone = true로 설정해서 새로 MemberQuest에 넣어주기
-
-
         findedMemberQuest.updateIsDone();
-        memberQuestRepository.save(findedMemberQuest);
-
-
         // 퀘스트의 횟수와 가중치에 맞게 보상 설정
         int reward = 10 * findedMemberQuest.getGoal();
         if(findedMemberQuest.getQuest().getId() == 1){
@@ -108,7 +104,8 @@ public class QuestServiceImpl implements QuestService{
     @Override
     public void addQuestList(Long memberId) {
         //사용자아이디
-        Member member = memberRepository.findById(memberId).get();
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberError.NOT_FOUND_MEMBER));
 
         // 리스트 중 랜덤하게, 혹은 사용자 맞춤으로 3개 뽑을것
         Random random = new Random();
@@ -136,16 +133,12 @@ public class QuestServiceImpl implements QuestService{
             );
         }
 
-
-
         // 펫 중 랜덤하게, 혹은 사용자 맞춤으로 1개 뽑을것
         List<MemberPet> petList = memberPetRepository.findByMemberId(memberId);
         //랜덤으로
         MemberPet selectedPet = petList.get(random.nextInt(0,petList.size()));
 
         for(int i=0; i<3; i++){
-
-
             MemberQuest memberQuest = MemberQuest.builder()
                     .member(member)
                     .memberPet(selectedPet)
@@ -164,7 +157,6 @@ public class QuestServiceImpl implements QuestService{
     public void addQuestListSchedule() {
         List<Member> memberList = memberRepository.findAll();
         for(Member memberItem : memberList){
-            System.out.println(memberItem.getId()+" "+memberItem.getEmail());
             addQuestList(memberItem.getId());
         }
     }

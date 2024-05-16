@@ -1,9 +1,9 @@
 package com.c206.backend.domain.history.service;
 
-import com.c206.backend.domain.history.dto.RouteDTO;
-import com.c206.backend.domain.history.dto.TrashDTO;
-import com.c206.backend.domain.history.dto.response.HistoryDetailResponseDTO;
-import com.c206.backend.domain.history.dto.response.HistoryListResponseDTO;
+import com.c206.backend.domain.history.dto.RouteDto;
+import com.c206.backend.domain.history.dto.TrashDto;
+import com.c206.backend.domain.history.dto.response.HistoryDetailResponseDto;
+import com.c206.backend.domain.history.dto.response.HistoryListResponseDto;
 import com.c206.backend.domain.history.exception.HistoryError;
 import com.c206.backend.domain.history.exception.HistoryException;
 import com.c206.backend.domain.plogging.entity.Plogging;
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,11 +35,11 @@ public class HistoryServiceImpl implements HistoryService{
     private final PloggingRouteRepository ploggingRouteRepository;
 
     @Override
-    public List<HistoryListResponseDTO> historyList(Long memberId) {
+    public List<HistoryListResponseDto> historyList(Long memberId) {
 
         List<Plogging> ploggingList = ploggingRepository.findByMemberIdOrderByCreatedAtDesc(memberId);
 
-        List<HistoryListResponseDTO> historyList = new ArrayList<>();
+        List<HistoryListResponseDto> historyList = new ArrayList<>();
 
         for(Plogging plogItem : ploggingList){
             if(plogItem.getDistance() == 0){
@@ -54,7 +53,7 @@ public class HistoryServiceImpl implements HistoryService{
                 TrashCount += ((Number) result[1]).intValue();
             }
 
-            HistoryListResponseDTO historyListResponseDto = new HistoryListResponseDTO(
+            HistoryListResponseDto historyListResponseDto = new HistoryListResponseDto(
                     plogItem.getId(),
                     plogItem.getCreatedAt(),
                     plogItem.getUpdatedAt(),
@@ -69,7 +68,7 @@ public class HistoryServiceImpl implements HistoryService{
     }
 
     @Override
-    public HistoryDetailResponseDTO historyDetail(Long memberId, Long ploggingId) {
+    public HistoryDetailResponseDto historyDetail(Long memberId, Long ploggingId) {
 
         //플로깅 찾기
         Plogging plogging = ploggingRepository.findById(ploggingId).orElseThrow(() ->
@@ -81,11 +80,11 @@ public class HistoryServiceImpl implements HistoryService{
         }
 
         //임의로 쓰레기 데이터 설정. 위도 경도의 자료형은 추후 달라질 수 있다.
-        List<TrashDTO> trashDTOList = new ArrayList<>();
+        List<TrashDto> trashDtoList = new ArrayList<>();
         List<Trash> trashList = trashRepository.findByPloggingId(ploggingId);
 
         for(Trash trashItem : trashList){
-            TrashDTO trashDTO = new TrashDTO(
+            TrashDto trashDTO = new TrashDto(
                     trashItem.getLocation().getY(),
                     trashItem.getLocation().getX(),
                     trashItem.getTrashType(),
@@ -93,20 +92,20 @@ public class HistoryServiceImpl implements HistoryService{
             );
 
 
-            trashDTOList.add(trashDTO);
+            trashDtoList.add(trashDTO);
         }
 
         //임의로 경로 데이터 설정. 위도 경도의 자료형은 추후 달라질 수 있다.
-        List<RouteDTO> routeDTOList = new ArrayList<>();
+        List<RouteDto> routeDtoList = new ArrayList<>();
         List<PloggingRoute> ploggingRouteList = ploggingRouteRepository.findByPloggingId(ploggingId);
 
         for(PloggingRoute routeItem : ploggingRouteList){
-            RouteDTO routeDTO = new RouteDTO(
+            RouteDto routeDTO = new RouteDto(
                     routeItem.getLatitude(),
                     routeItem.getLongitude()
             );
 
-            routeDTOList.add(routeDTO);
+            routeDtoList.add(routeDTO);
         }
 
         //쓰레기 갯수 세기
@@ -123,10 +122,10 @@ public class HistoryServiceImpl implements HistoryService{
         }
 
 
-        return new HistoryDetailResponseDTO(
+        return new HistoryDetailResponseDto(
                 ploggingId,
-                trashDTOList,
-                routeDTOList,
+                trashDtoList,
+                routeDtoList,
                 normal,
                 plastic,
                 can,
