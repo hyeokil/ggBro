@@ -1,6 +1,7 @@
 package com.c206.backend.domain.member.service;
 
-import jakarta.servlet.http.HttpServletRequest;
+import com.c206.backend.domain.member.exception.redis.RedisError;
+import com.c206.backend.domain.member.exception.redis.RedisException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
@@ -10,7 +11,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.datatype.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -21,8 +21,13 @@ import java.util.concurrent.TimeUnit;
 public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     public void setValues(String key, String data,Long refreshExpireMs ) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        values.set(key, data, refreshExpireMs , TimeUnit.MILLISECONDS);
+        try{
+            ValueOperations<String, Object> values = redisTemplate.opsForValue();
+            values.set(key, data, refreshExpireMs , TimeUnit.MILLISECONDS);
+        }catch (Exception e){
+            throw new RedisException(RedisError.FAIL_TO_SET_VALUE);
+        }
+
     }
 
 
@@ -37,11 +42,15 @@ public class RedisService {
 
     @Transactional(readOnly = true)
     public String getValues(String key) {
-        ValueOperations<String, Object> values = redisTemplate.opsForValue();
-        if (values.get(key) == null) {
-            return "false";
+        try{
+            ValueOperations<String, Object> values = redisTemplate.opsForValue();
+            if (values.get(key) == null) {
+                return "false";
+            }
+            return (String) values.get(key);
+        } catch (Exception e){
+            throw new RedisException(RedisError.FAIL_TO_GET_VALUE);
         }
-        return (String) values.get(key);
     }
 
     @Transactional(readOnly = true)
@@ -52,7 +61,11 @@ public class RedisService {
 
 
     public void deleteValues(String key) {
-        redisTemplate.delete(key);
+        try{
+            redisTemplate.delete(key);
+        }catch (Exception e){
+            throw new RedisException(RedisError.FAIL_TO_DELETE_VALUE);
+        }
     }
 
     public void expireValues(String key, int timeout) {
@@ -76,6 +89,10 @@ public class RedisService {
     }
 
     public boolean checkExistsValue(String value) {
-        return !value.equals("false");
+        try{
+            return !value.equals("false");
+        }catch (Exception e){
+            throw new RedisException(RedisError.FAIL_TO_CHECK_IS_EXIST_VALUE);
+        }
     }
 }
