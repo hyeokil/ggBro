@@ -95,7 +95,7 @@ public class MemberPetServiceImpl implements MemberPetService {
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
-            throw new PetException(PetError.NOT_YOUR_PET);
+            throw new PetException(PetError.NOT_MATCH_PET);
         }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
@@ -175,7 +175,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
-            throw new PetException(PetError.NOT_YOUR_PET);
+            throw new PetException(PetError.NOT_MATCH_PET);
         }
 
         memberPet.updateNickname(petNickname);
@@ -201,7 +201,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
-            throw new PetException(PetError.NOT_YOUR_PET);
+            throw new PetException(PetError.NOT_MATCH_PET);
         }
 
         memberPet.updateActive();

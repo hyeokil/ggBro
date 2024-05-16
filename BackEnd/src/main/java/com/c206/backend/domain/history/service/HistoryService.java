@@ -1,15 +1,15 @@
 package com.c206.backend.domain.history.service;
 
-import com.c206.backend.domain.history.dto.response.HistoryDetailResponseDTO;
-import com.c206.backend.domain.history.dto.response.HistoryListResponseDTO;
+import com.c206.backend.domain.history.dto.response.HistoryDetailResponseDto;
+import com.c206.backend.domain.history.dto.response.HistoryListResponseDto;
 
 import java.util.List;
 
 public interface HistoryService {
 
-    List<HistoryListResponseDTO> historyList(Long memberId);
+    List<HistoryListResponseDto> historyList(Long memberId);
 
 
-    HistoryDetailResponseDTO historyDetail(Long memberId, Long ploggingId);
+    HistoryDetailResponseDto historyDetail(Long memberId, Long ploggingId);
 
 }

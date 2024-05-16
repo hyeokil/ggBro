@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class MemberQuestExceptionHandler {
     @ExceptionHandler(MemberQuestException.class)
-    public ResponseEntity<Message<Void>> memberException(MemberQuestException e) {
+    public ResponseEntity<Message<Void>> memberQuestException(MemberQuestException e) {
         log.error("{} is occurred", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(Message.fail(null, e.getErrorMessage()));
     }

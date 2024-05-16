@@ -40,20 +40,20 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return ConfirmMapDialog();
+              return const ConfirmMapDialog();
             },
           ).then((value) {
             setState(() {});
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return BluetoothConnectTutorialDialog();
+                return const BluetoothConnectTutorialDialog();
               },
             ).then((value) {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return BluetoothConnectConfirmTutorialDialog();
+                  return const BluetoothConnectConfirmTutorialDialog();
                 },
               ).then((value) {
                 userProvider.setTutorial(true);
@@ -61,7 +61,10 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                     barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
-                      return BluetoothConnectedDialog(func: goNext, goPrevious: goPrevious,);
+                      return BluetoothConnectedDialog(
+                        func: goNext,
+                        goPrevious: goPrevious,
+                      );
                     });
               });
             });
@@ -74,7 +77,6 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
   goNext() {
     context.push('/ploggingProgress');
   }
-
 
   goPrevious() {
     context.push('/main');
@@ -111,18 +113,9 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ),
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: Stack(
             children: [
               Positioned(
@@ -137,22 +130,24 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
                   // color: Colors.black,
-                  child: currentTutorial == true ? Partner(
-                    image: pet['active']
-                        ? Image.network(
-                            pet['image'],
-                          )
-                        : Image.asset(
-                                AppIcons.intro_box,
-                              ),
-                    isPet: pet['active'],
-                  ) : Container(),
+                  child: currentTutorial == true
+                      ? Partner(
+                          image: pet['active']
+                              ? Image.network(
+                                  pet['image'],
+                                )
+                              : Image.asset(
+                                  AppIcons.intro_box,
+                                ),
+                          isPet: pet['active'],
+                        )
+                      : Container(),
                 ),
               ),
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
               Positioned(
                 right: MediaQuery.of(context).size.width * 0.03,
@@ -163,7 +158,10 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                         barrierDismissible: false,
                         context: context,
                         builder: (BuildContext context) {
-                          return BluetoothConnectedDialog(func: goNext, goPrevious: goPrevious,);
+                          return BluetoothConnectedDialog(
+                            func: goNext,
+                            goPrevious: goPrevious,
+                          );
                         });
                   },
                   onTapDown: _onTapDown,

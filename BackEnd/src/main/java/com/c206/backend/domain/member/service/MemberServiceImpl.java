@@ -16,7 +16,7 @@ import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
 import com.c206.backend.domain.pet.exception.PetError;
 import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.service.MemberPetService;
-import com.c206.backend.domain.quest.service.QuestService;
+import com.c206.backend.domain.quest.service.MemberQuestService;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService{
     private final MemberAchievementRepository memberAchievementRepository;
     private final MemberPetService memberPetService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final QuestService questService;
+    private final MemberQuestService memberQuestService;
     private final RedisService redisService;
 
     @Override
@@ -94,7 +94,6 @@ public class MemberServiceImpl implements MemberService{
                 throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_MEMBER_INFO);
             }
 
-
             //회원-업적 테이블에 기본사항 지정하기
             try{
                 List<Achievement> achievementList = achievementRepository.findAll();
@@ -113,7 +112,7 @@ public class MemberServiceImpl implements MemberService{
 
             //회원-퀘스트 테이블에 기본사항 지정하기
             try{
-                questService.addQuestList(member.getId());
+                memberQuestService.addQuestList(member.getId());
             }catch (Exception e){
                 throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_QUEST);
             }

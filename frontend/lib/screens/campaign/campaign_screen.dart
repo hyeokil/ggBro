@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/campaign_model.dart';
 import 'package:frontend/screens/campaign/component/campaign_list.dart';
@@ -17,30 +18,22 @@ class CampaignScreen extends StatefulWidget {
 class _RankingState extends State<CampaignScreen> {
   @override
   Widget build(BuildContext context) {
-    final campaign = Provider.of<CampaignModel>(context, listen: true).getCampaign();
+    final campaign =
+        Provider.of<CampaignModel>(context, listen: true).getCampaign();
 
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ), // 전
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: Stack(
             children: [
               Column(
                 children: [
-                  TopBar(),
+                  const TopBar(),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: MediaQuery.of(context).size.height * 0.07,
@@ -51,7 +44,7 @@ class _RankingState extends State<CampaignScreen> {
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.basicShadowGray.withOpacity(0.5),
-                          offset: Offset(0, 4),
+                          offset: const Offset(0, 4),
                           blurRadius: 1,
                           spreadRadius: 1,
                         ),
@@ -68,7 +61,7 @@ class _RankingState extends State<CampaignScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height * 0.42,
                     // color: Colors.yellow,
                     child: ListView.builder(
@@ -138,7 +131,7 @@ class _RankingState extends State<CampaignScreen> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.02,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
             ],
           ),
