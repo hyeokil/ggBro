@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/plogging")
-@Tag(name = "Plogging", description = "Ploggin API")
+@Tag(name = "Plogging", description = "Plogging API")
 public class PloggingController {
 
     private final PloggingService ploggingService;
@@ -30,7 +30,6 @@ public class PloggingController {
 
 
     @PostMapping("/start/{memberPetId}")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<Long>> createPlogging(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication) {
