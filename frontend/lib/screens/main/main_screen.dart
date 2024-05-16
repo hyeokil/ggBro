@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
@@ -305,7 +306,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               setState(() {
                                 _isButtonDisabled = true; // 버튼 비활성화
                               });
-                              final ranking = Provider.of<RankingModel>(context,
+                              final ranking = Provider.of<RankingModel>(
+                                  context,
                                   listen: false);
                               await ranking.getRanking(accessToken);
                               context.push('/ranking').then((value) {
@@ -470,7 +472,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             decoration: BoxDecoration(
                               color: AppColors.readyButton,
                               borderRadius: BorderRadius.circular(30),
-                              border: Border.all(width: 3, color: Colors.white),
+                              border:
+                                  Border.all(width: 3, color: Colors.white),
                               boxShadow: _isReadyPressed
                                   ? []
                                   : [
@@ -487,8 +490,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 Positioned(
                                   top: MediaQuery.of(context).size.height *
                                       0.003,
-                                  left:
-                                      MediaQuery.of(context).size.width * 0.015,
+                                  left: MediaQuery.of(context).size.width *
+                                      0.015,
                                   child: Container(
                                     child: const Icon(
                                       Icons.directions_run_sharp,
@@ -500,7 +503,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 Center(
                                   child: Text(
                                     '   준비하기',
-                                    style: CustomFontStyle.getTextStyle(context,
+                                    style: CustomFontStyle.getTextStyle(
+                                        context,
                                         CustomFontStyle.yeonSung80_white),
                                   ),
                                 ),
