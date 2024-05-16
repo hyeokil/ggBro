@@ -171,7 +171,7 @@ class _PloggingTutorialLocationDialog
                         width: MediaQuery.of(context).size.width * 0.148,
                         height: MediaQuery.of(context).size.height * 0.07,
                         decoration: BoxDecoration(
-                          color: Colors.transparent,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Image.asset(AppIcons.intro_box),
