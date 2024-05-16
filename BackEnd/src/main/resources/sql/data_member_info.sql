@@ -6,14 +6,14 @@ INSERT INTO `member_info` (
 )
 VALUES (
          1
-       ,null
+       ,0
        ,0
        ,0
 
 )
      ,(
         2
-      ,null
+      ,0
       ,0
       ,0
 );
