@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface PloggingRepository extends JpaRepository<Plogging,Long> {
 
-    List<Plogging> findByMemberId(Long memberId);
+    List<Plogging> findByMemberIdOrderByCreatedAtDesc(Long memberId);
 }

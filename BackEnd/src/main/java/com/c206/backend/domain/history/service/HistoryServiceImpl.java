@@ -9,6 +9,7 @@ import com.c206.backend.domain.history.exception.HistoryException;
 import com.c206.backend.domain.plogging.entity.Plogging;
 import com.c206.backend.domain.plogging.entity.PloggingRoute;
 import com.c206.backend.domain.plogging.entity.Trash;
+import com.c206.backend.domain.plogging.entity.enums.TrashType;
 import com.c206.backend.domain.plogging.repository.PloggingRepository;
 import com.c206.backend.domain.plogging.repository.PloggingRouteRepository;
 import com.c206.backend.domain.plogging.repository.TrashRepository;
@@ -37,19 +38,29 @@ public class HistoryServiceImpl implements HistoryService{
     @Override
     public List<HistoryListResponseDTO> historyList(Long memberId) {
 
-        List<Plogging> ploggingList = ploggingRepository.findByMemberId(memberId);
+        List<Plogging> ploggingList = ploggingRepository.findByMemberIdOrderByCreatedAtDesc(memberId);
 
         List<HistoryListResponseDTO> historyList = new ArrayList<>();
 
         for(Plogging plogItem : ploggingList){
+            if(plogItem.getDistance() == 0){
+                continue;
+            }
+
+            //쓰레기
+            List<Object[]> results = trashRepository.countTrashByPloggingId(plogItem.getId());
+            int TrashCount = 0;
+            for (Object[] result : results) {
+                TrashCount += ((Number) result[1]).intValue();
+            }
+
             HistoryListResponseDTO historyListResponseDto = new HistoryListResponseDTO(
                     plogItem.getId(),
                     plogItem.getCreatedAt(),
                     plogItem.getUpdatedAt(),
-                    plogItem.getMemberPet().getId(),
+                    plogItem.getMemberPet().getPet().getId(),
                     plogItem.getDistance(),
-                    33,
-                    "testImage"
+                    TrashCount
             );
             historyList.add(historyListResponseDto);
         }
@@ -62,7 +73,7 @@ public class HistoryServiceImpl implements HistoryService{
 
         //플로깅 찾기
         Plogging plogging = ploggingRepository.findById(ploggingId).orElseThrow(() ->
-        new HistoryException(HistoryError.NOT_FOUND_PLOGGING));
+                new HistoryException(HistoryError.NOT_FOUND_PLOGGING));
 
         // 찾은 플로깅이 회원과 일치하는지 체크
         if(!Objects.equals(plogging.getMember().getId(), memberId)){
@@ -75,7 +86,8 @@ public class HistoryServiceImpl implements HistoryService{
 
         for(Trash trashItem : trashList){
             TrashDTO trashDTO = new TrashDTO(
-                    trashItem.getLocation(),
+                    trashItem.getLocation().getY(),
+                    trashItem.getLocation().getX(),
                     trashItem.getTrashType(),
                     trashItem.getImage()
             );
@@ -97,11 +109,28 @@ public class HistoryServiceImpl implements HistoryService{
             routeDTOList.add(routeDTO);
         }
 
+        //쓰레기 갯수 세기
+        List<Object[]> results = trashRepository.countTrashByPloggingId(ploggingId);
+        int normal=0,plastic = 0,can=0,glass=0;
+        for (Object[] result : results) {
+            int count = ((Number) result[1]).intValue();
+            switch ((TrashType) result[0]) {
+                case NORMAL -> normal = count;
+                case PLASTIC -> plastic = count;
+                case CAN -> can = count;
+                case GLASS -> glass = count;
+            }
+        }
+
 
         return new HistoryDetailResponseDTO(
                 ploggingId,
                 trashDTOList,
-                routeDTOList
+                routeDTOList,
+                normal,
+                plastic,
+                can,
+                glass
         );
     }
 }
