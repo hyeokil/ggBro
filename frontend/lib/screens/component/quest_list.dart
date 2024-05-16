@@ -61,6 +61,12 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    int lastChar = widget.petNickName.codeUnitAt(widget.petNickName.length - 1);
+    int index = (lastChar - 0xAC00) % 28;
+
+    var petNickName =
+        index == 0 ? widget.petNickName + "와" : widget.petNickName + "과";
+
     return Stack(
       children: [
         Container(
@@ -80,14 +86,14 @@ class _QuestListState extends State<QuestList> with TickerProviderStateMixin {
           ),
           child: Text(
             widget.questId == 1
-                ? '${widget.petNickName}과(와) 플로깅 ${widget.goal}회 하기'
+                ? '$petNickName 플로깅 ${widget.goal}회 하기'
                 : widget.questId == 2
-                    ? '플라몽 ${widget.goal}마리 처치 하기'
+                    ? '$petNickName 플라몽 ${widget.goal}마리 처치 하기'
                     : widget.questId == 3
-                        ? '미쪼몬 ${widget.goal}마리 처치 하기'
+                        ? '$petNickName 미쪼몬 ${widget.goal}마리 처치 하기'
                         : widget.questId == 4
-                            ? '율몽 ${widget.goal}마리 처치 하기'
-                            : '포 캔몽 ${widget.goal}마리 처치 하기',
+                            ? '$petNickName 율몽 ${widget.goal}마리 처치 하기'
+                            : '$petNickName 포 캔몽 ${widget.goal}마리 처치 하기',
             style: CustomFontStyle.getTextStyle(
                 context, CustomFontStyle.yeonSung60_white),
           ),

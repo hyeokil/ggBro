@@ -118,6 +118,14 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
             },
             child: Text('다른기기 연결 방지를 위해 집게 블루투스만 표시됩니다.'),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+
+              widget.func();
+            },
+            child: Text('기기 없이 플로깅을 진행하려면 여기를 눌러주세요.'),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

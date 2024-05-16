@@ -137,7 +137,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                   width: MediaQuery.of(context).size.width * 1,
                   height: MediaQuery.of(context).size.height * 0.2,
                   // color: Colors.black,
-                  child: currentTutorial == false ? Partner(
+                  child: currentTutorial == true ? Partner(
                     image: pet['active']
                         ? Image.network(
                             pet['image'],

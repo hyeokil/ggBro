@@ -37,7 +37,9 @@ class _ClearMonsterState extends State<ClearMonster> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ClearMonsterTitle(),
+          ClearMonsterTitle(
+            petNickname: widget.pet['nickname'],
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

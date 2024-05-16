@@ -15,7 +15,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TrashDTO {
-    private Point Location;
+//    private Point Location;
+
+    private double latitude;
+
+    private double longitude;
 
     private TrashType type;
 
