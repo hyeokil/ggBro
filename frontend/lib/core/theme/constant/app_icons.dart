@@ -5,6 +5,7 @@ class AppIcons {
   static const String earth_4 = "assets/images/earth_4.png";
   static const String earth_5 = "assets/images/earth_5.png";
   static const String earth_6 = "assets/images/earth_6.png";
+  static const String background = "assets/images/background.png";
 
   static const String intro_animal_1 = "assets/images/intro_animal_1.png";
   static const String intro_animal_2 = "assets/images/intro_animal_2.png";
@@ -39,5 +40,4 @@ class AppIcons {
   static const String yulmong = "assets/images/yulmong.png";
   static const String transparent = "assets/images/transparent.png";
   static const String sudal = "assets/images/수달.jpg";
-
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/models/ranking_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
@@ -43,23 +44,14 @@ class _RankingState extends State<RankingScreen> {
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ),
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: Stack(
             children: [
               Column(
                 children: [
-                  TopBar(),
+                  const TopBar(),
                   Container(
                     color: Colors.transparent,
                     width: MediaQuery.of(context).size.width * 0.85,
@@ -67,6 +59,7 @@ class _RankingState extends State<RankingScreen> {
                     child: Stack(
                       children: [
                         Positioned(
+                          left: MediaQuery.of(context).size.width * 0.295,
                           child: Column(
                             children: [
                               RankingNameBar(
@@ -83,58 +76,66 @@ class _RankingState extends State<RankingScreen> {
                               ),
                             ],
                           ),
-                          left: MediaQuery.of(context).size.width * 0.295,
                         ),
-                        people.length >= 2 ?
-                        Positioned(
-                          child: Column(
-                            children: [
-                              RankingNameBar(
-                                nickName: people.length >= 2
-                                    ? people[1]["nickname"]
-                                    : '',
-                                profile: people.length >= 2
-                                    ? people[1]['profile_pet_id']
-                                    : 0,
-                              ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.02,
-                              ),
-                              RankingBar(
-                                heightSize: 0.12,
-                                exp: people.length >= 2 ? people[1]["exp"] : 0,
-                              ),
-                            ],
-                          ),
-                          top: MediaQuery.of(context).size.height * 0.08,
-                          left: MediaQuery.of(context).size.width * 0.005,
-                        ) : Container(),
-                        people.length >= 3 ?
-                        Positioned(
-                          child: Column(
-                            children: [
-                              RankingNameBar(
-                                nickName: people.length >= 3
-                                    ? people[2]["nickname"]
-                                    : '',
-                                profile: people.length >= 3
-                                    ? people[2]['profile_pet_id']
-                                    : 0,
-                              ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.02,
-                              ),
-                              RankingBar(
-                                heightSize: 0.08,
-                                exp: people.length >= 3 ? people[2]["exp"] : 0,
-                              ),
-                            ],
-                          ),
-                          right: MediaQuery.of(context).size.width * 0.005,
-                          top: MediaQuery.of(context).size.height * 0.12,
-                        ) : Container(),
+                        people.length >= 2
+                            ? Positioned(
+                                top: MediaQuery.of(context).size.height * 0.08,
+                                left: MediaQuery.of(context).size.width * 0.005,
+                                child: Column(
+                                  children: [
+                                    RankingNameBar(
+                                      nickName: people.length >= 2
+                                          ? people[1]["nickname"]
+                                          : '',
+                                      profile: people.length >= 2
+                                          ? people[1]['profile_pet_id']
+                                          : 0,
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    RankingBar(
+                                      heightSize: 0.12,
+                                      exp: people.length >= 2
+                                          ? people[1]["exp"]
+                                          : 0,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                        people.length >= 3
+                            ? Positioned(
+                                right:
+                                    MediaQuery.of(context).size.width * 0.005,
+                                top: MediaQuery.of(context).size.height * 0.12,
+                                child: Column(
+                                  children: [
+                                    RankingNameBar(
+                                      nickName: people.length >= 3
+                                          ? people[2]["nickname"]
+                                          : '',
+                                      profile: people.length >= 3
+                                          ? people[2]['profile_pet_id']
+                                          : 0,
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    RankingBar(
+                                      heightSize: 0.08,
+                                      exp: people.length >= 3
+                                          ? people[2]["exp"]
+                                          : 0,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),
@@ -146,7 +147,7 @@ class _RankingState extends State<RankingScreen> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.02,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
             ],
           ),
