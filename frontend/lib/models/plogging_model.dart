@@ -24,8 +24,7 @@ class PloggingModel with ChangeNotifier {
     print('ploggingStart request : $url, headers : $headers');
     final response = await http.post(url, headers: headers);
     print(
-        'ploggingStart response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
-
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
     if (response.statusCode == 200) {
       ploggingId = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       return "Success";
@@ -52,9 +51,8 @@ class PloggingModel with ChangeNotifier {
     print(
         'classificationTrash request : $url, headers : $headers body : $body');
     final response = await http.post(url, headers: headers, body: body);
-
     print(
-        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
 
     if (response.statusCode == 200) {
       classificationData =
@@ -67,5 +65,61 @@ class PloggingModel with ChangeNotifier {
 
   getClassificationData() {
     return classificationData;
+  }
+
+  late Map<String, dynamic> finishData;
+
+  Future<String> finishPlogging(
+      String accessToken, List<Map<String, double>> path, int distance) async {
+    var url = Uri.https(address, "/api/v1/plogging/finish/$ploggingId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode({'path': path, 'distance': distance});
+    print(
+        'classificationTrash request : $url, headers : $headers body : $body');
+    final response = await http.post(url, headers: headers, body: body);
+    print(
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
+
+    if (response.statusCode == 200) {
+      finishData = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      return 'Success';
+    } else {
+      return 'Fail';
+    }
+  }
+
+  getFinishData() {
+    return finishData;
+  }
+
+  late Map<String, dynamic> trashLists;
+
+  Future<String> trashList(
+      String accessToken, double latitude, double longitude, int radius) async {
+    var url = Uri.https(address, "/api/v1/plogging/trash/list");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode(
+        {'latitude': latitude, 'longitude': longitude, 'radius': radius});
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      trashLists = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      print('쓰레기 $trashLists');
+      return "Success";
+    } else {
+      print('안됨');
+      return "fail";
+    }
+  }
+
+  Map<String, dynamic> getTrashLists() {
+    return trashLists;
   }
 }

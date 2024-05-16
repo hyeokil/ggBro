@@ -67,7 +67,7 @@ class _AchievementListState extends State<AchievementList>
     late int ProgressDistance;
     if (widget.index == 1) {
       GoalDistance = (widget.goal / 1000).floor();
-      ProgressDistance = (widget.progress / 1000).round();
+      ProgressDistance = (widget.progress / 1000).floor();
     }
 
     return Stack(

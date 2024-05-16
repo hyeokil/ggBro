@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:frontend/models/history_model.dart';
+import 'package:provider/provider.dart';
 
 class HistoryDetailDialog extends StatefulWidget {
   final String date;
@@ -18,6 +20,17 @@ class HistoryDetailDialog extends StatefulWidget {
 }
 
 class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
+  late HistoryModel historyModel;
+  late Map<String,  dynamic> historyDetail;
+
+  @override
+  void initState() {
+    super.initState();
+
+    historyModel = Provider.of<HistoryModel>(context, listen: false);
+    historyDetail = historyModel.getDetailHistory();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -52,7 +65,7 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
                         '${widget.time}',
                         style: CustomFontStyle.getTextStyle(
                           context,
-                          CustomFontStyle.yeonSung55_white,
+                          CustomFontStyle.yeonSung60_white,
                         ),
                       ),
                       SizedBox(
@@ -100,7 +113,9 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
             ),
             Container(
               height: MediaQuery.of(context).size.height * 0.63,
+              width: MediaQuery.of(context).size.height * 0.9,
               decoration: BoxDecoration(color: Colors.black),
+              child: Text('$historyDetail', style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung50_white),),
             ),
           ],
         ),

@@ -102,8 +102,8 @@ public class TrashServiceImpl implements TrashService {
         memberAchievementRepository.findByMemberIdAndAchievementId(memberId,achievementId).updateProgress(progress);
     }
 
-    public void  updateMemberQuest(Long memberId, Long questId) {
-        MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndQuestIdOrderByIdDesc(memberId,questId);
+    public void  updateMemberQuest(Long memberId,Long memberPetId, Long questId) {
+        MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndQuestIdAndMemberPetIdOrderByIdDesc(memberId,memberPetId,questId);
         if (memberQuest!=null) {
             memberQuest.updateProgress();
         }
@@ -143,12 +143,12 @@ public class TrashServiceImpl implements TrashService {
         // 이미지 메타데이터 설정
         String imageUrl = uploadImageAndGetUrl(fileName, imageData);
         // 플라스크로 url 보내서 종류 받아오기 아래 주석
-        TrashType trashType = classifyTrash(imageUrl);
+//        TrashType trashType = classifyTrash(imageUrl);
         // 일단 랜덤으로 테스트  여기서 부터
-//        TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
-//        Random random = new Random();
-//        int randomIndex = random.nextInt(trashTypes.length);
-//        TrashType trashType = trashTypes[randomIndex]; // 여기까지 주석처리하고 134 번째줄 주석빼고 쓰면 됨
+        TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
+        Random random = new Random();
+        int randomIndex = random.nextInt(trashTypes.length);
+        TrashType trashType = trashTypes[randomIndex]; // 여기까지 주석처리하고 134 번째줄 주석빼고 쓰면 됨
         // 쓰레기 저장
         // Coordinate 객체를 사용하여 Point 생성
         GeometryFactory geometryFactory = new GeometryFactory();
@@ -175,22 +175,22 @@ public class TrashServiceImpl implements TrashService {
                 exp = 55 ;
                 value=petActive ? 100 : 50;memberPet.addNormal();
                 updateMemberAchievement(memberId, 4L,1);
-                updateMemberQuest(memberId,3L);}
+                updateMemberQuest(memberId,memberPet.getId(),3L);}
             case PLASTIC -> {
                 exp = 66;
                 value=petActive ? 110 : 60;memberPet.addPlastic();
                 updateMemberAchievement(memberId, 5L,1);
-                updateMemberQuest(memberId,2L);}
+                updateMemberQuest(memberId,memberPet.getId(),2L);}
             case CAN -> {
                 exp = 111;
                 value=petActive ? 160 : 100;memberPet.addCan();
                 updateMemberAchievement(memberId, 6L,1);
-                updateMemberQuest(memberId,5L);}
+                updateMemberQuest(memberId,memberPet.getId(),5L);}
             case GLASS -> {
                 exp = 199;
                 value =petActive ? 270 : 200;memberPet.addGlass();
                 updateMemberAchievement(memberId, 7L,1);
-                updateMemberQuest(memberId,4L);}
+                updateMemberQuest(memberId,memberPet.getId(),4L);}
         };
 
         int currency = petActive ? 0 : value;

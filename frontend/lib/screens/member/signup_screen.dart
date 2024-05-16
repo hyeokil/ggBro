@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/screens/member/component/custom_input.dart';
 import 'package:go_router/go_router.dart';
@@ -51,59 +53,65 @@ class _SignUpState extends State<SignUpScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Form(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              EmailField(controller: _email),
-              NicknameField(controller: _nickname),
-              PasswordField(
-                controller: _password,
-                validator: _validatePassword,
-              ),
-              PasswordCheckField(
-                controller: _passwordCheck,
-                validator: _validatePassword,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        context.pop();
-                      },
-                      child: const Text("뒤로가기")),
-                  ElevatedButton(
-                      onPressed: () async {
-                        final auth =
-                            Provider.of<AuthModel>(context, listen: false);
-                        if (_formKey.currentState!.validate()) {
-                          // 유효성 검사를 통과한 경우 회원가입 로직을 실행합니다.
-                          String email = _email.text;
-                          String password = _password.text;
-                          String nickName = _nickname.text;
-                          // Fluttertoast.showToast(
-                          //     msg: "회원가입 성공",
-                          //     toastLength: Toast.LENGTH_SHORT,
-                          //     gravity: ToastGravity.TOP,
-                          //     timeInSecForIosWeb: 2,
-                          //     backgroundColor: Colors.green,
-                          //     textColor: Colors.white,
-                          //     fontSize: 20.0);
-                          // print('이메일 $email 비밀번호 $password 닉네임 $nickName');
-                          // 여기에 회원가입 로직을 구현합니다.
-                          AuthStatus loginStatus =
-                              await auth.signUp(email, password, nickName);
-                          if (loginStatus == AuthStatus.loginSuccess) {
-                            context.go('/intro');
-                          }
-                        }
-                      },
-                      child: const Text("회원가입"))
+                  EmailField(
+                    controller: _email,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+                  NicknameField(controller: _nickname),
+                  PasswordField(
+                      controller: _password,
+                      validator: _validatePassword,
+                      autovalidateMode: AutovalidateMode.onUserInteraction),
+                  PasswordCheckField(
+                    controller: _passwordCheck,
+                    validator: _validatePassword,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          child: const Text("뒤로가기")),
+                      ElevatedButton(
+                          onPressed: () async {
+                            final auth =
+                                Provider.of<AuthModel>(context, listen: false);
+                            if (_formKey.currentState!.validate()) {
+                              // 유효성 검사를 통과한 경우 회원가입 로직을 실행합니다.
+                              String email = _email.text;
+                              String password = _password.text;
+                              String nickName = _nickname.text;
+                              // Fluttertoast.showToast(
+                              //     msg: "회원가입 성공",
+                              //     toastLength: Toast.LENGTH_SHORT,
+                              //     gravity: ToastGravity.TOP,
+                              //     timeInSecForIosWeb: 2,
+                              //     backgroundColor: Colors.green,
+                              //     textColor: Colors.white,
+                              //     fontSize: 20.0);
+                              // print('이메일 $email 비밀번호 $password 닉네임 $nickName');
+                              // 여기에 회원가입 로직을 구현합니다.
+                              AuthStatus loginStatus =
+                                  await auth.signUp(email, password, nickName);
+                              if (loginStatus == AuthStatus.loginSuccess) {
+                                context.go('/intro');
+                              }
+                            }
+                          },
+                          child: const Text("회원가입"))
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),
@@ -113,11 +121,17 @@ class _SignUpState extends State<SignUpScreen> {
 
 class EmailField extends StatelessWidget {
   final TextEditingController controller;
-  const EmailField({super.key, required this.controller});
+  final AutovalidateMode? autovalidateMode;
+  const EmailField({
+    super.key,
+    required this.controller,
+    this.autovalidateMode,
+  });
 
   @override
   Widget build(BuildContext context) {
     return CustomInput(
+      autovalidateMode: autovalidateMode,
       controller: controller,
       keyboard: TextInputType.emailAddress,
       icon: const Icon(Icons.mail),
@@ -134,7 +148,7 @@ class EmailField extends StatelessWidget {
         if (value == null || value.isEmpty) {
           return '이메일을 입력하세요.';
         } else if (!emailRegex.hasMatch(value)) {
-          return '올바른 이메일 주소를 입력하세요.';
+          return '올바른 이메일 양식을 입력하세요.';
         }
         return null;
       },
@@ -158,30 +172,56 @@ class NicknameField extends StatelessWidget {
   }
 }
 
-class PasswordField extends StatelessWidget {
+class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final AutovalidateMode? autovalidateMode;
 
   const PasswordField({
     super.key,
     required this.controller,
     this.validator,
+    this.autovalidateMode,
   });
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool isObscure = true;
+
+  void showTogglePassword() {
+    setState(() {
+      isObscure = !isObscure;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return CustomInput(
-      controller: controller,
-      icon: const Icon(Icons.lock),
-      hint: "password",
+      autovalidateMode: widget.autovalidateMode,
+      suffixIcon: IconButton(
+          iconSize: 20,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onPressed: () {
+            showTogglePassword();
+          },
+          icon: isObscure
+              ? const Icon(FontAwesomeIcons.eye)
+              : const Icon(FontAwesomeIcons.eyeSlash)),
+      controller: widget.controller,
+      obscure: isObscure,
+      icon: const Icon(Icons.key_sharp),
+      hint: "Password",
       label: "비밀번호",
-      obscure: true,
-      validator: validator,
+      validator: widget.validator,
     );
   }
 }
 
-class PasswordCheckField extends StatelessWidget {
+class PasswordCheckField extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
 
@@ -192,14 +232,38 @@ class PasswordCheckField extends StatelessWidget {
   });
 
   @override
+  State<PasswordCheckField> createState() => _PasswordCheckFieldState();
+}
+
+class _PasswordCheckFieldState extends State<PasswordCheckField> {
+  bool isObscure = true;
+
+  void showTogglePassword() {
+    setState(() {
+      isObscure = !isObscure;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomInput(
-      controller: controller,
-      obscure: true,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      suffixIcon: IconButton(
+          iconSize: 20,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onPressed: () {
+            showTogglePassword();
+          },
+          icon: isObscure
+              ? const Icon(FontAwesomeIcons.eye)
+              : const Icon(FontAwesomeIcons.eyeSlash)),
+      controller: widget.controller,
+      obscure: isObscure,
       icon: const Icon(Icons.check),
       hint: "Password Check",
       label: "비밀번호 확인",
-      validator: validator,
+      validator: widget.validator,
     );
   }
 }

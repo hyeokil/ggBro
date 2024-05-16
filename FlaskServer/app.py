@@ -27,13 +27,6 @@ s3_secret_key = tree.find('string[@name="s3_secret_key"]').text
 @app.route('/predict', methods=["POST"])
 def predict():
    if request.method == 'POST':
-      # f = request.files['file'] # 입력 이미지 파일
-      # print(f)
-
-      # f.save("./"+ secure_filename("image")+".jpg")
-
-      # image_path = "./"+ secure_filename("image")+".jpg"
-
       
       # s3 불러오는 부분
 
@@ -63,7 +56,6 @@ def predict():
 
       # 이미지 확인 (예: 이미지 보기 또는 처리)
       # s3_img.show()
-
       # ori_img3 = cv2.imread(image_path)
 
 

@@ -16,6 +16,7 @@ import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/ranking_model.dart';
 import 'package:frontend/models/rescue_model.dart';
 import 'package:frontend/router/routes.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'provider/main_provider.dart';
@@ -30,47 +31,48 @@ void main() async {
   await _initialize();
 
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => MainProvider()),
-        ChangeNotifierProvider(create: (context) => UserProvider()),
-        ChangeNotifierProvider(
-            create: (context) =>
-                AuthModel(Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) =>
-                PetModel(Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) =>
-                RescueModel(Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) => AchievementModel(
-                Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) =>
-                QuestModel(Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) => RankingModel(
-                Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) => CampaignModel(
-                Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) => HistoryModel(
-                Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) =>
-                MemberModel(Provider.of<UserProvider>(context, listen: false))),
-        ChangeNotifierProvider(
-            create: (context) => PloggingModel(
-                Provider.of<UserProvider>(context, listen: false))),
-        // ChangeNotifierProvider(create: (context) => AuthModel()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  initializeDateFormatting('ko_KR', null).then((value) {
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => MainProvider()),
+          ChangeNotifierProvider(create: (context) => UserProvider()),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  AuthModel(Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  PetModel(Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => RescueModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => AchievementModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => QuestModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => RankingModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => CampaignModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => HistoryModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => MemberModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          ChangeNotifierProvider(
+              create: (context) => PloggingModel(
+                  Provider.of<UserProvider>(context, listen: false))),
+          // ChangeNotifierProvider(create: (context) => AuthModel()),
+        ],
+        child: const MyApp(),
+      ),
+    );
+  });
 }
 
 Future<void> _initialize() async {

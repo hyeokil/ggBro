@@ -27,8 +27,14 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      master:
+        host: localhost
+        port: 6379
+      slaves:
+        - host: localhost
+          port: 6380
+        - host: localhost
+          port: 6381
   springdoc:
     api-docs:
       enabled: true
@@ -61,7 +67,7 @@ spring:
         - 'classpath:/sql/data_member_achievement.sql'
         - 'classpath:/sql/data_plogging.sql'
         - 'classpath:/sql/data_trash.sql'
-        - 'classpath:/data_notice.sql'
+        - 'classpath:/sql/data_notice.sql'
 
 
 # AWS
