@@ -68,7 +68,7 @@ spring:
         - 'classpath:/sql/data_member_achievement.sql'
         - 'classpath:/sql/data_plogging.sql'
         - 'classpath:/sql/data_trash.sql'
-        - 'classpath:/data_notice.sql'
+        - 'classpath:/sql/data_notice.sql'
 
 
 # AWS

@@ -85,6 +85,7 @@ class _RankingState extends State<RankingScreen> {
                           ),
                           left: MediaQuery.of(context).size.width * 0.295,
                         ),
+                        people.length >= 2 ?
                         Positioned(
                           child: Column(
                             children: [
@@ -93,7 +94,7 @@ class _RankingState extends State<RankingScreen> {
                                     ? people[1]["nickname"]
                                     : '',
                                 profile: people.length >= 2
-                                    ? people[0]['profile_pet_id']
+                                    ? people[1]['profile_pet_id']
                                     : 0,
                               ),
                               SizedBox(
@@ -108,7 +109,8 @@ class _RankingState extends State<RankingScreen> {
                           ),
                           top: MediaQuery.of(context).size.height * 0.08,
                           left: MediaQuery.of(context).size.width * 0.005,
-                        ),
+                        ) : Container(),
+                        people.length >= 3 ?
                         Positioned(
                           child: Column(
                             children: [
@@ -117,7 +119,7 @@ class _RankingState extends State<RankingScreen> {
                                     ? people[2]["nickname"]
                                     : '',
                                 profile: people.length >= 3
-                                    ? people[0]['profile_pet_id']
+                                    ? people[2]['profile_pet_id']
                                     : 0,
                               ),
                               SizedBox(
@@ -132,7 +134,7 @@ class _RankingState extends State<RankingScreen> {
                           ),
                           right: MediaQuery.of(context).size.width * 0.005,
                           top: MediaQuery.of(context).size.height * 0.12,
-                        ),
+                        ) : Container(),
                       ],
                     ),
                   ),

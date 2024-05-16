@@ -118,7 +118,7 @@ class _IntroduceMainProfileTutorialState
                   }
                 },
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
+                  width: MediaQuery.of(context).size.width * 0.75,
                   child: Stack(
                     children: [
                       Transform(
@@ -127,23 +127,28 @@ class _IntroduceMainProfileTutorialState
                         child: Image.asset(AppIcons.intro_speak_bubble),
                       ),
                       Positioned(
-                        left: MediaQuery.of(context).size.width * 0.1,
+                        left: MediaQuery.of(context).size.width * 0.08,
                         top: MediaQuery.of(context).size.height * 0.095,
                         child: Container(
                           child: Column(
                             children: [
                               Text(
-                                '프로필 사진을 누르면',
+                                '프로필 사진을 누르면 내 정보에서',
                                 style: CustomFontStyle.getTextStyle(
                                     context, CustomFontStyle.yeonSung80),
                               ),
                               Text(
-                                '내 정보를 볼 수 있고',
+                                '프로필 사진을 변경할 수 있고',
                                 style: CustomFontStyle.getTextStyle(
                                     context, CustomFontStyle.yeonSung80),
                               ),
                               Text(
-                                '프로필 사진을 변경할 수 있어!',
+                                '업적 달성을 확인하고',
+                                style: CustomFontStyle.getTextStyle(
+                                    context, CustomFontStyle.yeonSung80),
+                              ),
+                              Text(
+                                '낑으로 펫을 구출 할 수 있어',
                                 style: CustomFontStyle.getTextStyle(
                                     context, CustomFontStyle.yeonSung80),
                               ),

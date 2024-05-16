@@ -25,4 +25,12 @@ public class HistoryDetailResponseDTO {
 
     private List<RouteDTO> routeList;
 
+    private int normalTrashCount;
+
+    private int plasticTrashCount;
+
+    private int canTrashCount;
+
+    private int glassTrashCount;
+
 }

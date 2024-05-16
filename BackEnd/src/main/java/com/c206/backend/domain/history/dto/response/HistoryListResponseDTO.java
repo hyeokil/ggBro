@@ -28,6 +28,4 @@ public class HistoryListResponseDTO {
 
     private int trashCount;
 
-    private String image;
-    
 }
