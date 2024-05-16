@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
+import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/history_model.dart';
 import 'package:frontend/screens/component/custom_back_button.dart';
 import 'package:frontend/screens/component/topbar/top_bar.dart';
@@ -18,17 +19,20 @@ class HistoryScreen extends StatefulWidget {
 class _RankingState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
-    final histories = Provider.of<HistoryModel>(context, listen: true).getHistories();
+    final histories =
+        Provider.of<HistoryModel>(context, listen: true).getHistories();
     List<dynamic> dateHistory = [];
     dateHistory.addAll(histories);
 
     var groupedByDate = groupBy(dateHistory, (dynamic p) {
-      return DateTime.parse(p['create_at']).toIso8601String().substring(0, 10); // 날짜만 추출
+      return DateTime.parse(p['create_at'])
+          .toIso8601String()
+          .substring(0, 10); // 날짜만 추출
     });
 
     List<dynamic> dateFinalHistory = [];
     for (String key in groupedByDate.keys) {
-      dateFinalHistory.add({key : groupedByDate['$key']});
+      dateFinalHistory.add({key: groupedByDate[key]});
     }
 
     return SafeArea(
@@ -36,44 +40,48 @@ class _RankingState extends State<HistoryScreen> {
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ), // 전
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: Stack(
             children: [
               Column(
                 children: [
-                  TopBar(),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.82,
-                    child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: dateFinalHistory.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          // margin: EdgeInsets.only(bottom: 5),
-                          child: HistoryDateList(
-                            dateHistoryList: dateFinalHistory[index],
+                  const TopBar(),
+                  dateFinalHistory.isEmpty
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.3,
+                            ),
+                            Text(
+                              '플로깅을 진행해 주세요!',
+                              style: CustomFontStyle.getTextStyle(
+                                  context, CustomFontStyle.yeonSung90),
+                            )
+                          ],
+                        )
+                      : SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.82,
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: dateFinalHistory.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                // margin: EdgeInsets.only(bottom: 5),
+                                child: HistoryDateList(
+                                  dateHistoryList: dateFinalHistory[index],
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  )
+                        )
                 ],
               ),
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.02,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
             ],
           ),

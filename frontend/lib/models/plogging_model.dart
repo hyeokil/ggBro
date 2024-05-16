@@ -24,7 +24,7 @@ class PloggingModel with ChangeNotifier {
     print('ploggingStart request : $url, headers : $headers');
     final response = await http.post(url, headers: headers);
     print(
-        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
+        'PloggingStart response : ${json.decode(utf8.decode(response.bodyBytes))}');
     if (response.statusCode == 200) {
       ploggingId = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       return "Success";
@@ -77,11 +77,10 @@ class PloggingModel with ChangeNotifier {
       'Authorization': "Bearer $accessToken"
     };
     final body = jsonEncode({'path': path, 'distance': distance});
-    print(
-        'classificationTrash request : $url, headers : $headers body : $body');
+    print('finishPlogging request : $url, headers : $headers body : $body');
     final response = await http.post(url, headers: headers, body: body);
     print(
-        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
+        'finishPlogging response : ${json.decode(utf8.decode(response.bodyBytes))}');
 
     if (response.statusCode == 200) {
       finishData = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
