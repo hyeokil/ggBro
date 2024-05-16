@@ -8,10 +8,9 @@ import java.util.List;
 
 @Repository
 public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> {
-    List<MemberQuest> findByMemberId(Long memberId);
 
     List<MemberQuest> findTop3ByMemberIdOrderByCreatedAtDesc(Long memberId);
 
     MemberQuest findTopByMemberIdAndQuestIdAndMemberPetIdOrderByIdDesc(Long memberId,Long memberPetId, Long questId);
-//    MemberQuest findByMemberQuestId(Long memberQuestId);
+
 }
