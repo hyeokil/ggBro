@@ -35,8 +35,7 @@ public class MemberPetServiceImpl implements MemberPetService {
     private final MemberRepository memberRepository;
     private final PetRepository petRepository;
     private final RedisService redisService;
-//    private final PloggingRepository ploggingRepository;
-//    private final TrashRepository trashRepository;
+
 
     public void createMemberPet(List<MemberPet> memberPets,List<Pet> pets,Member member) {
         HashSet<Long> petIdSet = new HashSet<>();
@@ -83,7 +82,7 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public MemberPetDetailResponseDto getMemberPetDetail(Long memberId,Long memberPetId, boolean isRedis) {
-        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기 (임시 구현. 확인 한번 해주세요)
+        // -1 일 경우 redis에서 해당 회원의 latest pet id 가져오기
         if (memberPetId == -1) {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
@@ -95,10 +94,8 @@ public class MemberPetServiceImpl implements MemberPetService {
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
-
-
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
-            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+            throw new PetException(PetError.NOT_YOUR_PET);
         }
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
@@ -163,7 +160,7 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname) {
+    public Boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname) {
 
         if (memberPetId == -1) {
             try{
@@ -171,7 +168,6 @@ public class MemberPetServiceImpl implements MemberPetService {
             } catch (Exception e){
                 List<MemberPetListResponseDto> mPList = getMemberPetList(memberId);
                 memberPetId = mPList.get(0).getMemberPetId();
-//                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
@@ -179,7 +175,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
-            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+            throw new PetException(PetError.NOT_YOUR_PET);
         }
 
         memberPet.updateNickname(petNickname);
@@ -190,7 +186,7 @@ public class MemberPetServiceImpl implements MemberPetService {
     }
 
     @Override
-    public boolean activePet(Long memberId, Long memberPetId) {
+    public Boolean activePet(Long memberId, Long memberPetId) {
         if (memberPetId == -1) {
             try{
                 memberPetId = Long.valueOf(redisService.getValues("latest pet id "+ memberId));
@@ -205,7 +201,7 @@ public class MemberPetServiceImpl implements MemberPetService {
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
 
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
-            throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
+            throw new PetException(PetError.NOT_YOUR_PET);
         }
 
         memberPet.updateActive();
@@ -217,12 +213,12 @@ public class MemberPetServiceImpl implements MemberPetService {
 
     @Override
     public List<PetListResponseDto> getPetList(Long memberId) {
-        List<Pet> petList = petRepository.findAll(); // 1 2 3 4
+        List<Pet> petList = petRepository.findAll();
 
-        List<MemberPet> memberPet = memberPetRepository.findByMemberId(memberId); // 3, 6
+        List<MemberPet> memberPet = memberPetRepository.findByMemberId(memberId);
 
-        List<Long> memberPetHave = new ArrayList<>(); // 3 6
-        List<Long> memberPetActive = new ArrayList<>(); // 3 6
+        List<Long> memberPetHave = new ArrayList<>();
+        List<Long> memberPetActive = new ArrayList<>();
 
         for(MemberPet petItem : memberPet){
             memberPetHave.add(petItem.getPet().getId());

@@ -26,7 +26,7 @@ public class MemberPetController {
     private final MemberPetService memberPetService;
 
     // 회원이 수집한 모든 회원_펫 조회
-    @GetMapping("/list")
+    @GetMapping("/my/list")
     public ResponseEntity<Message<List<MemberPetListResponseDto>>> getMemberPetList(
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -67,26 +67,25 @@ public class MemberPetController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
         String petNickname = (String) nicknameJson.get("nickname");
-        boolean isUpdated = memberPetService.updatePetNickname(memberId,memberPetId, petNickname);
-
+        Boolean isUpdated = memberPetService.updatePetNickname(memberId,memberPetId, petNickname);
         return ResponseEntity.ok().body(Message.success(isUpdated));
     }
 
     @PostMapping("/active/{memberPetId}")
     @Operation(summary = "펫을 활성화 시킵니다.")
-    public ResponseEntity<Message<?>> activePet(
+    public ResponseEntity<Message<Boolean>> activePet(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication
     ){
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
-        boolean isActive = memberPetService.activePet(memberId, memberPetId);
+        Boolean isActive = memberPetService.activePet(memberId, memberPetId);
 
         return ResponseEntity.ok().body(Message.success(isActive));
     }
 
-    @GetMapping("/petlist")
+    @GetMapping("/list")
     @Operation(summary = "서비스해주는 펫의 모든 종류를 반환합니다.")
     public ResponseEntity<Message<List<PetListResponseDto>>> petList(
             @Parameter(hidden = true) Authentication authentication

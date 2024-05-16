@@ -22,10 +22,10 @@ public interface MemberPetService {
     void provideBasePet(Member member);
 
     // 회원_펫 닉네임 변경
-    boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname);
+    Boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname);
 
     // 회원_펫 활성화(박스에서 나올때)
-    boolean activePet(Long memberId, Long memberPetId);
+    Boolean activePet(Long memberId, Long memberPetId);
 
     // 모든 펫 리스트 조회
     List<PetListResponseDto> getPetList(Long memberId);
