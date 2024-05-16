@@ -90,12 +90,12 @@ public class MemberPetServiceImpl implements MemberPetService {
             } catch (Exception e){
                 List<MemberPetListResponseDto> mPList = getMemberPetList(memberId);
                 memberPetId = mPList.get(0).getMemberPetId();
-//                throw new PetException(PetError.NOT_FOUND_PET_IN_REDIS);
             }
         }
 
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
+
 
         if(!Objects.equals(memberPet.getMember().getId(), memberId)){
             throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
@@ -103,24 +103,6 @@ public class MemberPetServiceImpl implements MemberPetService {
 
         redisService.setValues("latest pet id "+ memberId, String.valueOf(memberPetId), 14*24*60*60*1000L);
 
-        // 조회 한번에 너무 많은 리소스 사용 -> 쓰레기 컬럼 추가하는 것으로 변경
-//        List<Plogging> ploggings = ploggingRepository.findByMemberPetId(memberPetId);
-//        int normal, plastic, can, glass;
-//        for (Plogging plogging : ploggings) {
-//            List<Trash> trashes = trashRepository.findByPloggingId(plogging.getId());
-//            for (Trash trash : trashes) {
-//                if (trash.getTrashType()== TrashType.NORMAL) {
-//                    normal += 1;
-//                } else if (trash.getTrashType() == TrashType.PLASTIC) {
-//                    plastic += 1;
-//                } else if (trash.getTrashType() == TrashType.CAN) {
-//                    can += 1;
-//                } else {
-//                    glass += 1;
-//                }
-//            }
-//
-//        }
         return new MemberPetDetailResponseDto(
                 memberPet.getNickname(),
                 memberPet.isActive(),

@@ -1,6 +1,5 @@
 package com.c206.backend.domain.pet.controller;
 
-import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.domain.pet.dto.response.PetListResponseDto;
@@ -26,10 +25,8 @@ public class MemberPetController {
 
     private final MemberPetService memberPetService;
 
-
-    // AuthenticationPrincipal 변경
+    // 회원이 수집한 모든 회원_펫 조회
     @GetMapping("/list")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<List<MemberPetListResponseDto>>> getMemberPetList(
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -39,10 +36,8 @@ public class MemberPetController {
     }
 
 
-    // todo: redis에서 latest memberPetId 가져오기
-    // AuthenticationPrincipal 변경
+    // 회원_펫 상세 조회
     @GetMapping("/{memberPetId}")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<MemberPetDetailResponseDto>> getMemberPetDetail(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication) {
@@ -52,9 +47,8 @@ public class MemberPetController {
         return ResponseEntity.ok().body(Message.success(memberPetDetailResponseDto));
     }
 
-    // AuthenticationPrincipal 변경
+    // 펫 구출하기
     @PostMapping("/rescue")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<Boolean>> rescuePet(
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -63,9 +57,9 @@ public class MemberPetController {
         return ResponseEntity.ok().body(Message.success(isRescue));
     }
 
-    @PostMapping("/updatenickname/{memberPetId}")
+    @PostMapping("/update/nickname/{memberPetId}")
     @Operation(summary = "펫 닉네임을 업데이트 합니다")
-    public ResponseEntity<Message<?>> updatePetNickname(
+    public ResponseEntity<Message<Boolean>> updatePetNickname(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication,
             @RequestBody @Parameter Map<String, Object> nicknameJson
