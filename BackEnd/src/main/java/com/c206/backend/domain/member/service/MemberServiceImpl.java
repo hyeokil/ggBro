@@ -175,7 +175,8 @@ public class MemberServiceImpl implements MemberService{
             throw new PetException(PetError.NOT_FOUND_MEMBER_PET);
         }
 
-        if(profilePetId <= 0 || profilePetId > 4){
+
+        if(profilePetId <= 0 || profilePetId > petList.size()){
             throw new PetException(PetError.NOT_FOUND_PET);
         }
 
