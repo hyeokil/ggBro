@@ -86,7 +86,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return GoPloggingTutorialDialog();
+            return const GoPloggingTutorialDialog();
           },
         ).then(
           (value) {
@@ -103,7 +103,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return BoxOpenTutorialDialog();
+              return const BoxOpenTutorialDialog();
             }).then((value) {
           petModel.openBox(accessToken, -1);
           showDialog(
@@ -236,22 +236,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
           ),
           child: isDataLoading
               ? Column(
                   children: [
-                    TopBar(),
+                    const TopBar(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -300,8 +291,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               setState(() {
                                 _isButtonDisabled = true; // 버튼 비활성화
                               });
-                              final ranking = Provider.of<RankingModel>(
-                                  context,
+                              final ranking = Provider.of<RankingModel>(context,
                                   listen: false);
                               await ranking.getRanking(accessToken);
                               context.push('/ranking').then((value) {
@@ -337,8 +327,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               setState(() {
                                 _isButtonDisabled = true; // 버튼 비활성화
                               });
-                              final history = Provider.of<HistoryModel>(
-                                  context,
+                              final history = Provider.of<HistoryModel>(context,
                                   listen: false);
                               await history.getHistory(accessToken);
                               context.push('/history').then((value) {
@@ -448,10 +437,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                         return Container();
                                       }
                                     },
-                                    child: EvolutionBar(),
+                                    child: const EvolutionBar(),
                                   )
                                 : currentTutorial == false
-                                    ? NickNameBar(nickName: '')
+                                    ? const NickNameBar(nickName: '')
                                     : ExpBar(exp: pet['exp']),
                         GestureDetector(
                           onTap: () {
@@ -466,8 +455,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             decoration: BoxDecoration(
                               color: AppColors.readyButton,
                               borderRadius: BorderRadius.circular(30),
-                              border:
-                                  Border.all(width: 3, color: Colors.white),
+                              border: Border.all(width: 3, color: Colors.white),
                               boxShadow: _isReadyPressed
                                   ? []
                                   : [
@@ -484,8 +472,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 Positioned(
                                   top: MediaQuery.of(context).size.height *
                                       0.003,
-                                  left: MediaQuery.of(context).size.width *
-                                      0.015,
+                                  left:
+                                      MediaQuery.of(context).size.width * 0.015,
                                   child: Container(
                                     child: const Icon(
                                       Icons.directions_run_sharp,
@@ -497,8 +485,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 Center(
                                   child: Text(
                                     '   준비하기',
-                                    style: CustomFontStyle.getTextStyle(
-                                        context,
+                                    style: CustomFontStyle.getTextStyle(context,
                                         CustomFontStyle.yeonSung80_white),
                                   ),
                                 ),
@@ -515,7 +502,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   ],
                 )
               : Container(
-                  child: Center(
+                  child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),

@@ -2,8 +2,8 @@ package com.c206.backend.domain.plogging.service.Impl;
 
 
 import com.c206.backend.domain.member.entity.Member;
-import com.c206.backend.domain.member.exception.MemberError;
-import com.c206.backend.domain.member.exception.MemberException;
+import com.c206.backend.domain.member.exception.member.MemberError;
+import com.c206.backend.domain.member.exception.member.MemberException;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import com.c206.backend.domain.member.service.RedisService;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
@@ -15,7 +15,6 @@ import com.c206.backend.domain.pet.service.MemberPetService;
 import com.c206.backend.domain.plogging.dto.LocationInfo;
 import com.c206.backend.domain.plogging.dto.request.FinishPloggingRequestDto;
 import com.c206.backend.domain.plogging.dto.response.FinishPloggingResponseDto;
-import com.c206.backend.domain.plogging.dto.response.GetTrashResponseDto;
 import com.c206.backend.domain.plogging.entity.Plogging;
 import com.c206.backend.domain.plogging.entity.PloggingRoute;
 import com.c206.backend.domain.plogging.entity.enums.TrashType;

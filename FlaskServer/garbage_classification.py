@@ -17,49 +17,48 @@ import subprocess
 import cv2
 
 from pathlib import Path
-import pathlib
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
+
+from flask import Flask
+
+app = Flask(__name__)
+app_root = Path(app.root_path)  # Flask 앱의 루트 경로
 
 
-def safe_path(path):
-    if sys.platform == "win32":  # 윈도우 환경인 경우
-        return Path(path).as_posix()  # WindowsPath를 Posix 스타일 문자열로 변환
-    return path
+def safe_path(file_name):
+    return (app_root / file_name).as_posix()
 
-weights_path = safe_path("./best.pt")
-source_path = safe_path("./image.jpg")
+weights_path = safe_path("best.pt")
+source_path = safe_path("image.jpg")
 detect_file_path = safe_path("./yolov5/detect.py")
 
 def crop_image(file_path):
 
-    result_dir = './yolov5/runs/detect/exp/'
+    result_dir = app_root / 'yolov5' / 'runs' / 'detect' / 'exp'
 
     # 기존 결과 삭제
     if os.path.exists(result_dir):
         import shutil
         shutil.rmtree(result_dir)
         
-    cmd = f"python {detect_file_path} --weights {weights_path} --img 640 --conf 0.25 --source {source_path} --save-txt --save-conf --exist-ok"
-    # cmd = f"python yolov5/detect.py --weights {weights_path} --source image.jpg --save-txt"
+    cmd = f"python {detect_file_path} --weights {weights_path} --img 320 --conf 0.25 --source {source_path} --save-txt --save-conf --exist-ok --device cpu"
+
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True) 
 
     # print(result)
 
     # 이미지 경로와 결과 파일 경로 설정
-    # image_path = '/content/image.jpg'
-    # txt_path = './yolov5/runs/detect/exp/labels/image.txt'  # 이 경로는 실제 결과 파일에 맞게 조정 필요
-    txt_path = f'yolov5/runs/detect/exp/labels/{os.path.basename(file_path).replace(".jpg", ".txt")}'
-
-    # txt_path = os.path.join(result_dir, 'labels', 'image.txt')
+    txt_path = result_dir / 'labels' / f"{Path(file_path).stem}.txt"
 
     # 이미지 로드
     image = cv2.imread(file_path)
     height, width, _ = image.shape
 
-    # 결과 파일 읽기
-    with open(txt_path, 'r') as file:
-        lines = file.readlines()
+    if txt_path.exists():
+        with open(txt_path, 'r') as file:
+            lines = file.readlines()
+    else:
+        print(f"No detection results file at {txt_path}")  # 결과 파일 경로 로그 추가
+        return 0
 
     # 객체 데이터 파싱
     objects = []
@@ -118,8 +117,6 @@ def prepare_image(file_path):
     return img_array
 
 def classify_garbage(image_path):
-    # 예를 들어 이미지 경로
-    # img_path = './test_data/test4.jfif'
 
     # Yolo 객체 탐지 및 Crop
     detected_cnt = crop_image(image_path)

@@ -11,9 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +24,8 @@ public class MemberAchievementController {
 
     private final MemberAchievementService memberAchievementService;
 
-    // AuthenticationPrincipal 변경
+
     @GetMapping("/list")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<List<MemberAchievementListResponseDto>>> getMemberAchievementList(
             @Parameter(hidden = true) Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -38,9 +35,8 @@ public class MemberAchievementController {
     }
 
 
-    // AuthenticationPrincipal 변경
+
     @PostMapping("/{memberAchievementId}")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<NewGoalResponseDto>> receiveAchievementReward(
             @PathVariable("memberAchievementId") Long memberAchievementId,
             @Parameter(hidden = true) Authentication authentication) {

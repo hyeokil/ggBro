@@ -1,4 +1,4 @@
-package com.c206.backend.domain.quest.exception;
+package com.c206.backend.domain.member.exception.redis;
 
 import com.c206.backend.global.common.dto.Message;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class MemberQuestExceptionHandler {
-    @ExceptionHandler(MemberQuestException.class)
-    public ResponseEntity<Message<Void>> memberQuestException(MemberQuestException e) {
+public class RedisExceptionHandler {
+    @ExceptionHandler(RedisException.class)
+    public ResponseEntity<Message<Void>> memberException(RedisException e) {
         log.error("{} is occurred", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(Message.fail(null, e.getErrorMessage()));
     }

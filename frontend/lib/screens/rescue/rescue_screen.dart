@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
@@ -24,7 +22,6 @@ class _RescueScreenState extends State<RescueScreen> {
   late UserProvider userProvider;
   late String accessToken;
   bool _isButtonDisabled = false;
-
 
   @override
   void initState() {
@@ -56,25 +53,17 @@ class _RescueScreenState extends State<RescueScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currency = Provider.of<UserProvider>(context, listen: true).getCurrency();
+    final currency =
+        Provider.of<UserProvider>(context, listen: true).getCurrency();
 
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ),
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: Stack(
             children: [
               Column(
@@ -168,14 +157,16 @@ class _RescueScreenState extends State<RescueScreen> {
                         color: AppColors.rescueButton,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(width: 3, color: Colors.white),
-                        boxShadow: _isPressed ? [] : [
-                          BoxShadow(
-                            color: AppColors.basicgray.withOpacity(0.5),
-                            offset: const Offset(0, 4),
-                            blurRadius: 1,
-                            spreadRadius: 1,
-                          )
-                        ],
+                        boxShadow: _isPressed
+                            ? []
+                            : [
+                                BoxShadow(
+                                  color: AppColors.basicgray.withOpacity(0.5),
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
+                                )
+                              ],
                       ),
                       child: Center(
                         child: Text(
@@ -210,7 +201,7 @@ class _RescueScreenState extends State<RescueScreen> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.03,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
             ],
           ),
