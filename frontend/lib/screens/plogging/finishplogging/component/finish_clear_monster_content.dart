@@ -20,6 +20,8 @@ class FinishClearMonsterContent extends StatefulWidget {
 }
 
 class _FinishClearMonsterContent extends State<FinishClearMonsterContent> {
+
+
   @override
   Widget build(BuildContext context) {
     return Container(

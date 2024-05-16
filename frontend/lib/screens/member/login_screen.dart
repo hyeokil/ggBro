@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/provider/user_provider.dart';
