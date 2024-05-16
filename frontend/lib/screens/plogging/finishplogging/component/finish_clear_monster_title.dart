@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
+import 'package:intl/intl.dart';
 
 class FinishClearMonsterTitle extends StatefulWidget {
   final String time;
@@ -15,6 +15,18 @@ class FinishClearMonsterTitle extends StatefulWidget {
 class _FinishClearMonsterTitleState extends State<FinishClearMonsterTitle> {
   @override
   Widget build(BuildContext context) {
+    String convertTime(String time24) {
+      final format24 = DateFormat('HH:mm');
+      final format12 = DateFormat('a hh:mm');
+
+      DateTime dateTime = format24.parse(time24);
+      String time12 = format12.format(dateTime); // 'a'는 AM/PM을 나타내며, toLowerCase()로 소문자 am/pm으로 변경
+      return time12;
+    }
+
+    String time24 = widget.time;
+    String time12 = convertTime(time24);
+
     return Container(
       padding: const EdgeInsets.only(left: 10),
       width: MediaQuery.of(context).size.width * 0.85,

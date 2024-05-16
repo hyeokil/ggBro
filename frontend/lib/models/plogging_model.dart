@@ -24,8 +24,7 @@ class PloggingModel with ChangeNotifier {
     print('ploggingStart request : $url, headers : $headers');
     final response = await http.post(url, headers: headers);
     print(
-        'ploggingStart response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
-
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
     if (response.statusCode == 200) {
       ploggingId = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       return "Success";
@@ -53,9 +52,7 @@ class PloggingModel with ChangeNotifier {
         'classificationTrash request : $url, headers : $headers body : $body');
     final response = await http.post(url, headers: headers, body: body);
     print(
-        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataHeaders]"]}');
-    print(
-        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))["dataBody"]}');
+        'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
 
     if (response.statusCode == 200) {
       classificationData =

@@ -359,6 +359,7 @@ class _ProgressMapState extends State<ProgressMap> {
           box: box,
           value: value,
           path: path,
+          isExp: isExp,
         );
       },
     ).then((value) {
