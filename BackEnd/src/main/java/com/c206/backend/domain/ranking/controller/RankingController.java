@@ -25,7 +25,7 @@ public class RankingController {
 
     @GetMapping()
     @Operation(summary = "상위 10명의 랭킹을 조회합니다")
-    public ResponseEntity<Message<?>> getRankingList(@Parameter(hidden = true)Authentication authentication){
+    public ResponseEntity<Message<List<RankingListResponseDto>>> getRankingList(@Parameter(hidden = true)Authentication authentication){
         List<RankingListResponseDto> rankingList = rankingService.rankingList();
 
         return ResponseEntity.ok().body(Message.success(rankingList));

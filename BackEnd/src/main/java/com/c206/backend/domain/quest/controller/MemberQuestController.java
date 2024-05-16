@@ -48,9 +48,7 @@ public class MemberQuestController {
     public ResponseEntity<Message<Void>> addQuest(@Parameter(hidden = true)Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
-
         memberQuestService.addQuestList(memberId);
-
         return ResponseEntity.ok().body(Message.success());
     }
 
