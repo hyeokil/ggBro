@@ -18,14 +18,16 @@ public interface MemberPetService {
     // 펫 구출하기 (회원 펫 생성)
     Boolean rescuePet(Long memberId);
 
-    //회원가입 시 펫 1개 기본 지급해 주기
+    // 회원가입 시 펫 1개 기본 지급해 주기
     void provideBasePet(Member member);
 
-    //펫 닉네임 변경
-    boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname);
+    // 회원_펫 닉네임 변경
+    Boolean updatePetNickname(Long memberId, Long memberPetId, String petNickname);
 
-    boolean activePet(Long memberId, Long memberPetId);
+    // 회원_펫 활성화(박스에서 나올때)
+    Boolean activePet(Long memberId, Long memberPetId);
 
+    // 모든 펫 리스트 조회
     List<PetListResponseDto> getPetList(Long memberId);
 
 }
