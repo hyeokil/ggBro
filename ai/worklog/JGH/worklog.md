@@ -61,6 +61,53 @@
 - Flutter와 이미지 데이터 통신
 - 카메라 로직 수정
 
-  - 카메라 이상한 곳 찍히는 현상 보정
+  - 카메라 이상한 곳 찍히는 현상 보정(진행중)
 
-- 3D 프린팅 모델링 설계
+- 3D 프린팅 모델링 설계함
+
+### [5.09]
+
+- Ging Stick 3D 설계(완)
+
+- 3D 모델링 전체 마무리
+
+- trouble shooting
+
+  :boom: 카메라 캡쳐하여 BLE로 넘기는 과정에서 이전 frame이 찍히는 문제
+
+  ```
+  해결 방법 : 카메라 파라미터 중 config.fb_location = CAMERA_FB_IN_PSRAM; 코드와
+  config.grab_mode = CAMERA_GRAB_LATEST; 코드를 추가한 후 count를 2로 증가시킴
+  ```
+
+  `config.fb_count = 2;` : 저장할 수 있는 캡쳐된 frame 최대 개수
+
+  `config.fb_location = CAMERA_FB_IN_PSRAM;` : 외부 RAM 사용. CPU와 별도로 추가적인 메모리 공간을 제공
+
+  `config.grab_mode = CAMERA_GRAB_LATEST;` : 가장 최근의 프레임을 잡아채며, 새 프레임이 도착하면 이전 프레임을 대체
+
+  -> 각 파라미터는 여러 값을 갖고 있으므로 상황에 맞는 변수 사용.
+
+### [5.16]
+
+- input image에 맞는 데이터셋 새로 생성
+
+  1. 이미지 사이즈를 카메라 input인 320 x 240으로 crop
+
+  2. YoloV5로 이미지를 학습. 가운데 추출된 이미지를 잘라냄
+
+  3. 잘라낸 이미지에 흰 색 배경을 입혀 완성
+
+- 새로 받은 데이터 기반으로 CNN 학습
+
+- trouble shooting
+
+  :boom: 입력 데이터에 대한 분류 정확도가 높지 않음
+
+  ```
+  해결 방법 : 학습 이미지의 전처리와 입력 이미지 간 전처리 방식이 다름을 확인
+
+  -> 입력되는 이미지 전처리 방법에 맞게 데이터셋을 조정하여 새로 학습 진행
+
+  ..되야한다...
+  ```
