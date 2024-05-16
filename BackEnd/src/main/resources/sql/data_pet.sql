@@ -64,4 +64,28 @@ VALUES (
     'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/bear.png',
     '곰',
     'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00145-2717840739-removebg-preview.png',
+    '호랭이',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(1).png',
+    '경찰 구리',
+    'ACHIEVEMENT'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(2).png',
+    '구리',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(3).png',
+    '늑대',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(4).png',
+    '햄',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file.png',
+    '초롱 사슴',
+    'NORMAL'
 );
