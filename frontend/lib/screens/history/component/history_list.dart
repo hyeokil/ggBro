@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
-import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/history_model.dart';
 import 'package:frontend/models/pet_model.dart';
@@ -65,8 +63,8 @@ class _HistoryListState extends State<HistoryList> {
 
   @override
   Widget build(BuildContext context) {
-    String dateStartTimeStr = "${widget.startAt}";
-    String dateFinishTimeStr = "${widget.finishAt}";
+    String dateStartTimeStr = widget.startAt;
+    String dateFinishTimeStr = widget.finishAt;
     DateTime dateStartTime = DateTime.parse(dateStartTimeStr);
     String formattedStartTime =
         DateFormat('a h:mm', 'ko_KR').format(dateStartTime);
@@ -100,7 +98,7 @@ class _HistoryListState extends State<HistoryList> {
                         : [
                             BoxShadow(
                               color: AppColors.basicgray.withOpacity(0.5),
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 4),
                               blurRadius: 1,
                               spreadRadius: 1,
                             )
@@ -110,7 +108,7 @@ class _HistoryListState extends State<HistoryList> {
                 top: MediaQuery.of(context).size.height * 0.004,
                 left: MediaQuery.of(context).size.height * 0.004,
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(10, 3, 3, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 3, 3, 0),
                   width: MediaQuery.of(context).size.width * 0.884,
                   height: MediaQuery.of(context).size.height * 0.075,
                   decoration: BoxDecoration(
@@ -120,12 +118,13 @@ class _HistoryListState extends State<HistoryList> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 55,
                         width: 55,
                         child: ProfileImage(
                           image: Image.network(
-                              allPets[widget.historyList['pet_id']]['image']),
+                              allPets[widget.historyList['pet_id'] - 1]
+                                  ['image']),
                           isPressed: false,
                         ), // 같이 간 펫
                       ),
@@ -167,16 +166,15 @@ class _HistoryListState extends State<HistoryList> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          var historyModel = Provider.of<HistoryModel>(
-                              context,
-                              listen: false);
+                          var historyModel =
+                              Provider.of<HistoryModel>(context, listen: false);
                           await historyModel.getHistoryDetail(
                               accessToken, widget.ploggingId);
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return HistoryDetailDialog(
-                                date: '${widget.date}',
+                                date: widget.date,
                                 time:
                                     '$formattedStartTime ~ $formattedFinishTime',
                               );
@@ -191,8 +189,7 @@ class _HistoryListState extends State<HistoryList> {
                             Icon(
                               Icons.search,
                               color: Colors.white,
-                              size:
-                                  MediaQuery.of(context).size.height * 0.051,
+                              size: MediaQuery.of(context).size.height * 0.051,
                             ),
                             Text(
                               '상세정보',

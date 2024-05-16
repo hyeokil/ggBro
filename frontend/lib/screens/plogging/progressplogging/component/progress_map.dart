@@ -167,14 +167,10 @@ class _ProgressMapState extends State<ProgressMap> {
         .classificationTrash(
             accessToken, trashLatitude, trashLongitude, imageBytes)
         .then((data) {
-      print('data1 $data');
       if (data == 'Success') {
-        print('여기 옴');
         Map<String, dynamic> classificationData =
             ploggingModel.getClassificationData();
-        print('이것은 데이터야 $classificationData');
         if (classificationData.isNotEmpty) {
-          print('여긴 올 까?');
           switch (classificationData['trash_type']) {
             case 'NORMAL':
               normal += 1;
