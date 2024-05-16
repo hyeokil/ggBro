@@ -71,7 +71,7 @@ public class ReissueServiceImpl implements ReissueService {
         //redis DB에 저장되어 있는지 확인. 있다면 이 값은 redis 안에 있는 refresh 토큰 그 자체다
         String inRedisRefresh = redisService.getValues("refresh "+ email);
 
-        //테스트. 지울것
+        //테스트
         boolean isExist = redisService.checkExistsValue(inRedisRefresh);
         if (!isExist) {
             //response body

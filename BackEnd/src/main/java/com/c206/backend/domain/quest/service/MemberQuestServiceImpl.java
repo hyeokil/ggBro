@@ -2,8 +2,8 @@ package com.c206.backend.domain.quest.service;
 
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.entity.MemberInfo;
-import com.c206.backend.domain.member.exception.MemberError;
-import com.c206.backend.domain.member.exception.MemberException;
+import com.c206.backend.domain.member.exception.member.MemberError;
+import com.c206.backend.domain.member.exception.member.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import com.c206.backend.domain.pet.entity.MemberPet;

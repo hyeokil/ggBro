@@ -23,10 +23,10 @@ class _ProfilePetState extends State<ProfilePet> {
         Provider.of<UserProvider>(context, listen: true).getProfileImage();
     final allPets = Provider.of<PetModel>(context, listen: true).getAllPet();
 
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       height: MediaQuery.of(context).size.height * 0.5,
-      // decoration: BoxDecoration(color: Colors.white),
+      // decoration: const BoxDecoration(color: Colors.white),
       child: Center(
         child: currentProfileImage == 0
             ? Image.asset(AppIcons.earth_3)

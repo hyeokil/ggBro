@@ -38,17 +38,6 @@ public class MemberController {
     @Operation(summary = "로그인을 진행합니다.")
     public ResponseEntity<?> loginP(@RequestBody @Valid @Parameter SignInRequestDto signInRequestDto // HashMap<String, Object> map
     ){
-
-//        try{
-//            System.out.println("여기는 Login API");
-//            System.out.println(signInRequestDto.getUsername()+" "+signInRequestDto.getPassword());
-//            System.out.println(memberService.signInProcess(signInRequestDto));
-//
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -64,12 +53,8 @@ public class MemberController {
             System.out.println(signUpRequestDto.getNickname());
             boolean isSuccess = memberService.signUpProcess(signUpRequestDto);
 
-            //펫 자동생성
-            //업적 자동생성
-            //회원정보 자동생성
-
             if(isSuccess){
-                return ResponseEntity.ok().body(Message.success());
+                return ResponseEntity.ok().body(Message.success(isSuccess));
             }else{
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -106,16 +91,11 @@ public class MemberController {
 
     @PostMapping()
     @Operation(summary = "이메일 중복체크를 진행합니다.")
-    public ResponseEntity<?> memberEmailDupCheck(@RequestBody @Parameter String email){
+    public ResponseEntity<Message<?>> memberEmailDupCheck(@RequestBody @Parameter String email){
 
         try{
-//            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
-//            System.out.println(customUserDetails.getId());
-//            System.out.println(customUserDetails.getEmail());
-//            System.out.println(customUserDetails.getNickname());
             System.out.println(memberService.emailDupCheck(email));
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().body(Message.success());
         }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -16,7 +16,7 @@ class PetModel with ChangeNotifier {
   List<dynamic> pets = [];
 
   Future<String> getPets(String accessToken) async {
-    var url = Uri.https(address, "/api/v1/pet/list");
+    var url = Uri.https(address, "/api/v1/pet/my/list");
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': "Bearer $accessToken"
@@ -65,7 +65,7 @@ class PetModel with ChangeNotifier {
   List<dynamic> allPets = [];
 
   Future<String> getAllPets(String accessToken) async {
-    var url = Uri.https(address, "/api/v1/pet/petlist");
+    var url = Uri.https(address, "/api/v1/pet/list");
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': "Bearer $accessToken"
@@ -107,7 +107,7 @@ class PetModel with ChangeNotifier {
 
   Future<String> updateNickName(
       String accessToken, int memberPetId, String nickName) async {
-    var url = Uri.https(address, "/api/v1/pet/updatenickname/$memberPetId");
+    var url = Uri.https(address, "/api/v1/pet/update/nickname/$memberPetId");
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': "Bearer $accessToken"

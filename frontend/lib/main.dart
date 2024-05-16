@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/theme_data.dart';
 import 'package:frontend/models/achievement_model.dart';
 import 'package:frontend/models/auth_model.dart';
@@ -15,6 +16,7 @@ import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/models/quest_model.dart';
 import 'package:frontend/models/ranking_model.dart';
 import 'package:frontend/models/rescue_model.dart';
+import 'package:frontend/provider/plogging_provider.dart';
 import 'package:frontend/router/routes.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,6 +39,7 @@ void main() async {
         providers: [
           ChangeNotifierProvider(create: (context) => MainProvider()),
           ChangeNotifierProvider(create: (context) => UserProvider()),
+          ChangeNotifierProvider(create: (context) => PloggingProvider()),
           ChangeNotifierProvider(
               create: (context) =>
                   AuthModel(Provider.of<UserProvider>(context, listen: false))),
@@ -67,6 +70,7 @@ void main() async {
           ChangeNotifierProvider(
               create: (context) => PloggingModel(
                   Provider.of<UserProvider>(context, listen: false))),
+
           // ChangeNotifierProvider(create: (context) => AuthModel()),
         ],
         child: const MyApp(),
@@ -115,18 +119,9 @@ class _MyAppState extends State<MyApp> {
       builder: (context, child) {
         return Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ), // 전체 배경색으로 파란색 설정
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: child, // 앱의 나머지 부분
         );
       },

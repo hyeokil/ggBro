@@ -7,8 +7,8 @@ import com.c206.backend.domain.achievement.repository.MemberAchievementRepositor
 import com.c206.backend.domain.member.dto.response.MemberTrashCountResDto;
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.entity.MemberInfo;
-import com.c206.backend.domain.member.exception.MemberError;
-import com.c206.backend.domain.member.exception.MemberException;
+import com.c206.backend.domain.member.exception.member.MemberError;
+import com.c206.backend.domain.member.exception.member.MemberException;
 import com.c206.backend.domain.member.repository.MemberInfoRepository;
 import com.c206.backend.domain.pet.dto.response.MemberPetDetailResponseDto;
 import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
@@ -17,7 +17,6 @@ import com.c206.backend.domain.pet.exception.PetError;
 import com.c206.backend.domain.pet.exception.PetException;
 import com.c206.backend.domain.pet.service.MemberPetService;
 import com.c206.backend.domain.quest.service.MemberQuestService;
-import com.c206.backend.domain.member.dto.request.SignInRequestDto;
 import com.c206.backend.domain.member.dto.request.SignUpRequestDto;
 import com.c206.backend.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -53,69 +52,73 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> isExist = memberRepository.findByEmail(email);
 
         if(isExist.isPresent()){
-            System.out.println("이미 존재하는 사용자입니다.");
             throw new MemberException(MemberError.EXIST_MEMBER_EMAIL);
         }else{
-            System.out.println("회원가입 가능");
+
             //회원가입
-            signupDto.setPassword(bCryptPasswordEncoder.encode(password));
-            memberRepository.save(signupDto.toEntity());
-            System.out.println("회원가입 성공");
+            try{
+                signupDto.setPassword(bCryptPasswordEncoder.encode(password));
+                memberRepository.save(signupDto.toEntity());
+            }catch(Exception e){
+                throw new MemberException(MemberError.FAIL_TO_MAKE_MEMBER);
+            }
 
             Optional<Member> nowMember = memberRepository.findByEmail(email);
             if(nowMember.isEmpty()){
                 return false;
             }
 
-            System.out.println("기본펫 지급시작");
-            //기본펫 1번 지급
             Member member = memberRepository.findById(nowMember.get().getId()).orElseThrow(()
                     -> new MemberException(MemberError.NOT_FOUND_MEMBER));
             memberPetService.provideBasePet(member);
 
-            List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(member.getId());
+            //기본펫 1번 지급
+            try{
+                List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(member.getId());
 
-            redisService.setValues("latest pet id "+ nowMember.get().getId(), String.valueOf(memberPetList.get(0).getMemberPetId()), 14*24*60*60*1000L);
-            System.out.println("기본펫 지급성공");
-
-            System.out.println("회원정보 지정시작");
-            //회원-정보 테이블에 기본사항 지정하기
-            MemberInfo newMemberInfo= MemberInfo.builder()
-                    .member(member)
-                    .profilePetId(0L)
-                    .exp(0)
-                    .currency(0)
-                    .build();
-            memberInfoRepository.save(newMemberInfo);
-            System.out.println("회원정보 지정성공");
-
-            System.out.println("회원업적 지정시작");
-            //회원-업적 테이블에 기본사항 지정하기
-            List<Achievement> achievementList = achievementRepository.findAll();
-
-            for (Achievement achievement : achievementList) {
-                MemberAchievement newMemberAchievement = MemberAchievement.builder()
-                        .member(member)
-                        .achievement(achievement)
-                        .progress(0)
-                        .goalMultiply(1)
-                        .build();
-                memberAchievementRepository.save(newMemberAchievement);
+                redisService.setValues("latest pet id "+ nowMember.get().getId(), String.valueOf(memberPetList.get(0).getMemberPetId()), 14*24*60*60*1000L);
+            }catch (Exception e){
+                throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_PET);
             }
-            System.out.println("회원업적 지정성공");
 
-            System.out.println("회원퀘스트 지정시작");
-            memberQuestService.addQuestList(member.getId());
-            System.out.println("회원퀘스트 지정성공");
+            //회원-정보 테이블에 기본사항 지정하기
+            try{
+                MemberInfo newMemberInfo= MemberInfo.builder()
+                        .member(member)
+                        .profilePetId(0L)
+                        .exp(0)
+                        .currency(0)
+                        .build();
+                memberInfoRepository.save(newMemberInfo);
+            }catch (Exception e){
+                throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_MEMBER_INFO);
+            }
+
+            //회원-업적 테이블에 기본사항 지정하기
+            try{
+                List<Achievement> achievementList = achievementRepository.findAll();
+                for (Achievement achievement : achievementList) {
+                    MemberAchievement newMemberAchievement = MemberAchievement.builder()
+                            .member(member)
+                            .achievement(achievement)
+                            .progress(0)
+                            .goalMultiply(1)
+                            .build();
+                    memberAchievementRepository.save(newMemberAchievement);
+                }
+            }catch (Exception e){
+                throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_ACHIEVEMENT);
+            }
+
+            //회원-퀘스트 테이블에 기본사항 지정하기
+            try{
+                memberQuestService.addQuestList(member.getId());
+            }catch (Exception e){
+                throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_QUEST);
+            }
 
             return true;
         }
-    }
-
-    @Override
-    public Boolean signInProcess(SignInRequestDto signInDto) {
-
-        return false;
     }
 
     @Override
@@ -172,18 +175,13 @@ public class MemberServiceImpl implements MemberService{
         }
 
 
-        for(PetListResponseDto petItem : petList){
-            System.out.println(petItem.getName()+" "+petItem.isHave()+" "+ petItem.isActive());
-        }
-
-        if(profilePetId <= 0 || profilePetId > 4){
+        if(profilePetId <= 0 || profilePetId > petList.size()){
             throw new PetException(PetError.NOT_FOUND_PET);
         }
 
         if(!petList.get(profilePetId.intValue() - 1).isActive()){
             throw new PetException(PetError.NOT_ACTIVE_PET);
         }
-
 
 
         memberInfo.updateProfilePetId(profilePetId);
