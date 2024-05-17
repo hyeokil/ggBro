@@ -9,12 +9,10 @@ class BoxDialog extends StatefulWidget {
   });
 
   @override
-  State<BoxDialog> createState() =>
-      _BoxDialogState();
+  State<BoxDialog> createState() => _BoxDialogState();
 }
 
-class _BoxDialogState extends State<BoxDialog>
-    with TickerProviderStateMixin {
+class _BoxDialogState extends State<BoxDialog> with TickerProviderStateMixin {
   AnimationController? _animationController_box;
   Animation<double>? _scaleAnimation_box;
   AnimationController? _animationController_intersect;
@@ -36,7 +34,7 @@ class _BoxDialogState extends State<BoxDialog>
 
     _animationController_intersect!.repeat(reverse: true);
     _animationController_box!.forward();
-    Future.delayed(const Duration(milliseconds: 2000), () {
+    Future.delayed(const Duration(milliseconds: 3500), () {
       Navigator.of(context).pop();
     });
   }
