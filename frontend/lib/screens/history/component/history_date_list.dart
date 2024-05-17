@@ -29,7 +29,7 @@ class _HistoryDateListState extends State<HistoryDateList> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: EdgeInsets.only(left: 5),
+          padding: const EdgeInsets.only(left: 5),
           width: MediaQuery.of(context).size.width * 0.9,
           alignment: Alignment.centerLeft,
           child: Text(
@@ -41,20 +41,23 @@ class _HistoryDateListState extends State<HistoryDateList> {
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
+            SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: ListView.builder(
-                physics: NeverScrollableScrollPhysics(), // 스크롤 중첩 방지
+                physics: const NeverScrollableScrollPhysics(), // 스크롤 중첩 방지
                 shrinkWrap: true,
                 itemCount: widget.dateHistoryList.values.toList()[0].length,
                 itemBuilder: (BuildContext context, int index) {
                   return HistoryList(
-                    historyList: widget.dateHistoryList.values.toList()[0][index],
-                    ploggingId: widget.dateHistoryList.values.toList()[0][index]['plogging_id'],
-                    date : formattedDate,
-                    startAt : widget.dateHistoryList.values.toList()[0][index]['create_at'],
-                    finishAt : widget.dateHistoryList.values.toList()[0][index]['update_at']
-                  );
+                      historyList: widget.dateHistoryList.values.toList()[0]
+                          [index],
+                      ploggingId: widget.dateHistoryList.values.toList()[0]
+                          [index]['plogging_id'],
+                      date: formattedDate,
+                      startAt: widget.dateHistoryList.values.toList()[0][index]
+                          ['create_at'],
+                      finishAt: widget.dateHistoryList.values.toList()[0][index]
+                          ['update_at']);
                 },
               ),
             ),

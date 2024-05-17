@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
@@ -10,13 +12,21 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/plogging_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
+import 'package:frontend/screens/plogging/progressplogging/dialog/box_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_box_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_get_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_kill_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_lacation_dialog.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import "package:http/http.dart" as http;
 
 class ProgressMap extends StatefulWidget {
   const ProgressMap({
@@ -30,6 +40,7 @@ class ProgressMap extends StatefulWidget {
 class _ProgressMapState extends State<ProgressMap> {
   late MainProvider mainProvider;
   late UserProvider userProvider;
+  late PloggingProvider ploggingProvider;
   late PetModel petModel;
   late Map<String, dynamic> currentPet;
 
@@ -64,16 +75,22 @@ class _ProgressMapState extends State<ProgressMap> {
   late String accessToken, displayMonster, monsterIcon;
   late bool isExp;
   bool isKill = false;
+  bool isKilling = false;
   int plastic = 0, can = 0, glass = 0, normal = 0, box = 0, value = 0;
+
+  late bool memberTutorial;
 
   @override
   void initState() {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    memberTutorial = userProvider.getMemberTutorial();
     ploggingModel = Provider.of<PloggingModel>(context, listen: false);
+    ploggingProvider = Provider.of<PloggingProvider>(context, listen: false);
     petModel = Provider.of<PetModel>(context, listen: false);
     currentPet = petModel.getCurrentPet();
     isExp = !currentPet['active'];
+    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
     accessToken = userProvider.getAccessToken();
     startAPI();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
@@ -127,9 +144,9 @@ class _ProgressMapState extends State<ProgressMap> {
               if (String.fromCharCodes(event) == '0') {
                 if (imageResult.isNotEmpty) {
                   imageBytes.addAll(imageResult);
-                  base64String = base64Encode(imageResult);
-                  print('총길이 ${base64String.length}');
-                  setState(() {});
+                  // base64String = base64Encode(imageResult);
+                  // print('총길이 ${base64String.length}');
+                  // setState(() {});
                   imageResult.clear();
                   // 쓰레기 판별 함수 실행 API 콜
                   getClassficationData();
@@ -138,6 +155,8 @@ class _ProgressMapState extends State<ProgressMap> {
               }
               // 데이터 수신 시작했으므로 위치 저장
               if (imageResult.isEmpty) {
+                isKilling = true;
+                setState(() {});
                 getTrashLocation();
               }
               // '|' 뒤 데이터 저장
@@ -158,66 +177,98 @@ class _ProgressMapState extends State<ProgressMap> {
     }
   }
 
-  getClassficationData() async {
-    String data = await ploggingModel.classificationTrash(
-        accessToken, trashLatitude, trashLongitude, imageBytes);
+  getClassficationData() {
+    ploggingModel
+        .classificationTrash(
+            accessToken, trashLatitude, trashLongitude, imageBytes)
+        .then((data) {
+      if (data == 'Success') {
+        Map<String, dynamic> classificationData =
+            ploggingModel.getClassificationData();
+        if (classificationData.isNotEmpty) {
+          switch (classificationData['trash_type']) {
+            case 'NORMAL':
+              normal += 1;
+              displayMonster = '미쪼몽';
+              monsterIcon = AppIcons.mizzomon;
+              drawData(classificationData);
+              break;
+            case 'CAN':
+              can += 1;
+              displayMonster = '포캔몽';
+              monsterIcon = AppIcons.pocanmong;
+              drawData(classificationData);
+              break;
+            case 'PLASTIC':
+              plastic += 1;
+              displayMonster = '플라몽';
+              monsterIcon = AppIcons.plamong;
+              drawData(classificationData);
+              break;
+            case 'GLASS':
+              glass += 1;
+              displayMonster = '율몽';
+              monsterIcon = AppIcons.yulmong;
+              drawData(classificationData);
+              break;
+            default:
+              return; // 판별하지 못했다면 마커 찍지 X
+          }
+        }
+        if (memberTutorial == false) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return PloggingTutorialKillTrashDialog(
+                  displayMonster: displayMonster,
+                  monsterIcon: monsterIcon,
+                  onConfirm: showFinishPloggingDialog,
+                );
+              },
+            );
+          });
+        }
+        return ploggingModel.getClassificationData();
+      } else {
+        return;
+      }
+    });
     imageBytes.clear();
-    if (data == 'Success') {
-      Map<String, dynamic> classificationData =
-          ploggingModel.getClassificationData();
-      if (classificationData.isNotEmpty) {
-        switch (classificationData['trash_type']) {
-          case 'NORMAL':
-            normal += 1;
-            displayMonster = '미쪼몽';
-            monsterIcon = AppIcons.mizzomon;
-            value += int.parse(classificationData['value']);
-            break;
-          case 'CAN':
-            can += 1;
-            displayMonster = '포캔몽';
-            monsterIcon = AppIcons.pocanmong;
+  }
 
-            break;
-          case 'PLASTIC':
-            plastic += 1;
-            displayMonster = '플라몽';
-            monsterIcon = AppIcons.plamong;
-            break;
-          case 'GLASS':
-            glass += 1;
-            displayMonster = '율몽';
-            monsterIcon = AppIcons.yulmong;
-            break;
-          default:
-            return; // 판별하지 못했다면 마커 찍지 X
-        }
-        value += int.parse(classificationData['value']);
-        if (classificationData['rescue']) {
-          box += 1;
-        }
-        isKill = true;
-        Future.delayed(const Duration(seconds: 3), () {
-          isKill = false;
-          setState(() {});
-        });
-        trashId += 1;
-        NMarker trashMarker = NMarker(
-          angle: 30,
-          id: 'trash$trashId',
-          position: NLatLng(trashLatitude, trashLongitude),
-          icon: NOverlayImage.fromAssetImage(monsterIcon),
-          size: const NSize(30, 40),
+  void drawData(Map<String, dynamic> classificationData) {
+    setState(() {
+      value += classificationData['value'] as int;
+      if (classificationData['rescue']) {
+        box += 1;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const BoxDialog();
+          },
         );
-        trashMarker.setGlobalZIndex(trashId);
-        _mapController!.addOverlay(trashMarker);
-        setState(() {});
       }
 
-      return ploggingModel.getClassificationData();
-    } else {
-      return;
-    }
+      isKill = true;
+      isKilling = false;
+      Future.delayed(const Duration(seconds: 3), () {
+        isKill = false;
+        setState(() {});
+      });
+      ploggingProvider.setTrashs(
+          plastic, can, glass, normal, value, box, isExp);
+      trashId += 1;
+      NMarker trashMarker = NMarker(
+        angle: 30,
+        id: 'trash$trashId',
+        position: NLatLng(trashLatitude, trashLongitude),
+        icon: NOverlayImage.fromAssetImage(monsterIcon),
+        size: const NSize(30, 40),
+      );
+      trashMarker.setGlobalZIndex(trashId);
+      _mapController!.addOverlay(trashMarker);
+    });
   }
 
   getTrashLocation() async {
@@ -238,6 +289,25 @@ class _ProgressMapState extends State<ProgressMap> {
       longitude = position.longitude;
       _pathPoints.add(NLatLng(position.latitude, position.longitude));
       _isLocationLoaded = true;
+      if (memberTutorial == false) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const PloggingTutorialLocationDialog();
+            },
+          ).then(
+            (value) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const PloggingTutorialGetTrashDialog();
+                },
+              );
+            },
+          );
+        });
+      }
     });
     print('현재 위치 : ${position.latitude}, ${position.longitude}');
   }
@@ -334,6 +404,20 @@ class _ProgressMapState extends State<ProgressMap> {
     }
   }
 
+  Future<NOverlayImage> createNOverlayImageFromNetwork(String imageUrl) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        Uint8List imageData = response.bodyBytes;
+        return NOverlayImage.fromByteArray(imageData);
+      } else {
+        throw Exception('Failed to load image');
+      }
+    } catch (e) {
+      throw Exception('Error loading image: $e');
+    }
+  }
+
   void updateMarkers() {
     // 쓰레기통 마커 업데이트
     if (_currentZoom < 13 && trashTongs.length > 1) {
@@ -362,9 +446,14 @@ class _ProgressMapState extends State<ProgressMap> {
           isExp: isExp,
         );
       },
-    ).then((value) {
+    ).then((_) {
       var petModel = Provider.of<PetModel>(context, listen: false);
       petModel.getPetDetail(accessToken, -1);
+      var currency =
+          Provider.of<UserProvider>(context, listen: false).getCurrency();
+      if (!isExp) {
+        userProvider.setCurrency(currency + value);
+      }
       context.pushReplacement('/main');
     });
   }
@@ -375,170 +464,139 @@ class _ProgressMapState extends State<ProgressMap> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: _isLocationLoaded
-          ? Stack(children: [
-              isKill
-                  ? Stack(
+          ? Stack(
+              children: [
+                NaverMap(
+                  onMapReady: (controller) async {
+                    _mapController = controller; // 지도 컨트롤러 초기화
+
+                    // 내 위치 표시 아이콘 설정
+                    final mylocation = _mapController!.getLocationOverlay();
+                    final myImage = await createNOverlayImageFromNetwork(
+                        currentPet['image']);
+                    mylocation.setIcon(
+                      currentPet['active']
+                          ? myImage
+                          : const NOverlayImage.fromAssetImage(
+                              AppIcons.intro_box),
+                    );
+                    mylocation.setIconSize(const NSize(50, 50));
+                    mylocation.setCircleColor(Colors.transparent);
+
+                    _mapController!
+                        .setLocationTrackingMode(NLocationTrackingMode.face);
+
+                    createTrashtongMarkers();
+                  },
+                  options: NaverMapViewOptions(
+                      // minZoom: 13,
+                      // maxZoom: 16,
+                      scaleBarEnable: false,
+                      logoAlign: NLogoAlign.leftTop,
+                      logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                      initialCameraPosition: NCameraPosition(
+                          target: NLatLng(latitude, longitude),
+                          zoom: 15,
+                          bearing: 0,
+                          tilt: 45)),
+                ),
+
+                // 이미지 확인용 코드
+                // Positioned(
+                //     child: base64String.isEmpty
+                //         ? Image.asset(
+                //             AppIcons.trash_tong,
+                //             height: MediaQuery.of(context).size.height * 0.05,
+                //             width: MediaQuery.of(context).size.height * 0.05,
+                //           )
+                //         : Image.memory(base64.decode(base64String))),
+                Positioned(
+                  bottom: 0,
+                  left: MediaQuery.of(context).size.width * 0.2,
+                  right: MediaQuery.of(context).size.width * 0.2,
+                  child: GestureDetector(
+                    onVerticalDragUpdate: (e) {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return const TotalTrash();
+                          }));
+                    },
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return const TotalTrash();
+                          }));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.2),
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ]),
+                      height: MediaQuery.of(context).size.height * 0.04,
+                      child: const Center(
+                        child: Text('원정 집계 현황'),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: MediaQuery.of(context).size.height * 0.75,
+                  right: 0,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.15,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: Column(
                       children: [
-                        Positioned(
-                          top: MediaQuery.of(context).size.height * 0.004,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.09,
-                            height: MediaQuery.of(context).size.height * 0.04,
-                            // color: Colors.black,
-                            child: Image.asset(monsterIcon),
-                          ),
-                        ),
-                        Positioned(
-                          top: MediaQuery.of(context).size.height * 0.01,
-                          right: MediaQuery.of(context).size.width * 0.02,
-                          child: Text(
-                            '$displayMonster + 1',
-                            style: CustomFontStyle.getTextStyle(
-                              context,
-                              CustomFontStyle.yeonSung60,
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                trashTongToggle();
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(40),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: AppColors.basicgray
+                                                .withOpacity(0.2),
+                                            blurRadius: 1,
+                                            spreadRadius: 1)
+                                      ]),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  width:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  child: Center(
+                                      child: Image.asset(
+                                    AppIcons.trash_tong,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    width: MediaQuery.of(context).size.height *
+                                        0.05,
+                                  ))),
                             ),
                           ),
-                        )
-                      ],
-                    )
-                  : Container(),
-              NaverMap(
-                onMapReady: (controller) {
-                  _mapController = controller; // 지도 컨트롤러 초기화
-
-                  // 내 위치 표시 아이콘 설정
-                  final mylocation = _mapController!.getLocationOverlay();
-                  mylocation.setIcon(
-                    const NOverlayImage.fromAssetImage(AppIcons.meka_sudal),
-                  );
-                  mylocation.setIconSize(const NSize(50, 50));
-                  mylocation.setCircleColor(Colors.transparent);
-
-                  _mapController!
-                      .setLocationTrackingMode(NLocationTrackingMode.face);
-
-                  createTrashtongMarkers();
-                },
-                options: NaverMapViewOptions(
-                    // minZoom: 13,
-                    // maxZoom: 16,
-                    scaleBarEnable: false,
-                    logoAlign: NLogoAlign.leftTop,
-                    logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                    initialCameraPosition: NCameraPosition(
-                        target: NLatLng(latitude, longitude),
-                        zoom: 15,
-                        bearing: 0,
-                        tilt: 45)),
-              ),
-
-              // 이미지 확인용 코드
-              Positioned(
-                  child: base64String.isEmpty
-                      ? Image.asset(
-                          AppIcons.trash_tong,
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          width: MediaQuery.of(context).size.height * 0.05,
-                        )
-                      : Image.memory(base64.decode(base64String))),
-              Positioned(
-                bottom: 0,
-                left: MediaQuery.of(context).size.width * 0.2,
-                right: MediaQuery.of(context).size.width * 0.2,
-                child: GestureDetector(
-                  onVerticalDragUpdate: (e) {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: ((context) {
-                          return TotalTrash(
-                            plastic: plastic,
-                            can: can,
-                            glass: glass,
-                            normal: normal,
-                            value: value,
-                            box: box,
-                            isExp: isExp,
-                          );
-                        }));
-                  },
-                  onTap: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: ((context) {
-                          return StatefulBuilder(builder:
-                              (BuildContext context, StateSetter bottomState) {
-                            return TotalTrash(
-                              plastic: plastic,
-                              can: can,
-                              glass: glass,
-                              normal: normal,
-                              value: value,
-                              box: box,
-                              isExp: isExp,
-                            );
-                          });
-                        }));
-                  },
-                  child: isKill
-                      ? Container(
-                          width: MediaQuery.of(context).size.width * 0.37,
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: AppColors.basicgray.withOpacity(0.2),
-                                    blurRadius: 1,
-                                    spreadRadius: 1)
-                              ]),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  '$displayMonster + 1',
-                                  style: CustomFontStyle.getTextStyle(
-                                    context,
-                                    CustomFontStyle.yeonSung60,
-                                  ),
-                                ),
-                              ]),
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20)),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: AppColors.basicgray.withOpacity(0.2),
-                                    blurRadius: 1,
-                                    spreadRadius: 1)
-                              ]),
-                          height: MediaQuery.of(context).size.height * 0.04,
-                          child: const Center(
-                            child: Text('원정 집계 현황'),
-                          ),
                         ),
-                ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.75,
-                right: 0,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.15,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: Column(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              trashTongToggle();
-                            },
-                            child: Container(
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                returnCurrentLocation();
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(40),
@@ -553,87 +611,150 @@ class _ProgressMapState extends State<ProgressMap> {
                                     MediaQuery.of(context).size.height * 0.06,
                                 width:
                                     MediaQuery.of(context).size.height * 0.06,
-                                child: Center(
-                                    child: Image.asset(
-                                  AppIcons.trash_tong,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  width:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                ))),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              returnCurrentLocation();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: const Center(
-                                child: Icon(Icons.my_location),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return FinishCheckPloggingDialog(
-                                    onConfirm: showFinishPloggingDialog,
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: Center(
-                                child: Text(
-                                  '종 료',
-                                  style: CustomFontStyle.getTextStyle(context,
-                                      CustomFontStyle.yeonSung70_white),
+                                child: const Center(
+                                  child: Icon(Icons.my_location),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return FinishCheckPloggingDialog(
+                                      onConfirm: showFinishPloggingDialog,
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Center(
+                                  child: Text(
+                                    '종 료',
+                                    style: CustomFontStyle.getTextStyle(context,
+                                        CustomFontStyle.yeonSung70_white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ])
+                isKill
+                    ? Positioned(
+                        top: MediaQuery.of(context).size.height * 0.02,
+                        right: MediaQuery.of(context).size.height * 0.02,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(width: 3, color: Colors.white),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.5),
+                                offset: const Offset(0, 4),
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.004,
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.09,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.04,
+                                  // color: Colors.black,
+                                  child: Image.asset(monsterIcon),
+                                ),
+                              ),
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.01,
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                child: Text(
+                                  '$displayMonster 처치 + 1',
+                                  style: CustomFontStyle.getTextStyle(
+                                    context,
+                                    CustomFontStyle.yeonSung60,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                isKilling
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IgnorePointer(
+                              child: Container(
+                                child: GifView.asset(
+                                  AppIcons.effect,
+                                  frameRate: 13,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '몬스터 처치중',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
+              ],
+            )
           : const Center(
               child: CircularProgressIndicator(),
             ),

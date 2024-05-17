@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class HistoryListResponseDTO {
+public class HistoryListResponseDto {
 
     private Long ploggingId;
 
@@ -24,7 +24,7 @@ public class HistoryListResponseDTO {
 
     private Long petId;
 
-    private double distance;
+    private int distance;
 
     private int trashCount;
 

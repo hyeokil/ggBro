@@ -10,6 +10,7 @@ class AppColors {
   static const Color basicgray = Color(0xFF796F6D);
   static const Color basicnavy = Color(0xFF2E293E);
   static const Color basicgreen = Color(0xFF2E6F68);
+  static const Color backgroundcolor = Color(0xFFE8F5E9);
 
   // shadow color
   static const Color basicShadowPink = Color(0xFFCE9392);

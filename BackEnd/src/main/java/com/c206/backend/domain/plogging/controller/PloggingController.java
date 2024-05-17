@@ -1,5 +1,6 @@
 package com.c206.backend.domain.plogging.controller;
 
+import com.c206.backend.domain.plogging.dto.LocationInfo;
 import com.c206.backend.domain.plogging.dto.request.CreateTrashRequestDto;
 import com.c206.backend.domain.plogging.dto.request.FinishPloggingRequestDto;
 import com.c206.backend.domain.plogging.dto.request.GetTrashRequestDto;
@@ -18,11 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/plogging")
-@Tag(name = "Plogging", description = "Ploggin API")
+@Tag(name = "Plogging", description = "Plogging API")
 public class PloggingController {
 
     private final PloggingService ploggingService;
@@ -30,7 +33,6 @@ public class PloggingController {
 
 
     @PostMapping("/start/{memberPetId}")
-//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Message<Long>> createPlogging(
             @PathVariable("memberPetId") Long memberPetId,
             @Parameter(hidden = true) Authentication authentication) {
@@ -46,6 +48,15 @@ public class PloggingController {
             @PathVariable("ploggingId") Long ploggingId,
             @RequestBody CreateTrashRequestDto createTrashRequestDto) {
         CreateTrashResponseDto createTrashResponseDto = trashService.createTrash(ploggingId,createTrashRequestDto);
+        return ResponseEntity.ok().body(Message.success(createTrashResponseDto));
+    }
+
+    // 쓰레기 줍기 테스트용
+    @PostMapping("/trash/test/{ploggingId}")
+    public ResponseEntity<Message<CreateTrashResponseDto>> createTrashTest(
+            @PathVariable("ploggingId") Long ploggingId,
+            @RequestBody LocationInfo locationInfo) {
+        CreateTrashResponseDto createTrashResponseDto = trashService.createTrashTest(ploggingId,locationInfo);
         return ResponseEntity.ok().body(Message.success(createTrashResponseDto));
     }
 

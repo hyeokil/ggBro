@@ -114,45 +114,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.transparent,
         body: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter, // 그라데이션 시작 위치
-              end: Alignment.bottomCenter, // 그라데이션 끝 위치
-              colors: [
-                Color.fromRGBO(203, 242, 245, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(247, 255, 230, 1),
-                Color.fromRGBO(254, 206, 224, 1),
-              ], // 그라데이션 색상 배열
-            ),
-          ), // 전
+            image: DecorationImage(
+                fit: BoxFit.cover, image: AssetImage(AppIcons.background)),
+          ), // 전체 배경
           child: Stack(
             children: [
               Column(
                 children: [
-                  TopBar(),
-                  Container(
+                  const TopBar(),
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     height: MediaQuery.of(context).size.width * 1.25,
                     child: Stack(
                       children: [
                         Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: ProfilePet(
-                              // profilePetImage: member['profile_pet_id'],
-                              ),
+                          right: MediaQuery.of(context).size.width * - 0.05,
+                          top: MediaQuery.of(context).size.height * 0.15,
+                          child: const ProfilePet(
+                            // profilePetImage: member['profile_pet_id'],
+                          ),
                         ),
                         ProfileClearMonster(
                           member: member,
                         ),
                         Positioned(
-                          bottom: 0,
+                          bottom: MediaQuery.of(context).size.height * 0.007,
                           child: GestureDetector(
                             onTap: () async {
                               final achievements =
-                                  Provider.of<AchievementModel>(context,
-                                      listen: false);
+                              Provider.of<AchievementModel>(context,
+                                  listen: false);
                               await achievements.getAchievements(accessToken);
                               showDialog(
                                 context: context,
@@ -169,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         Positioned(
-                          bottom: 0,
+                          bottom: MediaQuery.of(context).size.height * 0.007,
                           left: MediaQuery.of(context).size.width * 0.26,
                           child: GestureDetector(
                             onTap: () {
@@ -188,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  Container(
+                  SizedBox(
                     // color: Colors.black,
                     height: MediaQuery.of(context).size.width * 0.4,
                     width: MediaQuery.of(context).size.width * 0.95,
@@ -201,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: List.generate(allPets.length, (index) {
                         return Stack(
                           children: [
-                            Container(
+                            SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.08, // 각 항목의 높이 설정
                               width: MediaQuery.of(context).size.height *
@@ -209,52 +200,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               // color: Colors.blue,
                               child: ProfileImage(
                                 image:
-                                    Image.network('${allPets[index]['image']}'),
+                                Image.network('${allPets[index]['image']}'),
                                 isPressed: _isPressed,
                               ),
                             ),
                             allPets[index]['active'] && allPets[index]['have']
                                 ? GestureDetector(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return ChangeProfileImage(
-                                            name: allPets[index]['name'],
-                                            index: index + 1,
-                                          );
-                                        },
-                                      );
-                                    },
-                                    // onTapDown: _onTapDown,
-                                    // onTapUp: _onTapUp,
-                                    // onTapCancel: _onTapCancel,
-                                    child: Container(
-                                      color: Colors.transparent,
-                                    ),
-                                  )
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ChangeProfileImage(
+                                      name: allPets[index]['name'],
+                                      index: index + 1,
+                                    );
+                                  },
+                                );
+                              },
+                              // onTapDown: _onTapDown,
+                              // onTapUp: _onTapUp,
+                              // onTapCancel: _onTapCancel,
+                              child: Container(
+                                color: Colors.transparent,
+                              ),
+                            )
                                 : GestureDetector(
-                                    onTap: () {
-                                      Fluttertoast.showToast(
-                                          msg: '펫을 획득 해주세요!');
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(40),
-                                      ),
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.08, // 각 항목의 높이 설정
-                                      width:
-                                          MediaQuery.of(context).size.height *
-                                              0.08, // 각 항목의 너비 설정
-                                      child: Icon(
-                                        Icons.lock,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
+                              onTap: () {
+                                Fluttertoast.showToast(
+                                    msg: '펫을 획득 해주세요!');
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                                height:
+                                MediaQuery.of(context).size.height *
+                                    0.08, // 각 항목의 높이 설정
+                                width:
+                                MediaQuery.of(context).size.height *
+                                    0.08, // 각 항목의 너비 설정
+                                child: const Icon(
+                                  Icons.lock,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
                           ],
                         );
                       }),
@@ -265,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Positioned(
                 left: MediaQuery.of(context).size.width * 0.03,
                 bottom: MediaQuery.of(context).size.height * 0.02,
-                child: CustomBackButton(),
+                child: const CustomBackButton(),
               ),
             ],
           ),
