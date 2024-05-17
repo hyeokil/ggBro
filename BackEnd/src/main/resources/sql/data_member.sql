@@ -21,8 +21,8 @@ VALUES (
      ,(
         NOW()
       ,NOW()
-      ,'dummy2@dummy.com'
-      ,'dummy 2'
-      ,'ssafy!123'
+      ,'master@ssafy.com'
+      ,'master'
+      ,'$2a$10$8hYd.BRWqegZnhZ5lIQD/.oQwTAHe/cASFLWg4MJ5BA7eLbOcV2lK'
       ,true
 );

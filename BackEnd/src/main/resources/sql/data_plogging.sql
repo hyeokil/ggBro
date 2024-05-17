@@ -1,2 +1,4 @@
 INSERT INTO `plogging` (`member_pet_id`, `member_id`, `time`, `distance`)
-VALUES (1, 1, null, 1000);
+VALUES (1, 1, null, 1000),
+(1,2,NOW(),1000)
+;
