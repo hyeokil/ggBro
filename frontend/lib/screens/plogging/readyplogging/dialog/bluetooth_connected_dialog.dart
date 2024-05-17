@@ -5,12 +5,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
-import 'package:frontend/provider/main_provider.dart';
-import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
 import 'package:frontend/screens/plogging/readyplogging/dialog/no_device_dialog.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+
 
 class BluetoothConnectedDialog extends StatefulWidget {
   final Function func;

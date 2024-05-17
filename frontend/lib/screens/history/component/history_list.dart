@@ -138,7 +138,7 @@ class _HistoryListState extends State<HistoryList> {
                             ),
                           ),
                           Text(
-                            '${widget.historyList['distance']} KM',
+                            '${widget.historyList['distance'] / 1000} KM',
                             style: CustomFontStyle.getTextStyle(
                               context,
                               CustomFontStyle.yeonSung80_white,
