@@ -40,4 +40,5 @@ class AppIcons {
   static const String yulmong = "assets/images/yulmong.png";
   static const String transparent = "assets/images/transparent.png";
   static const String sudal = "assets/images/수달.png";
+  static const String effect = "assets/images/effect.gif";
 }
