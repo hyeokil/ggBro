@@ -4,23 +4,25 @@ pipeline {
         REPO = "s10-final/S10P31C206"
         DOCKERHUB_REGISTRY = "kimhyeokil/back"
         DOCKERHUB_CREDENTIALS = credentials('Docker-hub')
-//         DB_URL = "${env.DB_URL}"
-//         DB_NAME = "${env.DB_NAME}"
-//         DB_PASSWORD = "${env.DB_PASSWORD}"
-//         REDIS_HOST="${env.REDIS_HOST}"
-//         JWT_ACCESS="${env.JWT_ACCESS}"
-//         JWT_REFRESH="${env.JWT_REFRESH}"
-
     }
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
-                echo "JWT_ACCESS: ${env.JWT_ACCESS}"
-                echo "DB_URL: ${env.DB_URL}"
-                echo "REDIS_HOST: ${env.REDIS_HOST}"
-                echo "JWT_REFRESH: ${env.JWT_REFRESH}"
-                echo "DB_NAME: ${env.DB_NAME}"
+
+                sh """
+                sed -i 's|\${JWT_ACCESS}|${env.JWT_ACCESS}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${JWT_REFRESH}|${env.JWT_REFRESH}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${DB_URL}|${env.DB_URL}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${REDIS_HOST}|${env.REDIS_HOST}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${DB_NAME}|${env.DB_NAME}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${DB_PASSWORD}|${env.DB_PASSWORD}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${AWS_ACCESS_KEY_ID}|${env.AWS_ACCESS_KEY_ID}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${AWS_SECRET_ACCESS_KEY}|${env.AWS_SECRET_ACCESS_KEY}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${AWS_REGION}|${env.AWS_REGION}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${AWS_S3_BUCKET}|${env.AWS_S3_BUCKET}|g' BackEnd/src/main/resources/application.yml
+                sed -i 's|\${FLASK_SERVER_URL}|${env.FLASK_SERVER_URL}|g' BackEnd/src/main/resources/application.yml
+                """
 
             }
         }
