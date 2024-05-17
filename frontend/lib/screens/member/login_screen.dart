@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   bool isLoadingData = false;
 
   _asyncMethod() async {
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: const Text("확인"),
               onPressed: () {
                 // OpenSettings.openDataRoamingSetting();
                 SystemNavigator.pop(); // 대화 상자 닫기
@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               )
-            : Center(
+            : const Center(
                 child: CircularProgressIndicator(),
               ),
       ),

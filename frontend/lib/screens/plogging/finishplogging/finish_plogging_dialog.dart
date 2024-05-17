@@ -4,6 +4,7 @@ import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/plogging_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/component/finish_clear_monster_content.dart';
 import 'package:frontend/screens/plogging/finishplogging/component/finish_clear_monster_title.dart';

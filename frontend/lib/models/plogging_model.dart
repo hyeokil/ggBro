@@ -67,6 +67,33 @@ class PloggingModel with ChangeNotifier {
     return classificationData;
   }
 
+  late Map<String, dynamic> noDeviceData;
+
+  Future<String> noDeviceTrash(
+      String accessToken, double latitude, double longitude) async {
+    var url = Uri.https(address, "/api/v1/plogging/trash/test/$ploggingId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode({'latitude': latitude, 'longitude': longitude});
+    print('noDeviceTrash request : $url, headers : $headers body : $body');
+    final response = await http.post(url, headers: headers, body: body);
+    print(
+        'noDeviceTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
+
+    if (response.statusCode == 200) {
+      noDeviceData = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      return 'Success';
+    } else {
+      return 'fail';
+    }
+  }
+
+  getNoDeviceData() {
+    return noDeviceData;
+  }
+
   late Map<String, dynamic> finishData;
 
   Future<String> finishPlogging(

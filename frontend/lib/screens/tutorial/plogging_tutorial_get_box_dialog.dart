@@ -91,7 +91,7 @@ class _PloggingTutorialGetBoxDialogState
               top: MediaQuery.of(context).size.height * 0.02,
               right: MediaQuery.of(context).size.height * 0.02,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.33,
+                width: MediaQuery.of(context).size.width * 0.35,
                 height: MediaQuery.of(context).size.height * 0.06,
                 decoration: BoxDecoration(
                   color: AppColors.white,
@@ -110,6 +110,7 @@ class _PloggingTutorialGetBoxDialogState
                   children: [
                     Positioned(
                       top: MediaQuery.of(context).size.height * 0.004,
+                      left: MediaQuery.of(context).size.height * 0.004,
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.09,
                         height: MediaQuery.of(context).size.height * 0.04,

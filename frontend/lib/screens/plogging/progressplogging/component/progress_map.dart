@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
@@ -15,10 +17,13 @@ import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
+import 'package:frontend/screens/plogging/progressplogging/dialog/box_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_box_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_get_trash_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_kill_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_lacation_dialog.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import "package:http/http.dart" as http;
@@ -70,6 +75,7 @@ class _ProgressMapState extends State<ProgressMap> {
   late String accessToken, displayMonster, monsterIcon;
   late bool isExp;
   bool isKill = false;
+  bool isKilling = false;
   int plastic = 0, can = 0, glass = 0, normal = 0, box = 0, value = 0;
 
   late bool memberTutorial;
@@ -84,6 +90,7 @@ class _ProgressMapState extends State<ProgressMap> {
     petModel = Provider.of<PetModel>(context, listen: false);
     currentPet = petModel.getCurrentPet();
     isExp = !currentPet['active'];
+    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
     accessToken = userProvider.getAccessToken();
     startAPI();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
@@ -148,6 +155,8 @@ class _ProgressMapState extends State<ProgressMap> {
               }
               // 데이터 수신 시작했으므로 위치 저장
               if (imageResult.isEmpty) {
+                isKilling = true;
+                setState(() {});
                 getTrashLocation();
               }
               // '|' 뒤 데이터 저장
@@ -233,9 +242,16 @@ class _ProgressMapState extends State<ProgressMap> {
       value += classificationData['value'] as int;
       if (classificationData['rescue']) {
         box += 1;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const BoxDialog();
+          },
+        );
       }
 
       isKill = true;
+      isKilling = false;
       Future.delayed(const Duration(seconds: 3), () {
         isKill = false;
         setState(() {});
@@ -273,6 +289,25 @@ class _ProgressMapState extends State<ProgressMap> {
       longitude = position.longitude;
       _pathPoints.add(NLatLng(position.latitude, position.longitude));
       _isLocationLoaded = true;
+      if (memberTutorial == false) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const PloggingTutorialLocationDialog();
+            },
+          ).then(
+            (value) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const PloggingTutorialGetTrashDialog();
+                },
+              );
+            },
+          );
+        });
+      }
     });
     print('현재 위치 : ${position.latitude}, ${position.longitude}');
   }
@@ -415,8 +450,10 @@ class _ProgressMapState extends State<ProgressMap> {
       var petModel = Provider.of<PetModel>(context, listen: false);
       petModel.getPetDetail(accessToken, -1);
       var currency =
-          Provider.of<UserProvider>(context, listen: true).getCurrency();
-      userProvider.setCurrency(currency + value);
+          Provider.of<UserProvider>(context, listen: false).getCurrency();
+      if (!isExp) {
+        userProvider.setCurrency(currency + value);
+      }
       context.pushReplacement('/main');
     });
   }
@@ -427,105 +464,139 @@ class _ProgressMapState extends State<ProgressMap> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: _isLocationLoaded
-          ? Stack(children: [
-              NaverMap(
-                onMapReady: (controller) async {
-                  _mapController = controller; // 지도 컨트롤러 초기화
+          ? Stack(
+              children: [
+                NaverMap(
+                  onMapReady: (controller) async {
+                    _mapController = controller; // 지도 컨트롤러 초기화
 
-                  // 내 위치 표시 아이콘 설정
-                  final mylocation = _mapController!.getLocationOverlay();
-                  final myImage =
-                      await createNOverlayImageFromNetwork(currentPet['image']);
-                  mylocation.setIcon(
-                    currentPet['active']
-                        ? myImage
-                        : const NOverlayImage.fromAssetImage(
-                            AppIcons.intro_box),
-                  );
-                  mylocation.setIconSize(const NSize(50, 70));
-                  mylocation.setCircleColor(Colors.transparent);
+                    // 내 위치 표시 아이콘 설정
+                    final mylocation = _mapController!.getLocationOverlay();
+                    final myImage = await createNOverlayImageFromNetwork(
+                        currentPet['image']);
+                    mylocation.setIcon(
+                      currentPet['active']
+                          ? myImage
+                          : const NOverlayImage.fromAssetImage(
+                              AppIcons.intro_box),
+                    );
+                    mylocation.setIconSize(const NSize(50, 50));
+                    mylocation.setCircleColor(Colors.transparent);
 
-                  _mapController!
-                      .setLocationTrackingMode(NLocationTrackingMode.face);
+                    _mapController!
+                        .setLocationTrackingMode(NLocationTrackingMode.face);
 
-                  createTrashtongMarkers();
-                },
-                options: NaverMapViewOptions(
-                    // minZoom: 13,
-                    // maxZoom: 16,
-                    scaleBarEnable: false,
-                    logoAlign: NLogoAlign.leftTop,
-                    logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                    initialCameraPosition: NCameraPosition(
-                        target: NLatLng(latitude, longitude),
-                        zoom: 15,
-                        bearing: 0,
-                        tilt: 45)),
-              ),
-
-              // 이미지 확인용 코드
-              // Positioned(
-              //     child: base64String.isEmpty
-              //         ? Image.asset(
-              //             AppIcons.trash_tong,
-              //             height: MediaQuery.of(context).size.height * 0.05,
-              //             width: MediaQuery.of(context).size.height * 0.05,
-              //           )
-              //         : Image.memory(base64.decode(base64String))),
-              Positioned(
-                bottom: 0,
-                left: MediaQuery.of(context).size.width * 0.2,
-                right: MediaQuery.of(context).size.width * 0.2,
-                child: GestureDetector(
-                  onVerticalDragUpdate: (e) {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: ((context) {
-                          return const TotalTrash();
-                        }));
+                    createTrashtongMarkers();
                   },
-                  onTap: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: ((context) {
-                          return const TotalTrash();
-                        }));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20)),
-                        boxShadow: [
-                          BoxShadow(
-                              color: AppColors.basicgray.withOpacity(0.2),
-                              blurRadius: 1,
-                              spreadRadius: 1)
-                        ]),
-                    height: MediaQuery.of(context).size.height * 0.04,
-                    child: const Center(
-                      child: Text('원정 집계 현황'),
+                  options: NaverMapViewOptions(
+                      // minZoom: 13,
+                      // maxZoom: 16,
+                      scaleBarEnable: false,
+                      logoAlign: NLogoAlign.leftTop,
+                      logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                      initialCameraPosition: NCameraPosition(
+                          target: NLatLng(latitude, longitude),
+                          zoom: 15,
+                          bearing: 0,
+                          tilt: 45)),
+                ),
+
+                // 이미지 확인용 코드
+                // Positioned(
+                //     child: base64String.isEmpty
+                //         ? Image.asset(
+                //             AppIcons.trash_tong,
+                //             height: MediaQuery.of(context).size.height * 0.05,
+                //             width: MediaQuery.of(context).size.height * 0.05,
+                //           )
+                //         : Image.memory(base64.decode(base64String))),
+                Positioned(
+                  bottom: 0,
+                  left: MediaQuery.of(context).size.width * 0.2,
+                  right: MediaQuery.of(context).size.width * 0.2,
+                  child: GestureDetector(
+                    onVerticalDragUpdate: (e) {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return const TotalTrash();
+                          }));
+                    },
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return const TotalTrash();
+                          }));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.2),
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ]),
+                      height: MediaQuery.of(context).size.height * 0.04,
+                      child: const Center(
+                        child: Text('원정 집계 현황'),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.75,
-                right: 0,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.15,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: Column(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              trashTongToggle();
-                            },
-                            child: Container(
+                Positioned(
+                  top: MediaQuery.of(context).size.height * 0.75,
+                  right: 0,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.15,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                trashTongToggle();
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(40),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: AppColors.basicgray
+                                                .withOpacity(0.2),
+                                            blurRadius: 1,
+                                            spreadRadius: 1)
+                                      ]),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  width:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  child: Center(
+                                      child: Image.asset(
+                                    AppIcons.trash_tong,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    width: MediaQuery.of(context).size.height *
+                                        0.05,
+                                  ))),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                returnCurrentLocation();
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(40),
@@ -540,135 +611,150 @@ class _ProgressMapState extends State<ProgressMap> {
                                     MediaQuery.of(context).size.height * 0.06,
                                 width:
                                     MediaQuery.of(context).size.height * 0.06,
-                                child: Center(
-                                    child: Image.asset(
-                                  AppIcons.trash_tong,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  width:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                ))),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              returnCurrentLocation();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: const Center(
-                                child: Icon(Icons.my_location),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return FinishCheckPloggingDialog(
-                                    onConfirm: showFinishPloggingDialog,
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: Center(
-                                child: Text(
-                                  '종 료',
-                                  style: CustomFontStyle.getTextStyle(context,
-                                      CustomFontStyle.yeonSung70_white),
+                                child: const Center(
+                                  child: Icon(Icons.my_location),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return FinishCheckPloggingDialog(
+                                      onConfirm: showFinishPloggingDialog,
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Center(
+                                  child: Text(
+                                    '종 료',
+                                    style: CustomFontStyle.getTextStyle(context,
+                                        CustomFontStyle.yeonSung70_white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              isKill
-                  ? Positioned(
-                      top: MediaQuery.of(context).size.height * 0.02,
-                      right: MediaQuery.of(context).size.height * 0.02,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.33,
-                        height: MediaQuery.of(context).size.height * 0.06,
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(width: 3, color: Colors.white),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.basicgray.withOpacity(0.5),
-                              offset: const Offset(0, 4),
-                              blurRadius: 1,
-                              spreadRadius: 1,
-                            )
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: MediaQuery.of(context).size.height * 0.004,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.09,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.04,
-                                // color: Colors.black,
-                                child: Image.asset(monsterIcon),
-                              ),
-                            ),
-                            Positioned(
-                              top: MediaQuery.of(context).size.height * 0.01,
-                              right: MediaQuery.of(context).size.width * 0.02,
-                              child: Text(
-                                '$displayMonster 처치 + 1',
-                                style: CustomFontStyle.getTextStyle(
-                                  context,
-                                  CustomFontStyle.yeonSung60,
+                isKill
+                    ? Positioned(
+                        top: MediaQuery.of(context).size.height * 0.02,
+                        right: MediaQuery.of(context).size.height * 0.02,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(width: 3, color: Colors.white),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.5),
+                                offset: const Offset(0, 4),
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.004,
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.09,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.04,
+                                  // color: Colors.black,
+                                  child: Image.asset(monsterIcon),
                                 ),
                               ),
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.01,
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                child: Text(
+                                  '$displayMonster 처치 + 1',
+                                  style: CustomFontStyle.getTextStyle(
+                                    context,
+                                    CustomFontStyle.yeonSung60,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                isKilling
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IgnorePointer(
+                              child: Container(
+                                child: GifView.asset(
+                                  AppIcons.effect,
+                                  frameRate: 13,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '몬스터 처치중',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                              ],
                             )
                           ],
                         ),
-                      ),
-                    )
-                  : Container(),
-            ])
+                      )
+                    : Container(),
+              ],
+            )
           : const Center(
               child: CircularProgressIndicator(),
             ),
