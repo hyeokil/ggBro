@@ -89,7 +89,9 @@ class _AchievementListState extends State<AchievementList>
           ),
           child: Text(
             widget.index == 0
-                ? '플로깅 원정 ${widget.goal}회 출정하기'
+                ? widget.goal > 80
+                    ? '이미 모든 업적 펫을 획득 하였습니다.'
+                    : '플로깅 원정 ${widget.goal}회 출정하기'
                 : widget.index == 1
                     ? '원정 거리 ${GoalDistance}Km 주파'
                     : widget.index == 2
@@ -119,57 +121,62 @@ class _AchievementListState extends State<AchievementList>
                   ),
                 ),
               )
-            : Positioned(
-                right: 0,
-                child: AnimatedBuilder(
-                  animation: _animationController_intersect!,
-                  builder: (context, widget) {
-                    if (_rotateAnimation_intersect != null) {
-                      return Transform.rotate(
-                        angle: _rotateAnimation_intersect!.value,
-                        child: widget,
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                  child: GestureDetector(
-                    onTap: () async {
-                      final achievements =
-                          Provider.of<AchievementModel>(context, listen: false);
-                      await achievements.completeAchievement(
-                          accessToken, widget.memberAchievementId);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return GetAchievementDialog(index: widget.index);
+            : widget.index == 0 && widget.goal > 80
+                ? Container()
+                : Positioned(
+                    right: 0,
+                    child: AnimatedBuilder(
+                      animation: _animationController_intersect!,
+                      builder: (context, widget) {
+                        if (_rotateAnimation_intersect != null) {
+                          return Transform.rotate(
+                            angle: _rotateAnimation_intersect!.value,
+                            child: widget,
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                      child: GestureDetector(
+                        onTap: () async {
+                          final achievements = Provider.of<AchievementModel>(
+                              context,
+                              listen: false);
+                          await achievements.completeAchievement(
+                              accessToken, widget.memberAchievementId);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return GetAchievementDialog(index: widget.index);
+                            },
+                          );
+                          achievementModel.getAchievements(accessToken);
+                          if (widget.index != 0 && widget.index != 2) {
+                            userProvider.setCurrency(currency + 5000);
+                          }
                         },
-                      );
-                      achievementModel.getAchievements(accessToken);
-                      if (widget.index != 0 && widget.index != 2) {
-                        userProvider.setCurrency(currency + 5000);
-                      }
-                    },
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Image.asset(AppIcons.intersect,
-                          width: MediaQuery.of(context).size.width * 0.11),
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Image.asset(AppIcons.intersect,
+                              width: MediaQuery.of(context).size.width * 0.11),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
         if (widget.goal <= widget.progress)
           widget.index == 0 || widget.index == 2
-              ? Positioned(
-                  top: MediaQuery.of(context).size.height * 0.0155,
-                  right: MediaQuery.of(context).size.width * 0.015,
-                  child: IgnorePointer(
-                    child: Container(
-                      child: Image.asset(AppIcons.intro_box,
-                          width: MediaQuery.of(context).size.width * 0.08),
-                    ),
-                  ),
-                )
+              ? widget.goal > 80
+                  ? Container()
+                  : Positioned(
+                      top: MediaQuery.of(context).size.height * 0.0155,
+                      right: MediaQuery.of(context).size.width * 0.015,
+                      child: IgnorePointer(
+                        child: Container(
+                          child: Image.asset(AppIcons.intro_box,
+                              width: MediaQuery.of(context).size.width * 0.08),
+                        ),
+                      ),
+                    )
               : Positioned(
                   top: MediaQuery.of(context).size.height * 0.0155,
                   right: MediaQuery.of(context).size.width * 0.022,
