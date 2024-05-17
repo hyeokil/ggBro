@@ -65,7 +65,7 @@ class PetModel with ChangeNotifier {
   List<dynamic> allPets = [];
 
   Future<String> getAllPets(String accessToken) async {
-    var url = Uri.https(address, "/api/v1/pet/pet/list");
+    var url = Uri.https(address, "/api/v1/pet/list");
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': "Bearer $accessToken"

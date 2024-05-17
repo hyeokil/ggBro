@@ -50,6 +50,7 @@ dependencies:
   open_settings: ^2.0.2
   collection: ^1.18.0
   intl: ^0.19.0
+  flutter_secure_storage: ^9.2.1
 
 flutter_icons:
   android: true

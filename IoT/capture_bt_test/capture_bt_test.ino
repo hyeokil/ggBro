@@ -115,6 +115,7 @@ void handleButtonPress() {
     cameraCaptureTime = 0;
     fb = esp_camera_fb_get();
     Serial.println("Get Image!");
+    delay(50);
     if (!fb) {
       Serial.println("Failed to capture image");
       return;
@@ -199,6 +200,16 @@ void setup() {
   config.frame_size = FRAMESIZE_QVGA;    // 이미지 해상도
   config.jpeg_quality = 12;
   config.fb_count = 1;
+  
+  config.fb_location = CAMERA_FB_IN_PSRAM;
+  config.grab_mode = CAMERA_GRAB_LATEST;
+  if(psramFound()){
+    config.jpeg_quality = 10;
+    config.fb_count = 2;
+  } else {
+    config.jpeg_quality = 12;
+    config.fb_count = 1;
+  }
 
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {

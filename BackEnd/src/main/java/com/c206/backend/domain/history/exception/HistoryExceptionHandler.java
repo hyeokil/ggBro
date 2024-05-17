@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class HistoryExceptionHandler {
     @ExceptionHandler(HistoryException.class)
-    public ResponseEntity<Message<Void>> memberException(HistoryException e) {
+    public ResponseEntity<Message<Void>> historyException(HistoryException e) {
         log.error("{} is occurred", e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(Message.fail(null, e.getErrorMessage()));
     }

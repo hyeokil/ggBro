@@ -29,7 +29,7 @@ public class HistoryController {
 
     @GetMapping("/list")
     @Operation(summary = "히스토리 목록을 반환합니다.")
-    public ResponseEntity<Message<?>> historyList(@Parameter(hidden = true)Authentication authentication){
+    public ResponseEntity<Message<List<HistoryListResponseDto>>> historyList(@Parameter(hidden = true)Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
@@ -41,7 +41,7 @@ public class HistoryController {
 
     @GetMapping("/detail/{ploggingId}")
     @Operation(summary = "히스토리 디테일을 반환합니다.")
-    public ResponseEntity<Message<?>> historyDetail(@Parameter(hidden = true)Authentication authentication, @PathVariable("ploggingId") Long ploggingId){
+    public ResponseEntity<Message<HistoryDetailResponseDto>> historyDetail(@Parameter(hidden = true)Authentication authentication, @PathVariable("ploggingId") Long ploggingId){
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();

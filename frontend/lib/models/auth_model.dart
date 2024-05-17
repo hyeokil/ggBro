@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/provider/user_provider.dart';
 import "package:http/http.dart" as http;
@@ -48,6 +49,7 @@ class AuthModel with ChangeNotifier {
   }
 
   Future<AuthStatus> login(String email, String password) async {
+    final storage = FlutterSecureStorage();
     var url = Uri.https(address, "/api/v1/member/signin");
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({"email": email, "password": password});
@@ -81,6 +83,10 @@ class AuthModel with ChangeNotifier {
           json.decode(utf8.decode(response.bodyBytes))['responseUserInfoData']
               ['tutorial'];
 
+      storage.write(key: 'token', value: accessToken);
+      storage.write(key: 'email', value: email);
+      storage.write(key: 'password', value: password);
+
       userProvider.setEmail(email);
       userProvider.setAccessToken(accessToken);
       userProvider.setRefreshToken(refreshToken);
@@ -92,6 +98,7 @@ class AuthModel with ChangeNotifier {
       userProvider.setMemberTutorial(memberTutorial);
       userProvider.setTutorial(memberTutorial);
 
+      notifyListeners();
       return AuthStatus.loginSuccess;
     } else {
       Fluttertoast.showToast(msg: '로그인에 실패하였습니다.');

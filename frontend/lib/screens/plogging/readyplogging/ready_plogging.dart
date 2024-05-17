@@ -64,6 +64,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                       return BluetoothConnectedDialog(
                         func: goNext,
                         goPrevious: goPrevious,
+                        onConfirm: goNoDevice,
                       );
                     });
               });
@@ -80,6 +81,10 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
 
   goPrevious() {
     context.push('/main');
+  }
+
+  goNoDevice() {
+    context.push('/noDevicePlogging');
   }
 
   bool _isPressed = false;
@@ -161,6 +166,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                           return BluetoothConnectedDialog(
                             func: goNext,
                             goPrevious: goPrevious,
+                            onConfirm: goNoDevice,
                           );
                         });
                   },

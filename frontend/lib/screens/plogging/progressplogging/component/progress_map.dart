@@ -15,6 +15,9 @@ import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_box_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_get_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_kill_trash_dialog.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -69,10 +72,13 @@ class _ProgressMapState extends State<ProgressMap> {
   bool isKill = false;
   int plastic = 0, can = 0, glass = 0, normal = 0, box = 0, value = 0;
 
+  late bool memberTutorial;
+
   @override
   void initState() {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    memberTutorial = userProvider.getMemberTutorial();
     ploggingModel = Provider.of<PloggingModel>(context, listen: false);
     ploggingProvider = Provider.of<PloggingProvider>(context, listen: false);
     petModel = Provider.of<PetModel>(context, listen: false);
@@ -167,14 +173,10 @@ class _ProgressMapState extends State<ProgressMap> {
         .classificationTrash(
             accessToken, trashLatitude, trashLongitude, imageBytes)
         .then((data) {
-      print('data1 $data');
       if (data == 'Success') {
-        print('여기 옴');
         Map<String, dynamic> classificationData =
             ploggingModel.getClassificationData();
-        print('이것은 데이터야 $classificationData');
         if (classificationData.isNotEmpty) {
-          print('여긴 올 까?');
           switch (classificationData['trash_type']) {
             case 'NORMAL':
               normal += 1;
@@ -203,6 +205,20 @@ class _ProgressMapState extends State<ProgressMap> {
             default:
               return; // 판별하지 못했다면 마커 찍지 X
           }
+        }
+        if (memberTutorial == false) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return PloggingTutorialKillTrashDialog(
+                  displayMonster: displayMonster,
+                  monsterIcon: monsterIcon,
+                  onConfirm: showFinishPloggingDialog,
+                );
+              },
+            );
+          });
         }
         return ploggingModel.getClassificationData();
       } else {
@@ -395,9 +411,12 @@ class _ProgressMapState extends State<ProgressMap> {
           isExp: isExp,
         );
       },
-    ).then((value) {
+    ).then((_) {
       var petModel = Provider.of<PetModel>(context, listen: false);
       petModel.getPetDetail(accessToken, -1);
+      var currency =
+          Provider.of<UserProvider>(context, listen: true).getCurrency();
+      userProvider.setCurrency(currency + value);
       context.pushReplacement('/main');
     });
   }
