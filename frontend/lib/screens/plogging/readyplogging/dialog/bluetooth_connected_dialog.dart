@@ -111,26 +111,8 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                   );
                 }),
           ),
-          TextButton(
-            onPressed: () {
-              final userProvider =
-                  Provider.of<UserProvider>(context, listen: false);
-              userProvider.setTutorial(true);
-              var main = Provider.of<MainProvider>(context, listen: false);
-              main.setIsTutorialPloggingFinish();
-
-              Navigator.of(context).pop();
-              widget.goPrevious();
-            },
-            child: Text('서비스와 호환되는 기기만 표시'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.func();
-            },
-            child: Text('기기 검색 후 터치 시 자동으로 플로깅이 진행'),
-          ),
+          Text('서비스와 호환되는 기기만 표시'),
+          Text('기기 검색 후 터치 시 자동으로 플로깅이 진행'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

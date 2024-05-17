@@ -24,8 +24,12 @@ class _FinishClearMonsterTitleState extends State<FinishClearMonsterTitle> {
       return time12;
     }
 
-    String time24 = widget.time;
-    String time12 = convertTime(time24);
+    String timeStart24 = widget.time.split('~').first.trim();
+    String timeEnd24 = widget.time.split('~').last.trim();
+    String timeStart12 = convertTime(timeStart24);
+    String timeEnd12 = convertTime(timeEnd24);
+
+    print('시간이요 ${widget.time.split('~').first.trim()}');
 
     return Container(
       padding: const EdgeInsets.only(left: 10),
@@ -50,7 +54,7 @@ class _FinishClearMonsterTitleState extends State<FinishClearMonsterTitle> {
           ),
           Center(
             child: Text(
-              widget.time,
+              '$timeStart12 ~ $timeEnd12',
               style: CustomFontStyle.getTextStyle(
                   context, CustomFontStyle.yeonSung70),
             ),

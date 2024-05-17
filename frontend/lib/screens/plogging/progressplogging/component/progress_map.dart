@@ -15,9 +15,11 @@ import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
+import 'package:frontend/screens/plogging/progressplogging/dialog/box_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_box_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_get_trash_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_kill_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_lacation_dialog.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -84,6 +86,7 @@ class _ProgressMapState extends State<ProgressMap> {
     petModel = Provider.of<PetModel>(context, listen: false);
     currentPet = petModel.getCurrentPet();
     isExp = !currentPet['active'];
+    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
     accessToken = userProvider.getAccessToken();
     startAPI();
     mainProvider = Provider.of<MainProvider>(context, listen: false);
@@ -228,11 +231,21 @@ class _ProgressMapState extends State<ProgressMap> {
     imageBytes.clear();
   }
 
+  void onConfirm() {
+    print('테스트');
+  }
+
   void drawData(Map<String, dynamic> classificationData) {
     setState(() {
       value += classificationData['value'] as int;
       if (classificationData['rescue']) {
         box += 1;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const BoxDialog();
+          },
+        );
       }
 
       isKill = true;
@@ -273,6 +286,25 @@ class _ProgressMapState extends State<ProgressMap> {
       longitude = position.longitude;
       _pathPoints.add(NLatLng(position.latitude, position.longitude));
       _isLocationLoaded = true;
+      if (memberTutorial == false) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const PloggingTutorialLocationDialog();
+            },
+          ).then(
+            (value) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const PloggingTutorialGetTrashDialog();
+                },
+              );
+            },
+          );
+        });
+      }
     });
     print('현재 위치 : ${position.latitude}, ${position.longitude}');
   }
@@ -415,8 +447,10 @@ class _ProgressMapState extends State<ProgressMap> {
       var petModel = Provider.of<PetModel>(context, listen: false);
       petModel.getPetDetail(accessToken, -1);
       var currency =
-          Provider.of<UserProvider>(context, listen: true).getCurrency();
-      userProvider.setCurrency(currency + value);
+          Provider.of<UserProvider>(context, listen: false).getCurrency();
+      if (!isExp) {
+        userProvider.setCurrency(currency + value);
+      }
       context.pushReplacement('/main');
     });
   }
@@ -442,7 +476,7 @@ class _ProgressMapState extends State<ProgressMap> {
                         : const NOverlayImage.fromAssetImage(
                             AppIcons.intro_box),
                   );
-                  mylocation.setIconSize(const NSize(50, 70));
+                  mylocation.setIconSize(const NSize(50, 50));
                   mylocation.setCircleColor(Colors.transparent);
 
                   _mapController!
@@ -625,7 +659,7 @@ class _ProgressMapState extends State<ProgressMap> {
                       top: MediaQuery.of(context).size.height * 0.02,
                       right: MediaQuery.of(context).size.height * 0.02,
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.33,
+                        width: MediaQuery.of(context).size.width * 0.35,
                         height: MediaQuery.of(context).size.height * 0.06,
                         decoration: BoxDecoration(
                           color: AppColors.white,

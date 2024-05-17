@@ -108,7 +108,7 @@ class _PloggingTutorialKillTrashDialogState
               top: MediaQuery.of(context).size.height * 0.02,
               right: MediaQuery.of(context).size.height * 0.02,
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.33,
+                width: MediaQuery.of(context).size.width * 0.35,
                 height: MediaQuery.of(context).size.height * 0.06,
                 decoration: BoxDecoration(
                   color: AppColors.white,

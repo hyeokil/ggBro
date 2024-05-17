@@ -200,63 +200,102 @@ class _NoDeviceState extends State<NoDevicePlogging> {
     }
   }
 
+  void goMain() {
+    context.pushReplacement('/main');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: _isLocationLoaded
-          ? Stack(children: [
-              NaverMap(
-                onMapReady: (controller) async {
-                  _mapController = controller; // 지도 컨트롤러 초기화
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: _isLocationLoaded
+            ? Stack(children: [
+                NaverMap(
+                  onMapReady: (controller) async {
+                    _mapController = controller; // 지도 컨트롤러 초기화
 
-                  // 내 위치 표시 아이콘 설정
-                  final mylocation = _mapController!.getLocationOverlay();
-                  final myImage =
-                      await createNOverlayImageFromNetwork(currentPet['image']);
-                  mylocation.setIcon(
-                    currentPet['active']
-                        ? myImage
-                        : const NOverlayImage.fromAssetImage(
-                            AppIcons.intro_box),
-                  );
-                  mylocation.setIconSize(const NSize(50, 70));
-                  mylocation.setCircleColor(Colors.transparent);
+                    // 내 위치 표시 아이콘 설정
+                    final mylocation = _mapController!.getLocationOverlay();
+                    final myImage = await createNOverlayImageFromNetwork(
+                        currentPet['image']);
+                    mylocation.setIcon(
+                      currentPet['active']
+                          ? myImage
+                          : const NOverlayImage.fromAssetImage(
+                              AppIcons.intro_box),
+                    );
+                    mylocation.setIconSize(const NSize(50, 70));
+                    mylocation.setCircleColor(Colors.transparent);
 
-                  _mapController!
-                      .setLocationTrackingMode(NLocationTrackingMode.face);
+                    _mapController!
+                        .setLocationTrackingMode(NLocationTrackingMode.face);
 
-                  createTrashtongMarkers();
-                },
-                options: NaverMapViewOptions(
-                    // minZoom: 13,
-                    // maxZoom: 16,
-                    scaleBarEnable: false,
-                    logoAlign: NLogoAlign.leftTop,
-                    logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-                    initialCameraPosition: NCameraPosition(
-                        target: NLatLng(latitude, longitude),
-                        zoom: 15,
-                        bearing: 0,
-                        tilt: 45)),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.75,
-                right: 0,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.15,
-                  height: MediaQuery.of(context).size.height * 0.25,
-                  child: Column(
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              trashTongToggle();
-                            },
-                            child: Container(
+                    createTrashtongMarkers();
+                  },
+                  options: NaverMapViewOptions(
+                      // minZoom: 13,
+                      // maxZoom: 16,
+                      scaleBarEnable: false,
+                      logoAlign: NLogoAlign.leftTop,
+                      logoMargin: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                      initialCameraPosition: NCameraPosition(
+                          target: NLatLng(latitude, longitude),
+                          zoom: 15,
+                          bearing: 0,
+                          tilt: 45)),
+                ),
+                Positioned(
+                  top: MediaQuery.of(context).size.height * 0.75,
+                  right: 0,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.15,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: Column(
+                      children: [
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                trashTongToggle();
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(40),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: AppColors.basicgray
+                                                .withOpacity(0.2),
+                                            blurRadius: 1,
+                                            spreadRadius: 1)
+                                      ]),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  width:
+                                      MediaQuery.of(context).size.height * 0.06,
+                                  child: Center(
+                                      child: Image.asset(
+                                    AppIcons.trash_tong,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    width: MediaQuery.of(context).size.height *
+                                        0.05,
+                                  ))),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                returnCurrentLocation();
+                              },
+                              child: Container(
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(40),
@@ -271,83 +310,93 @@ class _NoDeviceState extends State<NoDevicePlogging> {
                                     MediaQuery.of(context).size.height * 0.06,
                                 width:
                                     MediaQuery.of(context).size.height * 0.06,
-                                child: Center(
-                                    child: Image.asset(
-                                  AppIcons.trash_tong,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  width:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                ))),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              returnCurrentLocation();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: const Center(
-                                child: Icon(Icons.my_location),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              context.go('/main');
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: AppColors.basicgray
-                                            .withOpacity(0.2),
-                                        blurRadius: 1,
-                                        spreadRadius: 1)
-                                  ]),
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              width: MediaQuery.of(context).size.height * 0.06,
-                              child: Center(
-                                child: Text(
-                                  '종 료',
-                                  style: CustomFontStyle.getTextStyle(context,
-                                      CustomFontStyle.yeonSung70_white),
+                                child: const Center(
+                                  child: Icon(Icons.my_location),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor: Colors.white,
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text(
+                                            '원정을 종료하시겠습니까?',
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              ElevatedButton(
+                                                  onPressed: () =>
+                                                      Navigator.of(context)
+                                                          .pop(),
+                                                  child: const Text('취소')),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    var main = Provider.of<
+                                                            MainProvider>(
+                                                        context,
+                                                        listen: false);
+                                                    main.setIsTutorialPloggingFinish();
+                                                    Navigator.of(context).pop();
+                                                    goMain();
+                                                  },
+                                                  child: const Text('확인'))
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Center(
+                                  child: Text(
+                                    '종 료',
+                                    style: CustomFontStyle.getTextStyle(context,
+                                        CustomFontStyle.yeonSung70_white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+              ])
+            : const Center(
+                child: CircularProgressIndicator(),
               ),
-            ])
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
+      ),
     );
   }
 }
