@@ -177,6 +177,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                             ),
                             child: TextField(
                               controller: _nickNameController,
+                              maxLength: 10,
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),

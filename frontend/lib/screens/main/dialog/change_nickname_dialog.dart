@@ -125,6 +125,7 @@ class _ChangeNickNameDialogState extends State<ChangeNickNameDialog> {
                   ),
                   child: TextField(
                     controller: _nickNameController,
+                    maxLength: 10,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
