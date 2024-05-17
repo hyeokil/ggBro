@@ -12,6 +12,7 @@ from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
 
 import subprocess
 import cv2
@@ -95,23 +96,49 @@ def crop_image(file_path):
     return count
 
 
-def prepare_image(file_path):
-    # Load the image
-    img = Image.open(file_path).convert('RGB')  # Ensure image is in RGB
+def prepare_image(file_path, output_size=(384, 384)):
+    # 이미지를 불러옵니다.
+    img = cv2.imread(file_path)
+    cropped_image = cv2.imread(file_path)
 
-    # Resize image to match model's expected sizing
-    img = img.resize((384, 384))
+    # 이미지 사이즈 조절
+    desired_size = 275
+    old_size = img.shape[:2]
+    if max(old_size) < desired_size:
+        ratio = float(desired_size) / max(old_size)
+        new_size = tuple([int(x * ratio) for x in old_size])
+        img = cv2.resize(cropped_image, (new_size[1], new_size[0]))
 
-    # Convert the image to a numpy array
-    img_array = image.img_to_array(img)
 
-    # Ensure data type consistency
-    img_array = img_array.astype('float32')  # Ensure float32 data type
+    h, w, _ = img.shape
+    # 새 이미지의 크기를 설정합니다.
+    new_h, new_w = output_size
 
-    # Expand dimensions to fit model input
+    # 배경 이미지를 생성합니다. 여기서는 흰색 배경을 사용합니다.
+    result = np.full((new_h, new_w, 3), 255, dtype=np.uint8)
+
+    # 새 이미지에서 원본 이미지가 위치할 시작점을 계산합니다.
+    x_center = (new_w - w) // 2
+    y_center = (new_h - h) // 2
+
+    # 원본 이미지를 새 이미지의 중앙에 위치시킵니다.
+    result[y_center:y_center+h, x_center:x_center+w] = img
+
+    # 이미지를 RGB 형식으로 변환합니다.
+    img_rgb = cv2.cvtColor(result, cv2.COLOR_BGR2RGB)
+    # plt.imshow(img_rgb)
+    # plt.show()
+
+    # 이미지를 numpy 배열로 변환합니다.
+    img_array = image.img_to_array(img_rgb)
+
+    # 데이터 형식을 float32로 변경합니다.
+    img_array = img_array.astype('float32')
+
+    # 차원을 확장하여 모델 입력에 맞춥니다.
     img_array = np.expand_dims(img_array, axis=0)
 
-    # Preprocess the input image array
+    # 입력 이미지 배열을 전처리합니다.
     img_array = preprocess_input(img_array)
 
     return img_array
@@ -132,6 +159,8 @@ def classify_garbage(image_path):
 
     # 이미지 전처리
     prepared_image = prepare_image(cropped_image_path)
+
+    cv2.imwrite('./prepared_image.jpg', prepared_image)
 
     model = load_model("cnn(batch_size_256_lr_e-3).h5", compile=False)
 

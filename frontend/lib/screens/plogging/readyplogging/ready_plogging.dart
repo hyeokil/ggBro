@@ -10,7 +10,6 @@ import 'package:frontend/screens/plogging/readyplogging/component/ready_map.dart
 import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:frontend/screens/tutorial/bluetooth_connect_tutorial_dialog.dart';
 import 'package:frontend/screens/tutorial/bluetooth_connet_confirm_dialog.dart';
-import 'package:frontend/screens/tutorial/bluetooth_tutorial_dialog.dart';
 import 'package:frontend/screens/tutorial/confirm_map_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -64,6 +63,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                       return BluetoothConnectedDialog(
                         func: goNext,
                         goPrevious: goPrevious,
+                        onConfirm: goNoDevice,
                       );
                     });
               });
@@ -80,6 +80,10 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
 
   goPrevious() {
     context.push('/main');
+  }
+
+  goNoDevice() {
+    context.go('/noDevicePlogging');
   }
 
   bool _isPressed = false;
@@ -161,6 +165,7 @@ class _ReadyPloggingState extends State<ReadyPlogging> {
                           return BluetoothConnectedDialog(
                             func: goNext,
                             goPrevious: goPrevious,
+                            onConfirm: goNoDevice,
                           );
                         });
                   },

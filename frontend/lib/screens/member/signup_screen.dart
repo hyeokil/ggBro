@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
+import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/screens/member/component/custom_input.dart';
 import 'package:go_router/go_router.dart';
@@ -58,6 +61,14 @@ class _SignUpState extends State<SignUpScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(
+                    '회원가입',
+                    style: CustomFontStyle.getTextStyle(
+                        context, CustomFontStyle.yeonSung150),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                  ),
                   EmailField(
                     controller: _email,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -75,11 +86,23 @@ class _SignUpState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.orange.shade100,
+                            backgroundColor: AppColors.error,
+                            textStyle: CustomFontStyle.getTextStyle(
+                                context, CustomFontStyle.yeonSung70),
+                          ),
                           onPressed: () {
                             context.pop();
                           },
-                          child: const Text("뒤로가기")),
+                          child: const Text("뒤로 가기")),
                       ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.green.shade100,
+                            backgroundColor: AppColors.basicgreen,
+                            textStyle: CustomFontStyle.getTextStyle(
+                                context, CustomFontStyle.yeonSung70),
+                          ),
                           onPressed: () async {
                             final auth =
                                 Provider.of<AuthModel>(context, listen: false);
@@ -105,7 +128,7 @@ class _SignUpState extends State<SignUpScreen> {
                               }
                             }
                           },
-                          child: const Text("회원가입"))
+                          child: const Text("회원 가입"))
                     ],
                   )
                 ],
@@ -121,6 +144,7 @@ class _SignUpState extends State<SignUpScreen> {
 class EmailField extends StatelessWidget {
   final TextEditingController controller;
   final AutovalidateMode? autovalidateMode;
+
   const EmailField({
     super.key,
     required this.controller,

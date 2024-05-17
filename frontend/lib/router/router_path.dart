@@ -26,6 +26,9 @@ class RoutePath {
   //  플로깅 진행 페이지
   static const String ploggingProgress = '/ploggingProgress';
 
+  //  기기 없는 플로깅 페이지
+  static const String noDevicePlogging = '/noDevicePlogging';
+
   //  프로필 페이지
   static const String profile = '/profile';
 

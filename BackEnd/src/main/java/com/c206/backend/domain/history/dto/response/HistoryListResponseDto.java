@@ -24,7 +24,7 @@ public class HistoryListResponseDto {
 
     private Long petId;
 
-    private double distance;
+    private int distance;
 
     private int trashCount;
 

@@ -5,18 +5,19 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
-import 'package:frontend/models/member_model.dart';
-import 'package:frontend/provider/main_provider.dart';
-import 'package:frontend/provider/user_provider.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:frontend/screens/plogging/readyplogging/dialog/no_device_dialog.dart';
 
 class BluetoothConnectedDialog extends StatefulWidget {
   final Function func;
   final Function goPrevious;
+  final Function onConfirm;
 
-  const BluetoothConnectedDialog({super.key, required this.func, required this.goPrevious});
+  const BluetoothConnectedDialog(
+      {super.key,
+      required this.func,
+      required this.goPrevious,
+      required this.onConfirm});
 
   @override
   State<BluetoothConnectedDialog> createState() => _BluetoothConnecState();
@@ -45,7 +46,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                 ),
                 child: Center(
                   child: Text(
-                    '블루투스 목록',
+                    '블루투스 기기 목록',
                     style: CustomFontStyle.getTextStyle(
                       context,
                       CustomFontStyle.yeonSung80_white,
@@ -106,32 +107,23 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                   );
                 }),
           ),
-          TextButton(
-            onPressed: () {
-              final userProvider = Provider.of<UserProvider>(context, listen: false);
-              userProvider.setTutorial(true);
-              var main = Provider.of<MainProvider>(context, listen: false);
-              main.setIsTutorialPloggingFinish();
-
-              Navigator.of(context).pop();
-              widget.goPrevious();
-            },
-            child: Text('다른기기 연결 방지를 위해 집게 블루투스만 표시됩니다.'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-
-              widget.func();
-            },
-            child: Text('기기 없이 플로깅을 진행하려면 여기를 눌러주세요.'),
-          ),
+          const Text('서비스와 호환되는 기기만 표시'),
+          const Text('기기가 있을 시 연결 후 플로깅 진행'),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
-                  onPressed: () => deviceDisConnect(),
-                  child: const Text('연결 해제')),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return NoDeviceDialog(
+                          onConfirm: goNoDevice,
+                        );
+                      },
+                    );
+                  },
+                  child: const Text('기기 없이 진행')),
               ElevatedButton(
                   onPressed: () => isScanning ? null : startScan(),
                   child: Text(isScanning ? '검색 중' : '기기 검색'))
@@ -164,6 +156,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
     });
   }
 
+  goNoDevice() {
+    Navigator.of(context).pop();
+    widget.onConfirm();
+  }
+
   bluetoothSetting() async {
     if (await FlutterBluePlus.isSupported == false) {
       Fluttertoast.showToast(msg: '블루투스가 지원되지 않습니다.');
@@ -172,12 +169,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
 
     FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) async {
       if (state == BluetoothAdapterState.on) {
-        Fluttertoast.showToast(msg: '블루투스 켜져있음');
       } // 블루투스가 켜져있다면 스캔 시작
       else {
         if (Platform.isAndroid) {
           await FlutterBluePlus.turnOn();
-          Fluttertoast.showToast(msg: '블루투스 연결됨');
+          Fluttertoast.showToast(msg: '기기 연결됨');
         }
       } // 블루투스 꺼져있다면 다시 켤 수 있도록
     });
@@ -208,11 +204,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
     }
   }
 
-  void deviceDisConnect() {
-    BluetoothDevice device = FlutterBluePlus.connectedDevices
-        .firstWhere((device) => device.advName == 'GingStick');
+  // void deviceDisConnect() {
+  //   BluetoothDevice device = FlutterBluePlus.connectedDevices
+  //       .firstWhere((device) => device.advName == 'GingStick');
 
-    print('연결 해제 기기 :  $device');
-    device.disconnect();
-  }
+  //   print('연결 해제 기기 :  $device');
+  //   device.disconnect();
+  // }
 }

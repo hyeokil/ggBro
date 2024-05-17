@@ -29,7 +29,7 @@ class AppIcons {
 
   static const String gging = "assets/images/gging.png";
   static const String intersect = "assets/images/intersect.png";
-  static const String flogging_logo = "assets/images/flogging_logo.png";
+  static const String logo = "assets/images/logo.png";
   static const String trashs = "assets/images/trashs.png";
   static const String trash_tong = "assets/images/trash_tong.png";
   static const String meka_sudal = "assets/images/meka_sudal.png";
@@ -39,5 +39,6 @@ class AppIcons {
   static const String pocanmong = "assets/images/pocanmong.png";
   static const String yulmong = "assets/images/yulmong.png";
   static const String transparent = "assets/images/transparent.png";
-  static const String sudal = "assets/images/수달.jpg";
+  static const String sudal = "assets/images/수달.png";
+  static const String effect = "assets/images/effect.gif";
 }

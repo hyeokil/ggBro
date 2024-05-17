@@ -26,26 +26,6 @@ class _ProgressPloggingState extends State<ProgressPlogging> {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
     memberTutorial = userProvider.getMemberTutorial();
-
-    if (memberTutorial == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return const PloggingTutorialLocationDialog();
-          },
-        ).then(
-          (value) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return const PloggingTutorialGetTrashDialog();
-              },
-            );
-          },
-        );
-      });
-    }
   }
 
   @override

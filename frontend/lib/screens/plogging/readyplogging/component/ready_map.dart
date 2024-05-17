@@ -9,7 +9,6 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/user_provider.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class ReadyMap extends StatefulWidget {
@@ -64,6 +63,12 @@ class _ReadyMapState extends State<ReadyMap> {
     ploggingModel = Provider.of<PloggingModel>(context, listen: false);
     accessToken = userProvider.getAccessToken();
     getLocation();
+  }
+
+  @override
+  void dispose() {
+    _mapController!.dispose();
+    super.dispose();
   }
 
   void trashTongToggle() {
@@ -456,21 +461,27 @@ class _ReadyMapState extends State<ReadyMap> {
                                             children: [
                                               Text(
                                                 '플라몽',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                               Text(
                                                 '${trashLists['plastic']}마리',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                               Text(
                                                 '처치',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                             ],
                                           ),
@@ -487,29 +498,36 @@ class _ReadyMapState extends State<ReadyMap> {
                                         children: [
                                           Image.asset(
                                             AppIcons.pocanmong,
-                                            width:
-                                                MediaQuery.of(context).size.width *
-                                                    0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
                                           ),
                                           Column(
                                             children: [
                                               Text(
                                                 '포 캔몽',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                               Text(
                                                 '${trashLists['can']}마리',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                               Text(
                                                 '처치',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                             ],
                                           )
@@ -546,9 +564,10 @@ class _ReadyMapState extends State<ReadyMap> {
                                         children: [
                                           Image.asset(
                                             AppIcons.yulmong,
-                                            width:
-                                                MediaQuery.of(context).size.width *
-                                                    0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
                                           ),
                                         ],
                                       ),
@@ -556,29 +575,36 @@ class _ReadyMapState extends State<ReadyMap> {
                                         children: [
                                           Image.asset(
                                             AppIcons.mizzomon,
-                                            width:
-                                                MediaQuery.of(context).size.width *
-                                                    0.24,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.24,
                                           ),
                                           Column(
                                             children: [
                                               Text(
                                                 '미쪼몬',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                               Text(
                                                 '${trashLists['normal']}마리',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                               Text(
                                                 '처치',
-                                                style: CustomFontStyle.getTextStyle(
-                                                    context,
-                                                    CustomFontStyle.yeonSung70),
+                                                style: CustomFontStyle
+                                                    .getTextStyle(
+                                                        context,
+                                                        CustomFontStyle
+                                                            .yeonSung70),
                                               ),
                                             ],
                                           )

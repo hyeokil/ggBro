@@ -6,8 +6,8 @@ import 'package:frontend/screens/intro/intro_screen.dart';
 import 'package:frontend/screens/main/main_screen.dart';
 import 'package:frontend/screens/member/login_screen.dart';
 import 'package:frontend/screens/member/signup_screen.dart';
+import 'package:frontend/screens/plogging/progressplogging/no_device_plogging.dart';
 import 'package:frontend/screens/plogging/progressplogging/progress_plogging.dart';
-import 'package:frontend/screens/plogging/readyplogging/dialog/bluetooth_connected_dialog.dart';
 import 'package:frontend/screens/plogging/readyplogging/ready_plogging.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/ranking/ranking_screen.dart';
@@ -203,23 +203,23 @@ final GoRouter globalRouter = GoRouter(
         },
       ),
     ),
-    // GoRoute(
-    //   path: RoutePath.bluetooth,
-    //   name: 'bluetooth',
-    //   pageBuilder: (context, state) => CustomTransitionPage(
-    //     key: state.pageKey,
-    //     child: const BluetoothConnectedDialog(),
-    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-    //       return SlideTransition(
-    //         position: Tween<Offset>(
-    //           begin: const Offset(1.0, 0.0),
-    //           end: Offset.zero,
-    //         ).animate(animation),
-    //         child: child,
-    //       );
-    //     },
-    //   ),
-    // ),
+    GoRoute(
+      path: RoutePath.noDevicePlogging,
+      name: 'noDevicePlogging',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const NoDevicePlogging(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    ),
     // GoRoute(
     //   path: RoutePath.main,
     //   name: 'main',
