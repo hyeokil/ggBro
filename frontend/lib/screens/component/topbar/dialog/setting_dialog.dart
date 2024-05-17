@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/constant/app_icons.dart';
@@ -75,12 +77,15 @@ class _SettingDialogState extends State<SettingDialog> {
     });
   }
 
+  final storage = FlutterSecureStorage();
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: Colors.white,
       content: Column(
         mainAxisSize: MainAxisSize.min, // 컬럼이 전체 다 자치 안하게
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Stack(
             children: [
@@ -237,22 +242,54 @@ class _SettingDialogState extends State<SettingDialog> {
               ),
             ],
           ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '로그아웃하면 앱이 종료됩니다.',
+                            style: CustomFontStyle.getTextStyle(
+                                context, CustomFontStyle.yeonSung80),
+                          ),
+                          Text(
+                            '로그아웃 하시겠습니까?',
+                            style: CustomFontStyle.getTextStyle(
+                                context, CustomFontStyle.yeonSung80),
+                          ),
+                        ],
+                      ),
+                      actions: <Widget>[
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('취소'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            storage.deleteAll();
+                            SystemNavigator.pop();
+                          },
+                          child: Text('확인'),
+                        ),
+                      ],
+                    );
+                  });
+            },
+            child: Container(
+              child: Text('로그아웃'),
+            ),
+          ),
         ],
       ),
-      // actions: <Widget>[
-      //   GreenButton(
-      //     "취소",
-      //     onPressed: () => Navigator.of(context).pop(), // 모달 닫기
-      //   ),
-      //   RedButton(
-      //     "종료",
-      //     onPressed: () {
-      //       Navigator.of(context).pop();
-      //       onConfirm();
-      //     },
-      //   ),
-      // ],
     );
-    ;
   }
 }

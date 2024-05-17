@@ -8,7 +8,6 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
 import 'package:frontend/screens/plogging/readyplogging/dialog/no_device_dialog.dart';
 
-
 class BluetoothConnectedDialog extends StatefulWidget {
   final Function func;
   final Function goPrevious;
@@ -108,8 +107,8 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                   );
                 }),
           ),
-          Text('서비스와 호환되는 기기만 표시'),
-          Text('기기 검색 후 터치 시 자동으로 플로깅이 진행'),
+          const Text('서비스와 호환되는 기기만 표시'),
+          const Text('기기가 있을 시 연결 후 플로깅 진행'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -124,7 +123,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                       },
                     );
                   },
-                  child: const Text('기기 없이')),
+                  child: const Text('기기 없이 진행')),
               ElevatedButton(
                   onPressed: () => isScanning ? null : startScan(),
                   child: Text(isScanning ? '검색 중' : '기기 검색'))
@@ -170,12 +169,11 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
 
     FlutterBluePlus.adapterState.listen((BluetoothAdapterState state) async {
       if (state == BluetoothAdapterState.on) {
-        Fluttertoast.showToast(msg: '블루투스 켜져있음');
       } // 블루투스가 켜져있다면 스캔 시작
       else {
         if (Platform.isAndroid) {
           await FlutterBluePlus.turnOn();
-          Fluttertoast.showToast(msg: '블루투스 연결됨');
+          Fluttertoast.showToast(msg: '기기 연결됨');
         }
       } // 블루투스 꺼져있다면 다시 켤 수 있도록
     });
