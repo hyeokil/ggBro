@@ -2,9 +2,7 @@ package com.c206.backend.domain.notice.controller;
 
 import com.c206.backend.domain.notice.dto.response.NoticeListResponseDto;
 import com.c206.backend.domain.notice.service.NoticeService;
-import com.c206.backend.domain.pet.dto.response.MemberPetListResponseDto;
 import com.c206.backend.global.common.dto.Message;
-import com.c206.backend.global.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
