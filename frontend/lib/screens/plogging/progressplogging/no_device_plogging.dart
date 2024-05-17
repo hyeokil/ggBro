@@ -102,39 +102,38 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
     ploggingId = ploggingModel.getPloggingId();
   }
 
-  getClassficationData() {
+  getNoDeviceData() {
     // test용 버튼 클릭 시 API 콜
     ploggingModel
         .noDeviceTrash(accessToken, trashLatitude, trashLongitude)
         .then((data) {
       if (data == 'Success') {
-        Map<String, dynamic> classificationData =
-            ploggingModel.getClassificationData();
-        if (classificationData.isNotEmpty) {
-          switch (classificationData['trash_type']) {
+        Map<String, dynamic> noDeviceData = ploggingModel.getNoDeviceData();
+        if (noDeviceData.isNotEmpty) {
+          switch (noDeviceData['trash_type']) {
             case 'NORMAL':
               normal += 1;
               displayMonster = '미쪼몽';
               monsterIcon = AppIcons.mizzomon;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             case 'CAN':
               can += 1;
               displayMonster = '포캔몽';
               monsterIcon = AppIcons.pocanmong;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             case 'PLASTIC':
               plastic += 1;
               displayMonster = '플라몽';
               monsterIcon = AppIcons.plamong;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             case 'GLASS':
               glass += 1;
               displayMonster = '율몽';
               monsterIcon = AppIcons.yulmong;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             default:
               return; // 판별하지 못했다면 마커 찍지 X
@@ -154,17 +153,17 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
             );
           });
         }
-        return ploggingModel.getClassificationData();
+        return ploggingModel.getNoDeviceData();
       } else {
         return;
       }
     });
   }
 
-  void drawData(Map<String, dynamic> classificationData) {
+  void drawData(Map<String, dynamic> noDeviceData) {
     setState(() {
-      value += classificationData['value'] as int;
-      if (classificationData['rescue']) {
+      value += noDeviceData['value'] as int;
+      if (noDeviceData['rescue']) {
         box += 1;
         showDialog(
           context: context,
@@ -541,9 +540,12 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
                           child: Center(
                             child: GestureDetector(
                               onTap: () async {
-                                await getTrashLocation();
                                 isKilling = true;
-                                getClassficationData();
+                                await getTrashLocation();
+                                Future.delayed(
+                                  const Duration(seconds: 3),
+                                  getNoDeviceData,
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(
