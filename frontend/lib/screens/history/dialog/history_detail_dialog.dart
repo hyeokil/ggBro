@@ -52,7 +52,6 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
       ));
     }
     for (int i = 0; i < trashPath.length; i++) {
-      print(trashPath[i]);
       String monsterIcon = '';
       switch (trashPath[i]['type']) {
         case 'NORMAL':
@@ -70,6 +69,7 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
         default:
           return; // 판별하지 못했다면 마커 찍지 X
       }
+
       NMarker trashMarker = NMarker(
         angle: 30,
         id: 'trash$i',
@@ -77,17 +77,39 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
         icon: NOverlayImage.fromAssetImage(monsterIcon),
         size: const NSize(30, 40),
       );
+      trashMarker.setOnTapListener((NMarker marker) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                      child: InteractiveViewer(
+                          child: Image.network(trashPath[i]['image']))));
+            });
+      });
       trashMarker.setGlobalZIndex(i);
       _mapController!.addOverlay(trashMarker);
     }
   }
 
+  // marker.setOnTapListener(
+  //           (NMarker marker) async => {
+  //             if (await marker.hasOpenInfoWindow())
+  //               {onMarkerInfoWindow.close()}
+  //             else
+  //               {marker.openInfoWindow(onMarkerInfoWindow)}
+  //           },
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+        contentPadding: const EdgeInsets.all(10),
         backgroundColor: AppColors.white,
         content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.7,
           child: Column(children: [
             Stack(
@@ -165,7 +187,7 @@ class _HistoryDetailDialogState extends State<HistoryDetailDialog> {
               children: [
                 Container(
                   height: MediaQuery.of(context).size.height * 0.63,
-                  width: MediaQuery.of(context).size.height * 0.9,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   decoration: const BoxDecoration(color: Colors.black),
                   child: historyDetail.isNotEmpty
                       ? NaverMap(
