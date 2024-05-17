@@ -39,5 +39,5 @@ class AppIcons {
   static const String pocanmong = "assets/images/pocanmong.png";
   static const String yulmong = "assets/images/yulmong.png";
   static const String transparent = "assets/images/transparent.png";
-  static const String sudal = "assets/images/수달.jpg";
+  static const String sudal = "assets/images/수달.png";
 }

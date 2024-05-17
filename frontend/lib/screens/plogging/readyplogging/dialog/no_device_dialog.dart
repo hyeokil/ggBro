@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/custom/custom_font_style.dart';
 
 class NoDeviceDialog extends StatelessWidget {
   final Function onConfirm;
@@ -11,14 +12,22 @@ class NoDeviceDialog extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             '기기 없을 시 기본적인 플로깅만 가능합니다.',
-            style: TextStyle(fontSize: 15),
+            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
           ),
-          const Text(
-            '쓰레기통 위치 확인, 실시간 경로 기능만 가능, 플로깅 기록 남지 X',
-            style: TextStyle(fontSize: 15),
+          Text(
+            '쓰레기통 위치 확인,',
+            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
           ),
+          Text(
+            '실시간 경로 기능만 제공 하고,',
+            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+          ),
+        Text(
+          '플로깅 기록은 남지 않습니다.',
+          style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+        ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
