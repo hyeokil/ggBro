@@ -15,6 +15,7 @@ import com.c206.backend.domain.pet.entity.enums.PetType;
 import com.c206.backend.domain.pet.repository.MemberPetRepository;
 import com.c206.backend.domain.pet.repository.PetRepository;
 import com.c206.backend.domain.pet.service.MemberPetServiceImpl;
+import com.c206.backend.domain.plogging.dto.LocationInfo;
 import com.c206.backend.domain.plogging.dto.request.CreateTrashRequestDto;
 import com.c206.backend.domain.plogging.dto.request.GetTrashRequestDto;
 import com.c206.backend.domain.plogging.dto.response.CreateTrashResponseDto;
@@ -52,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -76,28 +78,30 @@ public class TrashServiceImpl implements TrashService {
 
     private final WebClient webClient;
 
-    public CompletableFuture<TrashType> classifyTrash(String imageUrl) {
+    public TrashType classifyTrash(String imageUrl) {
         try {
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
             formData.add("url", imageUrl);
-            Mono<Map<String, String>> responseMono = webClient.post()
-                    .uri("/classify") // Flask 서버의 엔드포인트 URI 설정
-                    .contentType(MediaType.APPLICATION_JSON)
+            Map<String, String> response = webClient.post()
+                    .uri("") // Flask 서버의 엔드포인트 URI 설정
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .bodyValue(formData)
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {});
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
+                    .block();
 
-            return responseMono.toFuture().thenApply(response -> {
-                String type = response.get("class");
-                if (type == null) {
-                    throw new PloggingException(PloggingError.FLASK_SERVER_ERROR);
-                } else if (type.equals("NONE")) {
-                    throw new PloggingException(PloggingError.TRASH_NOT_DETECTED);
-                }
-                return TrashType.valueOf(type); // 응답을 Enum으로 변환
-            }).exceptionally(e -> {
+            if (response == null) {
                 throw new PloggingException(PloggingError.FLASK_SERVER_ERROR);
-            });
+            }
+
+            String type = response.get("type");
+            if (type == null) {
+                throw new PloggingException(PloggingError.FLASK_SERVER_ERROR);
+            } else if (type.equals("NONE")) {
+                throw new PloggingException(PloggingError.TRASH_NOT_DETECTED);
+            }
+            return TrashType.valueOf(type); // 응답을 Enum으로 변환
+
         } catch (Exception e) {
             throw new PloggingException(PloggingError.FLASK_SERVER_ERROR);
         }
@@ -130,26 +134,13 @@ public class TrashServiceImpl implements TrashService {
         return imageUrl.toString();
     }
 
-    @Override
-    public CreateTrashResponseDto createTrash(Long ploggingId, CreateTrashRequestDto createTrashRequestDto) {
-        Plogging plogging = ploggingRepository.findById(ploggingId).orElseThrow(()
-                -> new PloggingException(PloggingError.NOT_FOUND_PLOGGING));
-        // 파일 이름 생성
-        String fileName = generateFileName(ploggingId);
-        byte[] imageData = createTrashRequestDto.getImage();
-        // 이미지 s3로 업로드
-        String imageUrl = uploadImageAndGetUrl(fileName, imageData);
-        // 플라스크로 url 보내서 종류 받아오기 아래 주석
-//        TrashType trashType = classifyTrash(imageUrl);
-        // 일단 랜덤으로 테스트  여기서 부터
-        TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
-        Random random = new Random();
-        int randomIndex = random.nextInt(trashTypes.length);
-        TrashType trashType = trashTypes[randomIndex]; // 여기까지 주석처리하고 134 번째줄 주석빼고 쓰면 됨
+    private CreateTrashResponseDto trashLogic(
+            Plogging plogging, TrashType trashType, String imageUrl, double longitude, double latitude) {
+
         // 쓰레기 저장
         // Coordinate 객체를 사용하여 Point 생성
         GeometryFactory geometryFactory = new GeometryFactory();
-        Coordinate coord = new Coordinate(createTrashRequestDto.getLongitude(), createTrashRequestDto.getLatitude());
+        Coordinate coord = new Coordinate(longitude, latitude);
         Point point = geometryFactory.createPoint(coord);
         Trash trash = Trash.builder()
                 .plogging(plogging)
@@ -221,11 +212,40 @@ public class TrashServiceImpl implements TrashService {
             memberPetServiceImpl.createMemberPet(memberPets, pets, member);
         }
         return new CreateTrashResponseDto(
-            trashType,
-            value,
-            petActive,
-            result
-            );
+                trashType,
+                value,
+                petActive,
+                result
+        );
+
+    }
+
+    @Override
+    public CreateTrashResponseDto createTrash(Long ploggingId, CreateTrashRequestDto createTrashRequestDto) {
+        Plogging plogging = ploggingRepository.findById(ploggingId).orElseThrow(()
+                -> new PloggingException(PloggingError.NOT_FOUND_PLOGGING));
+        // 파일 이름 생성
+        String fileName = generateFileName(ploggingId);
+        byte[] imageData = createTrashRequestDto.getImage();
+        // 이미지 s3로 업로드
+        String imageUrl = uploadImageAndGetUrl(fileName, imageData);
+        TrashType trashType = classifyTrash(imageUrl);
+        return trashLogic(plogging,
+                trashType, imageUrl, createTrashRequestDto.getLongitude(), createTrashRequestDto.getLatitude());
+    }
+
+    @Override
+    public CreateTrashResponseDto createTrashTest(Long ploggingId, LocationInfo locationInfo) {
+        Plogging plogging = ploggingRepository.findById(ploggingId).orElseThrow(()
+                -> new PloggingException(PloggingError.NOT_FOUND_PLOGGING));
+
+        String imageUrl = "https://ggbro.s3.ap-northeast-2.amazonaws.com/test/test_image.png";
+        TrashType[] trashTypes = {TrashType.NORMAL, TrashType.PLASTIC, TrashType.CAN, TrashType.GLASS};
+        Random random = new Random();
+        int randomIndex = random.nextInt(trashTypes.length);
+        TrashType trashType = trashTypes[randomIndex];
+        return trashLogic(plogging,
+                trashType, imageUrl, locationInfo.getLongitude(), locationInfo.getLatitude());
     }
 
 

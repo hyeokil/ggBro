@@ -90,8 +90,6 @@ public class HistoryServiceImpl implements HistoryService{
                     trashItem.getTrashType(),
                     trashItem.getImage()
             );
-
-
             trashDtoList.add(trashDTO);
         }
 
