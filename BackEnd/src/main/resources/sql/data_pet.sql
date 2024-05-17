@@ -4,88 +4,83 @@ INSERT INTO `pet` (
                       `pet_type`
 )
 VALUES (
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00002-1802962273-removebg-preview.png',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/main_sudal.png',
         '수달',
         'NORMAL'
-)
-     ,(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00003-670815452-removebg-preview.png',
-       '로봇 수달',
-       'ACHIEVEMENT'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00005-1479123344-removebg-preview.png',
-    '갈색 로봇 고양이',
-    'ACHIEVEMENT'
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%8B%AC%ED%8C%BD%EC%9D%B4-removebg-preview.png',
+       '달팽이',
+       'NORMAL'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/6-removebg-preview.png',
-    '먼지 새',
-    'ACHIEVEMENT'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/7-removebg-preview.png',
-    '라쿤',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%8F%85%EC%88%98%EB%A6%AC-removebg-preview.png',
+    '독수리',
     'NORMAL'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00009-2385360464-removebg-preview.png',
-    '도라에몽',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%91%90%EB%A3%A8%EB%AF%B8-removebg-preview.png',
+    '두루미',
     'NORMAL'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00024-141959725-removebg-preview.png',
-    '유치원생',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%8B%B4%EB%B9%84.png',
+    '담비',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%A7%B9%EA%BD%81%EC%9D%B4.png',
+    '맹꽁이',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%AC%BC%EB%B2%94.png',
+    '물범',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%B0%98%EB%8B%AC%EA%B0%80%EC%8A%B4%EA%B3%B0.png',
+    '반달가슴곰',
+    'NORMAL'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EC%82%AC%EC%8A%B4-removebg-preview.png',
+    '사슴',
     'ACHIEVEMENT'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00031-895081911-removebg-preview.png',
-    '밤톨이',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/gun_sudal.png',
+    '총든 수달',
     'ACHIEVEMENT'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00036-549065694-removebg-preview.png',
-    '어린이',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/armor_sudal.png',
+    '갑옷 수달',
     'ACHIEVEMENT'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/intro.png',
-    '맘모스',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EA%B2%BD%EA%B4%80.png',
+    '경관 수달',
+    'ACHIEVEMENT'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EC%88%98%EB%A6%AC%EB%B6%80%EC%97%89%EC%9D%B4.png',
+    '수리부엉이',
     'NORMAL'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/intro1.png',
-    '꽃사슴',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/intro2.png',
-    '다람이',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/intro3.png',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EC%97%AC%EC%9A%B0-removebg-preview.png',
     '여우',
     'NORMAL'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/intro4.png',
-    '올뻄',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/bear.png',
-    '곰',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/00145-2717840739-removebg-preview.png',
-    '호랭이',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(1).png',
-    '경찰 구리',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%ED%91%9C%EB%B2%94-removebg-preview.png',
+    '표범',
     'ACHIEVEMENT'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(2).png',
-    '구리',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%ED%98%B8%EB%9E%91%EC%9D%B4.png',
+    '호랑이',
+    'ACHIEVEMENT'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%ED%95%98%EB%8A%98%EB%8B%A4%EB%9E%8C%EC%A5%90.png',
+    '하늘다람쥐',
+    'ACHIEVEMENT'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file__6_-removebg-preview.png',
+    '산양',
+    'ACHIEVEMENT'
+),(
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EC%82%B5-removebg-preview.png',
+    '삵',
     'NORMAL'
 ),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(3).png',
+    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/%EB%8A%91%EB%8C%80.png',
     '늑대',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file+(4).png',
-    '햄',
-    'NORMAL'
-),(
-    'https://ggbro.s3.ap-northeast-2.amazonaws.com/pets/file.png',
-    '초롱 사슴',
     'NORMAL'
 );
