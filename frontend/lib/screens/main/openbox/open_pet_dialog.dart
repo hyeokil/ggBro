@@ -179,6 +179,7 @@ class _OpenPetDialogState extends State<OpenPetDialog>
                               controller: _nickNameController,
                               maxLength: 10,
                               decoration: InputDecoration(
+                                counterText: '',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
