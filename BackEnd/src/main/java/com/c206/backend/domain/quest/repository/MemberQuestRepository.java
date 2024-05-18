@@ -11,6 +11,6 @@ public interface MemberQuestRepository extends JpaRepository<MemberQuest, Long> 
 
     List<MemberQuest> findTop3ByMemberIdOrderByCreatedAtDesc(Long memberId);
 
-    MemberQuest findTopByMemberIdAndQuestIdAndMemberPetIdOrderByIdDesc(Long memberId,Long memberPetId, Long questId);
+    MemberQuest findTopByMemberIdAndMemberPetIdAndQuestIdOrderByIdDesc(Long memberId,Long memberPetId, Long questId);
 
 }
