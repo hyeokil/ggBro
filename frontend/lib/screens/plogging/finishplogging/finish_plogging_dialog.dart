@@ -11,20 +11,13 @@ import 'package:frontend/screens/plogging/finishplogging/component/finish_clear_
 import 'package:provider/provider.dart';
 
 class FinishPloggingDialog extends StatefulWidget {
-  final int totalDistance, plastic, can, glass, normal, value, box;
+  final int totalDistance;
   final List<Map<String, double>> path;
-  final bool isExp;
-  const FinishPloggingDialog(
-      {super.key,
-      required this.path,
-      required this.totalDistance,
-      required this.can,
-      required this.glass,
-      required this.normal,
-      required this.plastic,
-      required this.value,
-      required this.box,
-      required this.isExp});
+  const FinishPloggingDialog({
+    super.key,
+    required this.path,
+    required this.totalDistance,
+  });
 
   @override
   State<FinishPloggingDialog> createState() => _FinishPloggingDialogState();
@@ -33,27 +26,60 @@ class FinishPloggingDialog extends StatefulWidget {
 class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
   late UserProvider userProvider;
   late PloggingModel ploggingModel;
+  late PloggingProvider ploggingProvider;
+  late int totalDistance, plastic, can, glass, normal, value, box;
+  late bool isExp;
+  late bool isPlogging;
   late String accessToken;
+  late Map<String, dynamic> ploggingData, finishData;
   bool isLoadingData = false;
-  late Map<String, dynamic> response;
 
   @override
   void initState() {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
     ploggingModel = Provider.of<PloggingModel>(context, listen: false);
+    ploggingProvider = Provider.of<PloggingProvider>(context, listen: false);
+    totalDistance = widget.totalDistance;
     accessToken = userProvider.getAccessToken();
-    ploggingModel
-        .finishPlogging(accessToken, widget.path, widget.totalDistance)
-        .then((value) => {
-              if (value == 'Success')
-                {
-                  setState(() {
-                    response = ploggingModel.getFinishData();
-                    isLoadingData = true;
-                  })
-                }
+    isPlogging = ploggingProvider.isPlogging();
+    setPloggingData();
+    finishPlogging();
+  }
+
+  void setPloggingData() {
+    ploggingData = ploggingProvider.getTrashs();
+    plastic = ploggingData['plastic'];
+    can = ploggingData['can'];
+    glass = ploggingData['glass'];
+    normal = ploggingData['normal'];
+    value = ploggingData['value'];
+    box = ploggingData['box'];
+    isExp = ploggingData['isExp'];
+  }
+
+  void finishPlogging() {
+    // 플로깅 유무인지 확인 후 API 보내는 부분
+    if (isPlogging) {
+      if (totalDistance == 0) {
+        totalDistance = 1;
+      }
+      ploggingModel
+          .finishPlogging(accessToken, widget.path, totalDistance)
+          .then((res) {
+        if (res == 'Success') {
+          finishData = ploggingModel.getFinishData();
+          Future.delayed(Duration(microseconds: 100), () {
+            setState(() {
+              isLoadingData = true;
             });
+          });
+        }
+      });
+      return;
+    }
+    // 플로깅 아니라면 데이터 받을 필요 X
+    isLoadingData = true;
   }
 
   @override
@@ -70,27 +96,29 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      FinishClearMonsterTitle(
-                        time: response['time'],
-                      ),
+                      isPlogging
+                          ? FinishClearMonsterTitle(
+                              time: finishData['time'],
+                            )
+                          : Text('몬스터 처치가 없는 원정은 저장되지 않아요'),
                       FinishClearMonsterContent(
                         color: AppColors.basicpink,
                         content: '플라몽',
-                        count: widget.plastic,
+                        count: plastic,
                       ),
                       FinishClearMonsterContent(
                         color: AppColors.basicgray,
                         content: '포캔몽',
-                        count: widget.can,
+                        count: can,
                       ),
                       FinishClearMonsterContent(
                           color: AppColors.basicgreen,
                           content: '율몽',
-                          count: widget.glass),
+                          count: glass),
                       FinishClearMonsterContent(
                         color: AppColors.basicnavy,
                         content: '미쪼몬',
-                        count: widget.normal,
+                        count: normal,
                       ),
                       Container(
                         padding: const EdgeInsets.all(10),
@@ -117,11 +145,11 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  widget.isExp
+                                  isExp
                                       ? const Text('EXP :')
                                       : Image.asset(AppIcons.gging),
                                   const Text('+'),
-                                  Text('${widget.value}'),
+                                  Text('$value'),
                                 ],
                               ),
                             ),
@@ -133,7 +161,7 @@ class _FinishPloggingDialogState extends State<FinishPloggingDialog> {
                                 children: [
                                   Image.asset(AppIcons.intro_box),
                                   const Text('+'),
-                                  Text('${widget.box}'),
+                                  Text('$box'),
                                 ],
                               ),
                             ),

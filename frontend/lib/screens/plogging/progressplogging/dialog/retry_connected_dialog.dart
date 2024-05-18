@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -6,30 +5,25 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
-import 'package:frontend/screens/plogging/readyplogging/component/scan_device_tile.dart';
-import 'package:frontend/screens/plogging/readyplogging/dialog/no_device_dialog.dart';
+import 'package:frontend/screens/plogging/progressplogging/component/retry_device_tile.dart';
 
-class BluetoothConnectedDialog extends StatefulWidget {
-  final Function func;
-  final Function goPrevious;
-  final Function onConfirm;
-
-  const BluetoothConnectedDialog(
-      {super.key,
-      required this.func,
-      required this.goPrevious,
-      required this.onConfirm});
+class RetryConnectedDialog extends StatefulWidget {
+  final Function onFinish;
+  final Function onConnect;
+  const RetryConnectedDialog({
+    super.key,
+    required this.onFinish,
+    required this.onConnect,
+  });
 
   @override
-  State<BluetoothConnectedDialog> createState() => _BluetoothConnectedState();
+  State<RetryConnectedDialog> createState() => _RetryConnectedState();
 }
 
-class _BluetoothConnectedState extends State<BluetoothConnectedDialog> {
+class _RetryConnectedState extends State<RetryConnectedDialog> {
   List<ScanResult> scanResults = [];
   bool isScanning = false;
   bool blueConnect = false;
-  late StreamSubscription<List<ScanResult>> scanSubscription;
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -103,43 +97,31 @@ class _BluetoothConnectedState extends State<BluetoothConnectedDialog> {
                 itemBuilder: (BuildContext context, int idx) {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
-                    child: ScanDeviceTile(
+                    child: RetryDeviceTile(
                       device: scanResults[idx].device,
-                      func: widget.func,
+                      func: widget.onConnect,
                     ),
                   );
                 }),
           ),
           const Text('서비스와 호환되는 기기만 표시'),
-          const Text('기기가 있을 시 연결 후 플로깅 진행'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return NoDeviceDialog(
-                          onConfirm: goNoDevice,
-                        );
-                      },
-                    );
+                    Navigator.of(context).pop();
+                    widget.onFinish();
                   },
-                  child: const Text('기기 없이 진행')),
+                  child: const Text('플로깅 종료')),
               ElevatedButton(
-                  onPressed: () => isScanning ? stopScan() : startScan(),
+                  onPressed: () => isScanning ? null : startScan(),
                   child: Text(isScanning ? '검색 중' : '기기 검색'))
             ],
           )
         ],
       ),
     );
-  }
-
-  void stopScan() {
-    scanSubscription.cancel();
-    FlutterBluePlus.stopScan();
   }
 
   @override
@@ -152,23 +134,16 @@ class _BluetoothConnectedState extends State<BluetoothConnectedDialog> {
   // 다이얼로그 끄면 스캔 멈추게
   @override
   void dispose() {
-    isScanSubscription.cancel();
-    FlutterBluePlus.stopScan();
     super.dispose();
+    FlutterBluePlus.stopScan();
   }
 
-  late StreamSubscription<bool> isScanSubscription;
   void initBle() {
     // BLE 스캔 상태 얻기 위한 리스너
-    isScanSubscription = FlutterBluePlus.isScanning.listen((isScan) {
+    FlutterBluePlus.isScanning.listen((isScan) {
       isScanning = isScan;
       setState(() {});
     });
-  }
-
-  goNoDevice() {
-    Navigator.of(context).pop();
-    widget.onConfirm();
   }
 
   bluetoothSetting() async {
@@ -200,7 +175,7 @@ class _BluetoothConnectedState extends State<BluetoothConnectedDialog> {
       FlutterBluePlus.startScan(
           timeout: const Duration(seconds: 10)); // 새로운 스캔 시작
 
-      scanSubscription = FlutterBluePlus.scanResults.listen((results) {
+      var subscription = FlutterBluePlus.scanResults.listen((results) {
         setState(() {
           scanResults = results
               .where((result) => result.device.advName == 'GingStick')
@@ -212,17 +187,9 @@ class _BluetoothConnectedState extends State<BluetoothConnectedDialog> {
           }
         }
       });
-      FlutterBluePlus.cancelWhenScanComplete(scanSubscription);
+      FlutterBluePlus.cancelWhenScanComplete(subscription);
     } else {
       FlutterBluePlus.stopScan();
     }
   }
-
-  // void deviceDisConnect() {
-  //   BluetoothDevice device = FlutterBluePlus.connectedDevices
-  //       .firstWhere((device) => device.advName == 'GingStick');
-
-  //   print('연결 해제 기기 :  $device');
-  //   device.disconnect();
-  // }
 }

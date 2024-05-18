@@ -81,7 +81,6 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
     petModel = Provider.of<PetModel>(context, listen: false);
     currentPet = petModel.getCurrentPet();
     isExp = !currentPet['active'];
-    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
     accessToken = userProvider.getAccessToken();
     startAPI();
     totalDistance = 0;
@@ -100,6 +99,8 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
   void startAPI() async {
     await ploggingModel.ploggingStart(accessToken, -1);
     ploggingId = ploggingModel.getPloggingId();
+    // 쓰레기도 같이 초기화
+    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
   }
 
   getNoDeviceData() {
@@ -183,7 +184,6 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
           plastic, can, glass, normal, value, box, isExp);
       trashId += 1;
       NMarker trashMarker = NMarker(
-        angle: 30,
         id: 'trash$trashId',
         position: NLatLng(trashLatitude, trashLongitude),
         icon: NOverlayImage.fromAssetImage(monsterIcon),
@@ -196,7 +196,7 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
 
   getTrashLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best);
     setState(() {
       trashLatitude = position.latitude;
       trashLongitude = position.longitude;
@@ -239,8 +239,13 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
-            locationSettings: const LocationSettings(distanceFilter: 15))
+            locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.bestForNavigation,
+                distanceFilter: 10))
         .listen((Position position) {
+      if (position.speed < 2.5) {
+        return;
+      }
       setState(() {
         previousLatitude = _pathPoints.last.latitude;
         previousLongitude = _pathPoints.last.longitude;
@@ -359,14 +364,7 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
       builder: (BuildContext context) {
         return FinishPloggingDialog(
           totalDistance: totalDistance.floor(),
-          plastic: plastic,
-          glass: glass,
-          can: can,
-          normal: normal,
-          box: box,
-          value: value,
           path: path,
-          isExp: isExp,
         );
       },
     ).then((_) {
