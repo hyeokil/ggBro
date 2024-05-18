@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -20,12 +21,14 @@ class BluetoothConnectedDialog extends StatefulWidget {
       required this.onConfirm});
 
   @override
-  State<BluetoothConnectedDialog> createState() => _BluetoothConnecState();
+  State<BluetoothConnectedDialog> createState() => _BluetoothConnectedState();
 }
 
-class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
+class _BluetoothConnectedState extends State<BluetoothConnectedDialog> {
   List<ScanResult> scanResults = [];
   bool isScanning = false;
+  bool blueConnect = false;
+  late StreamSubscription<List<ScanResult>> scanSubscription;
 
   @override
   Widget build(BuildContext context) {
@@ -125,13 +128,18 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
                   },
                   child: const Text('기기 없이 진행')),
               ElevatedButton(
-                  onPressed: () => isScanning ? null : startScan(),
+                  onPressed: () => isScanning ? stopScan() : startScan(),
                   child: Text(isScanning ? '검색 중' : '기기 검색'))
             ],
           )
         ],
       ),
     );
+  }
+
+  void stopScan() {
+    scanSubscription.cancel();
+    FlutterBluePlus.stopScan();
   }
 
   @override
@@ -144,13 +152,15 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
   // 다이얼로그 끄면 스캔 멈추게
   @override
   void dispose() {
-    super.dispose();
+    isScanSubscription.cancel();
     FlutterBluePlus.stopScan();
+    super.dispose();
   }
 
+  late StreamSubscription<bool> isScanSubscription;
   void initBle() {
     // BLE 스캔 상태 얻기 위한 리스너
-    FlutterBluePlus.isScanning.listen((isScan) {
+    isScanSubscription = FlutterBluePlus.isScanning.listen((isScan) {
       isScanning = isScan;
       setState(() {});
     });
@@ -172,8 +182,12 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
       } // 블루투스가 켜져있다면 스캔 시작
       else {
         if (Platform.isAndroid) {
-          await FlutterBluePlus.turnOn();
-          Fluttertoast.showToast(msg: '기기 연결됨');
+          if (!blueConnect) {
+            blueConnect = true;
+            await FlutterBluePlus.turnOn();
+            Fluttertoast.showToast(msg: '기기 연결됨');
+            blueConnect = false;
+          }
         }
       } // 블루투스 꺼져있다면 다시 켤 수 있도록
     });
@@ -186,7 +200,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
       FlutterBluePlus.startScan(
           timeout: const Duration(seconds: 10)); // 새로운 스캔 시작
 
-      var subscription = FlutterBluePlus.scanResults.listen((results) {
+      scanSubscription = FlutterBluePlus.scanResults.listen((results) {
         setState(() {
           scanResults = results
               .where((result) => result.device.advName == 'GingStick')
@@ -198,7 +212,7 @@ class _BluetoothConnecState extends State<BluetoothConnectedDialog> {
           }
         }
       });
-      FlutterBluePlus.cancelWhenScanComplete(subscription);
+      FlutterBluePlus.cancelWhenScanComplete(scanSubscription);
     } else {
       FlutterBluePlus.stopScan();
     }

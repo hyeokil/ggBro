@@ -34,6 +34,15 @@ public class MemberQuestServiceImpl implements MemberQuestService {
     private final MemberQuestRepository memberQuestRepository;
     private final MemberPetRepository memberPetRepository;
     private final MemberInfoRepository memberInfoRepository;
+
+    public void  updateMemberQuest(Long memberId,Long memberPetId, Long questId) {
+        MemberQuest memberQuest=memberQuestRepository.findTopByMemberIdAndMemberPetIdAndQuestIdOrderByIdDesc(memberId,memberPetId,questId);
+        System.out.println(memberQuest);
+        if (memberQuest!=null) {
+            memberQuest.updateProgress();
+        }
+    }
+
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<MemberQuestListResponseDto> getQuestList(Long memberId) {

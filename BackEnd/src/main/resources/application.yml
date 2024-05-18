@@ -69,6 +69,7 @@ spring:
         - 'classpath:/sql/data_plogging.sql'
         - 'classpath:/sql/data_trash.sql'
         - 'classpath:/sql/data_notice.sql'
+        - 'classpath:/sql/data_plogging_route.sql'
 
   jackson:
      time-zone: Asia/Seoul

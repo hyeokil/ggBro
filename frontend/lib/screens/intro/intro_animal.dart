@@ -113,7 +113,7 @@ class _IntroScreenState extends State<IntroAnimal>
           ),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.2,
-            right: MediaQuery.of(context).size.width * 0.105,
+            right: MediaQuery.of(context).size.width * 0.03,
             child: AnimatedBuilder(
               animation: _scaleAnimation_animal_2!,
               builder: (context, widget) {
@@ -130,14 +130,14 @@ class _IntroScreenState extends State<IntroAnimal>
                 color: Colors.transparent,
                 child: Center(
                   child: Image.asset(AppIcons.intro_animal_2,
-                      width: MediaQuery.of(context).size.width * 0.2),
+                      width: MediaQuery.of(context).size.width * 0.3),
                 ),
               ),
             ),
           ),
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.35,
-            right: MediaQuery.of(context).size.width * 0.27,
+            right: MediaQuery.of(context).size.width * 0.25,
             child: AnimatedBuilder(
               animation: _scaleAnimation_animal_3!,
               builder: (context, widget) {
@@ -154,7 +154,7 @@ class _IntroScreenState extends State<IntroAnimal>
                 color: Colors.transparent,
                 child: Center(
                   child: Image.asset(AppIcons.intro_animal_3,
-                      width: MediaQuery.of(context).size.width * 0.2),
+                      width: MediaQuery.of(context).size.width * 0.3),
                 ),
               ),
             ),
@@ -178,14 +178,14 @@ class _IntroScreenState extends State<IntroAnimal>
                 color: Colors.transparent,
                 child: Center(
                   child: Image.asset(AppIcons.intro_animal_4,
-                      width: MediaQuery.of(context).size.width * 0.15),
+                      width: MediaQuery.of(context).size.width * 0.2),
                 ),
               ),
             ),
           ),
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.2,
-            left: MediaQuery.of(context).size.width * 0.2,
+            left: MediaQuery.of(context).size.width * 0.1,
             child: AnimatedBuilder(
               animation: _scaleAnimation_animal_5!,
               builder: (context, widget) {
@@ -202,7 +202,7 @@ class _IntroScreenState extends State<IntroAnimal>
                 color: Colors.transparent,
                 child: Center(
                   child: Image.asset(AppIcons.intro_animal_5,
-                      width: MediaQuery.of(context).size.width * 0.25),
+                      width: MediaQuery.of(context).size.width * 0.4),
                 ),
               ),
             ),

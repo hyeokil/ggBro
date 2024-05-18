@@ -27,7 +27,7 @@ class _RankingBarState extends State<RankingBar> {
         right: 5,
         left: 5,
       ),
-      width: MediaQuery.of(context).size.width * 0.15,
+      width: MediaQuery.of(context).size.width * 0.2,
       height: MediaQuery.of(context).size.height * widget.heightSize,
       decoration: BoxDecoration(
         color: AppColors.basicgreen,
