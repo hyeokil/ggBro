@@ -1,5 +1,7 @@
 package com.c206.backend.domain.pet.service;
 
+import com.c206.backend.domain.achievement.entity.MemberAchievement;
+import com.c206.backend.domain.achievement.repository.MemberAchievementRepository;
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.entity.MemberInfo;
 import com.c206.backend.domain.member.exception.member.MemberError;
@@ -30,6 +32,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MemberPetServiceImpl implements MemberPetService {
 
+    private final MemberAchievementRepository memberAchievementRepository;
     private final MemberPetRepository memberPetRepository;
     private final MemberInfoRepository memberInfoRepository;
     private final MemberRepository memberRepository;
@@ -64,6 +67,8 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .glass(0)
                 .build();
         memberPetRepository.save(newMemberPet);
+        MemberAchievement memberAchievement = memberAchievementRepository.findByMemberIdAndAchievementId(member.getId(), 3L);
+        memberAchievement.updateProgress(1);
     }
     @Override
     public List<MemberPetListResponseDto> getMemberPetList(Long memberId) {
@@ -157,6 +162,8 @@ public class MemberPetServiceImpl implements MemberPetService {
                 .glass(0)
                 .build();
         memberPetRepository.save(newMemberPet);
+        MemberAchievement memberAchievement = memberAchievementRepository.findByMemberIdAndAchievementId(member.getId(), 3L);
+        memberAchievement.updateProgress(1);
     }
 
     @Override

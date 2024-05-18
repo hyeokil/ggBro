@@ -21,6 +21,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/member", produces = "application/json")
@@ -71,6 +74,11 @@ public class MemberController {
     public ResponseEntity<Message<?>> getMemberInfo(@Parameter(hidden = true)Authentication authentication){
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        System.out.println(now);
 
         MemberTrashCountResDto memberTrashCountResDto = memberService.getMemberInfo(memberId);
 

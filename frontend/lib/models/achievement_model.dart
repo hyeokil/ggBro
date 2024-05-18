@@ -43,7 +43,7 @@ class AchievementModel with ChangeNotifier {
     };
 
     final response = await http.post(url, headers: headers);
-    print(json.decode(utf8.decode(response.bodyBytes))["dataBody"]);
+    print(json.decode(utf8.decode(response.bodyBytes)));
 
     if (response.statusCode == 200) {
       goal = json.decode(utf8.decode(response.bodyBytes))["dataBody"]["goal"];
