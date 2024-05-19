@@ -173,7 +173,7 @@
 #### 5. AI
 - 학습 환경 : Colab, Jupyter Notebook, Python 3.8.10
 
-- Library : Keras 2.13.1, Tensorflow 2.13.1, Numpy 1.24.3, torch 1.8.0, OpenCV 4.9.0.80
+- Library : Keras 2.13.1, Tensorflow 2.13.1, Numpy 1.24.3, Torch 1.8.0, OpenCV 4.9.0.80
 
 - Model : ResNet50, YoloV5
 
