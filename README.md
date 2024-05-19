@@ -127,84 +127,38 @@
 <br>
 
 # 주요 기술
+#### 1. FE
+- Android Studio
+    - Hedgehog 2023.1.1 Patch 2
 
-**Backend**
-<br>
+- Flutter 3.19.1
 
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/springsecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/intellijidea-000000?style=for-the-badge&logo=intellijidea&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=black">
+#### 2. BE
+- OpenJDK 17
 
-- Java : 17
-- Spring Boot : 3.2.2
-- Spring Data JPA : 3.2.2
-- Spring Security : 3.2.2
-- JWT
-- QueryDSL
-- IntelliJ : 2023.3.2
-- Gradle : 8.5
-- MySQL : 8.0.35
-- Redis : 3.0.504
+- Spring Boot 3.2.2
+    - Project : Gradle - Groovy
 
-<br>
+#### 3. DB
+- MYSQL 8.0.35
 
-**3D**
-<br>
-
-<img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/flask-000000?style=for-the-badge&logo=flask&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/blender-E87D0D?style=for-the-badge&logo=blender&logoColor=white">&nbsp;
-
-- Python : 3.11.7
-- Flask : 3.0.2
-- Blender : 2.8.1
-  - MB-Lab : 1.7.8.9
-
-<br>
-
-**FrontEnd**
-<br>
-
-<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black">&nbsp;<img src="https://img.shields.io/badge/vite-646CFF?style=for-the-badge&logo=vite&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/pwa-5A0FC8?style=for-the-badge&logo=pwa&logoColor=black">&nbsp;<img src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=Three.js&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/recoil-3578E5?style=for-the-badge&logo=recoil&logoColor=black">&nbsp;<img src="https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=black">&nbsp;<img src="https://img.shields.io/badge/chart.js-FF6384?style=for-the-badge&logo=chart.js&logoColor=black">
-
-- React 18.2.0
-- Vite 5.0.8
-- Vite Pwa 0.17.4
-- Npm 10.2.5
-- Node.js 20.10.0
-- Axios 1.6.7
-- React-Three/fiber 8.15.16
-- Hls.js 1.5.3
-- Videosdk 0.1.83
-- Recoil 0.7.7
-- Recoil-persist 5.1.0
-- Tailwindcss 3.4.1
-- Aws-sdk/client-s3 3.511.0
-- Chart.js 4.4.1
-- Heroicons 2.1.1
-
-<br>
-
-**CI/CD**
-<br>
-
-<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=Jenkins&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/aws ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/amazonrds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/amazons3-1572B6?style=for-the-badge&logo=amazons3&logoColor=white">&nbsp;
-
+#### 4. INFRA
 - Docker : 25.0.2
+
+- DockerHub
+
 - Jenkins : 2.441
-- Nginx : 1.18(Ubuntu)
-- AWS
-  - EC2
-  - RDS
-  - S3
 
-<br>
+- nginx : 1.18(Ubuntu)
 
-**협업 툴**
-<br>
+#### 5. AI
+- Famework : Tensorflow
 
-<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jirasoftware&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/mattermost-0058CC?style=for-the-badge&logo=mattermost&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white">&nbsp;<img src="https://img.shields.io/badge/figma-EA4335?style=for-the-badge&logo=figma&logoColor=white">&nbsp;
+- 가상환경 : Annaconda
 
-- 형상 관리 : Git
-- 이슈 관리 : Jira
-- 커뮤니케이션 : Mattermost, Webex, Notion, Discord
-- 디자인 : Figma
+- Library : Keras
+
+- Model : Sequential, CNN
 
 <br>
 <br>
