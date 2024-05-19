@@ -47,7 +47,7 @@ class _RankingListState extends State<RankingLists> {
                           context, CustomFontStyle.yeonSung60)),
                 ),
                 Positioned(
-                  right: MediaQuery.of(context).size.width * 0.04,
+                  right: MediaQuery.of(context).size.width * 0.1,
                   child: Text('경험치',
                       style: CustomFontStyle.getTextStyle(
                           context, CustomFontStyle.yeonSung60)),

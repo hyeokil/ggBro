@@ -87,7 +87,7 @@ class _RankingListState extends State<RankingList> {
             child: Container(
               alignment: Alignment.centerLeft,
               height: MediaQuery.of(context).size.height * 0.06,
-              width: MediaQuery.of(context).size.width * 0.17,
+              width: MediaQuery.of(context).size.width * 0.2,
               child: Text(
                 '${widget.score} exp',
                 style: CustomFontStyle.getTextStyle(
