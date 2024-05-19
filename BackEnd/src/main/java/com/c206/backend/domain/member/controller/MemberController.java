@@ -75,11 +75,6 @@ public class MemberController {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long memberId = customUserDetails.getId();
 
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        System.out.println(now);
-
         MemberTrashCountResDto memberTrashCountResDto = memberService.getMemberInfo(memberId);
 
         return ResponseEntity.ok().body(Message.success(memberTrashCountResDto));
