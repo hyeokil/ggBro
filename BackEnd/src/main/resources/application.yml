@@ -65,6 +65,7 @@ spring:
         - 'classpath:/sql/data_member_info.sql'
         - 'classpath:/sql/data_member_pet.sql'
         - 'classpath:/sql/data_member_achievement.sql'
+        - 'classpath:/sql/data_member_quest.sql'
         - 'classpath:/sql/data_plogging.sql'
         - 'classpath:/sql/data_trash.sql'
         - 'classpath:/sql/data_notice.sql'
