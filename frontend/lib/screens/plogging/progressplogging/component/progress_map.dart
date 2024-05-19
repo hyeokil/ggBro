@@ -337,7 +337,7 @@ class _ProgressMapState extends State<ProgressMap> {
             {'latitude': position.latitude, 'longitude': position.longitude});
         isStart = false;
       }
-      if (position.speed < 2.5) {
+      if (position.speed < 1) {
         return;
       }
       setState(() {
