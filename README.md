@@ -13,7 +13,9 @@
 - [개요](#개요)<br>
 - [주요 기능](#주요-기능)<br>
 - [서비스 화면](#서비스-화면)<br>
+- [시스템 아키텍처](#시스템-아키텍처)<br>
 - [주요 기술](#주요-기술)<br>
+- [파일 구조](#파일-구조)<br>
 - [프로젝트 산출물](#프로젝트-산출물)<br>
 
 <br>
@@ -185,6 +187,140 @@
 - 커뮤니케이션 : Mattermost, Notion, Miro
 
 - 디자인 : Figma, Canva
+
+<br>
+<br>
+
+# 파일 구조
+
+#### Backend
+```
+BackEnd\src\main\java\com\c206\backend
+├─ 📂domain
+│  ├─ 📂achievement
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  └─ 📂response
+│  │  ├─ 📂entity
+│  │  │  └─ 📂enums
+│  │  ├─ 📂exception
+│  │  ├─ 📂repository
+│  │  └─ 📂service
+│  ├─ 📂history
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  └─ 📂response
+│  │  ├─ 📂exception
+│  │  └─ 📂service
+│  ├─ 📂member
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  ├─ 📂request
+│  │  │  └─ 📂response
+│  │  ├─ 📂entity
+│  │  ├─ 📂exception
+│  │  │  ├─ 📂member
+│  │  │  └─ 📂redis
+│  │  ├─ 📂repository
+│  │  └─ 📂service
+│  ├─ 📂notice
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  └─ 📂response
+│  │  ├─ 📂entity
+│  │  ├─ 📂exception
+│  │  ├─ 📂repository
+│  │  └─ 📂service
+│  ├─ 📂pet
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  └─ 📂response
+│  │  ├─ 📂entity
+│  │  │  └─ 📂enums
+│  │  ├─ 📂exception
+│  │  ├─ 📂repository
+│  │  └─ 📂service
+│  ├─ 📂plogging
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  ├─ 📂request
+│  │  │  └─ 📂response
+│  │  ├─ 📂entity
+│  │  │  └─ 📂enums
+│  │  ├─ 📂exception
+│  │  ├─ 📂repository
+│  │  └─ 📂service
+│  │      └─ 📂Impl
+│  ├─ 📂quest
+│  │  ├─ 📂controller
+│  │  ├─ 📂dto
+│  │  │  └─ 📂response
+│  │  ├─ 📂entity
+│  │  ├─ 📂exception
+│  │  ├─ 📂repository
+│  │  └─ 📂service
+│  └─ 📂ranking
+│      ├─ 📂controller
+│      ├─ 📂dto
+│      │  └─ 📂response
+│      └─ 📂service
+└─ 📂global
+    ├─ 📂common
+    │  ├─ 📂dto
+    │  └─ 📂entity
+    ├─ 📂config
+    ├─ 📂exception
+    └─ 📂jwt
+```
+
+#### Frontend
+```
+frontend\lib
+├─ 📂core
+│  └─ 📂theme
+│      ├─ 📂constant
+│      └─ 📂custom
+├─ 📂models
+├─ 📂provider
+├─ 📂router
+└─ 📂screens
+    ├─ 📂campaign
+    │  ├─ 📂component
+    │  └─ 📂dialog
+    ├─ 📂component
+    │  ├─ 📂clearmonster
+    │  └─ 📂topbar
+    │      └─ 📂dialog
+    ├─ 📂history
+    │  ├─ 📂component
+    │  └─ 📂dialog
+    ├─ 📂intro
+    │  └─ 📂dialog
+    ├─ 📂main
+    │  ├─ 📂component
+    │  ├─ 📂dialog
+    │  ├─ 📂openbox
+    │  └─ 📂partner
+    ├─ 📂member
+    │  └─ 📂component
+    ├─ 📂plogging
+    │  ├─ 📂finishplogging
+    │  │  └─ 📂component
+    │  ├─ 📂progressplogging
+    │  │  ├─ 📂component
+    │  │  └─ 📂dialog
+    │  └─ 📂readyplogging
+    │      ├─ 📂component
+    │      └─ 📂dialog
+    ├─ 📂profile
+    │  ├─ 📂component
+    │  └─ 📂dialog
+    ├─ 📂ranking
+    │  └─ 📂component
+    ├─ 📂rescue
+    │  └─ 📂dialog
+    └─ 📂tutorial
+```
 
 <br>
 <br>
