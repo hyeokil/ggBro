@@ -36,35 +36,55 @@ output_image_path = safe_path("grabcut_image.jpg")
 
 no_detected = 0
 
+
 def remove_background_grabcut(image_path, output_path):
     # 이미지 읽기
-    original_image = cv2.imread(image_path)
-    image = original_image.copy()  # 작업용 복사본 생성
+    image = cv2.imread(image_path)
+    height, width = image.shape[:2]
+
+    # 이미지 중심 좌표
+    center_x, center_y = width // 2, height // 2
 
     # 초기 마스크 생성
-    mask = np.full(image.shape[:2], cv2.GC_PR_BGD, dtype=np.uint8)  # 대부분의 영역을 가능한 배경으로 설정
+    mask = np.zeros(image.shape[:2], np.uint8)
 
-    # 확실한 배경 설정을 최소화
-    mask[:1, :] = cv2.GC_BGD  # 상단 1픽셀
-    mask[-1:, :] = cv2.GC_BGD  # 하단 1픽셀
-    mask[:, :1] = cv2.GC_BGD  # 좌측 1픽셀
-    mask[:, -1:] = cv2.GC_BGD  # 우측 1픽셀
+    # 마스크를 위한 사전 설정
+    # 확실한 배경
+    border_margin = 10
+    mask[:border_margin, :] = 0
+    mask[-border_margin:, :] = 0
+    mask[:, :border_margin] = 0
+    mask[:, -border_margin:] = 0
 
-    # 이미지 중앙에 더 작은 사각형을 확실한 전경으로 설정
-    height, width = image.shape[:2]
-    fg_rect = (width // 4, height // 4, width // 2, height // 2)
-    cv2.rectangle(mask, (fg_rect[0], fg_rect[1]), (fg_rect[0] + fg_rect[2], fg_rect[1] + fg_rect[3]), cv2.GC_FGD, -1)
+    # 중심 영역을 전경으로 설정
+    # margin_x = width // 3
+    # margin_y = height // 2
+
+    # margin_x = 80
+    # margin_y = 120
+
+    margin_x = width // 4
+    margin_y = height // 2
+
+    top_left_x = max(0, center_x - margin_x)
+    top_left_y = max(0, center_y - margin_y)
+    bottom_right_x = min(width, center_x + margin_x)
+    bottom_right_y = min(height, center_y + margin_y)
+
+    mask[top_left_y:bottom_right_y, top_left_x:bottom_right_x] = 3  # GC_PR_FGD
 
     # GrabCut에 필요한 임시 배열 생성
     bgd_model = np.zeros((1, 65), np.float64)
     fgd_model = np.zeros((1, 65), np.float64)
 
-    # GrabCut 알고리즘 적용, 반복 횟수를 조정
+    # GrabCut 알고리즘 적용
     cv2.grabCut(image, mask, None, bgd_model, fgd_model, 5, cv2.GC_INIT_WITH_MASK)
 
-    # 마스크를 사용하여 원본 이미지에서 전경 추출
+    # 확실한 배경과 불확실한 배경을 0으로 설정, 확실한 전경과 불확실한 전경을 1로 설정
     mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
-    result = original_image * mask2[:, :, np.newaxis]
+
+    # 원본 이미지와 마스크를 사용하여 결과 이미지 생성
+    result = image * mask2[:, :, np.newaxis]
 
     # 결과 이미지 저장
     cv2.imwrite(output_path, result)
@@ -137,11 +157,8 @@ def crop_image(file_path):
         y2 = int(y_center + bbox_height / 2)
         objects.append((x1, y1, x2, y2))
 
-    count = len(objects)
-    # print("객체 개수:", count)
-
-    if count == 0:
-        return count
+    if not objects:
+        return 0
 
     # 이미지 중앙과 가장 가까운 객체 찾기
     image_center = (width / 2, height / 2)
@@ -149,12 +166,51 @@ def crop_image(file_path):
 
     # 가장 가까운 객체를 사용하여 이미지 크롭
     x1, y1, x2, y2 = closest_object
+
+    closest_object_area = (x2 - x1) * (y2 - y1)
+    image_area = width * height
+
+    if closest_object_area >= 0.9 * image_area:
+        remove_background_grabcut(file_path, output_image_path)
+        cmd = f"python {detect_file_path} --weights {weights_path} --img 320 --conf 0.20 --source {output_image_path} --save-txt --save-conf --exist-ok --device cpu"
+        result3 = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+        txt_path_grabcut = result_dir / 'labels' / f"{Path(output_image_path).stem}.txt"
+
+        if txt_path_grabcut.exists():
+            with open(txt_path_grabcut, 'r') as file:
+                lines = file.readlines()
+        else:
+            return 0
+
+        objects = []
+        for line in lines:
+            parts = line.strip().split()
+            x_center, y_center, bbox_width, bbox_height = map(float, parts[1:5])
+            x_center *= width
+            y_center *= height
+            bbox_width *= width
+            bbox_height *= height
+            x1 = int(x_center - bbox_width / 2)
+            y1 = int(y_center - bbox_height / 2)
+            x2 = int(x_center + bbox_width / 2)
+            y2 = int(y_center + bbox_height / 2)
+            objects.append((x1, y1, x2, y2))
+
+    if not objects:
+        return 0
+    
+
+    closest_object = min(objects, key=lambda obj: (image_center[0] - (obj[0]+obj[2])/2) ** 2 + (image_center[1] - (obj[1]+obj[3])/2) ** 2)
+
+    x1, y1, x2, y2 = closest_object
+
     cropped_image = image[y1:y2, x1:x2]
 
     # 크롭된 이미지 저장 또는 표시
     cv2.imwrite('./cropped_image.jpg', cropped_image)
 
-    return count
+    return len(objects)
 
 
 def prepare_image(file_path, output_size=(384, 384)):
