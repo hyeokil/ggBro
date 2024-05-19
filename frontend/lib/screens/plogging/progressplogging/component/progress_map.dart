@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
@@ -18,7 +16,7 @@ import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.
 import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
 import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
 import 'package:frontend/screens/plogging/progressplogging/dialog/box_dialog.dart';
-import 'package:frontend/screens/tutorial/plogging_tutorial_box_dialog.dart';
+import 'package:frontend/screens/plogging/progressplogging/dialog/retry_connected_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_get_trash_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_kill_trash_dialog.dart';
 import 'package:frontend/screens/tutorial/plogging_tutorial_lacation_dialog.dart';
@@ -59,6 +57,7 @@ class _ProgressMapState extends State<ProgressMap> {
   final double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
   List<NMarker> trashTongs = []; // 쓰레기통 마커 변수
   List<Map<String, double>> path = []; // 종료 시 보내 줄 경로 정보
+  bool isStart = true;
 
   // 블루투스용 변수들
   late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
@@ -71,6 +70,7 @@ class _ProgressMapState extends State<ProgressMap> {
 
   // api 응답 관련 변수
   late PloggingModel ploggingModel;
+  late StreamSubscription<BluetoothConnectionState> isConnected;
   late int ploggingId;
   late String accessToken, displayMonster, monsterIcon;
   late bool isExp;
@@ -97,6 +97,7 @@ class _ProgressMapState extends State<ProgressMap> {
     device = mainProvider.getDevice();
     findServiceAndCharacteristics();
     totalDistance = 0;
+    retryConnect();
     getPathLocation();
     realTimePath();
   }
@@ -106,6 +107,7 @@ class _ProgressMapState extends State<ProgressMap> {
   void dispose() {
     pathStream.cancel();
     device.disconnect();
+    isConnected.cancel();
     _mapController!.dispose();
     super.dispose();
   }
@@ -115,17 +117,28 @@ class _ProgressMapState extends State<ProgressMap> {
     ploggingId = ploggingModel.getPloggingId();
   }
 
+  void retryConnect() {
+    isConnected =
+        device.connectionState.listen((BluetoothConnectionState state) {
+      if (state == BluetoothConnectionState.disconnected) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return RetryConnectedDialog(
+              onFinish: showFinishPloggingDialog,
+              onConnect: () {
+                device = mainProvider.getDevice();
+                findServiceAndCharacteristics();
+              },
+            );
+          },
+        );
+      }
+    });
+  }
+
   // 기기 서비스와 해당 서비스의 필요한 characteristic 연결 함수
   void findServiceAndCharacteristics() async {
-    if (!device.isConnected) {
-      // showDialog(
-      //     barrierDismissible: false,
-      //     context: context,
-      //     builder: (BuildContext context) {
-      //       return const BluetoothConnectedDialog();
-      //     });
-    }
-
     List<BluetoothService> services = await device.discoverServices();
 
     for (BluetoothService service in services) {
@@ -260,7 +273,6 @@ class _ProgressMapState extends State<ProgressMap> {
           plastic, can, glass, normal, value, box, isExp);
       trashId += 1;
       NMarker trashMarker = NMarker(
-        angle: 30,
         id: 'trash$trashId',
         position: NLatLng(trashLatitude, trashLongitude),
         icon: NOverlayImage.fromAssetImage(monsterIcon),
@@ -273,7 +285,7 @@ class _ProgressMapState extends State<ProgressMap> {
 
   getTrashLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best);
     setState(() {
       trashLatitude = position.latitude;
       trashLongitude = position.longitude;
@@ -283,7 +295,7 @@ class _ProgressMapState extends State<ProgressMap> {
   // 현재 위치 조회하는 함수
   getPathLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best);
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
@@ -316,8 +328,18 @@ class _ProgressMapState extends State<ProgressMap> {
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
-            locationSettings: const LocationSettings(distanceFilter: 10))
+            locationSettings: LocationSettings(
+                accuracy: LocationAccuracy.bestForNavigation,
+                distanceFilter: 10))
         .listen((Position position) {
+      if (isStart) {
+        path.add(
+            {'latitude': position.latitude, 'longitude': position.longitude});
+        isStart = false;
+      }
+      if (position.speed < 2.5) {
+        return;
+      }
       setState(() {
         previousLatitude = _pathPoints.last.latitude;
         previousLongitude = _pathPoints.last.longitude;
@@ -436,14 +458,7 @@ class _ProgressMapState extends State<ProgressMap> {
       builder: (BuildContext context) {
         return FinishPloggingDialog(
           totalDistance: totalDistance.floor(),
-          plastic: plastic,
-          glass: glass,
-          can: can,
-          normal: normal,
-          box: box,
-          value: value,
           path: path,
-          isExp: isExp,
         );
       },
     ).then((_) {

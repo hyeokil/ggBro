@@ -1,6 +1,7 @@
 package com.c206.backend.domain.plogging.service.Impl;
 
 
+import com.c206.backend.domain.achievement.service.MemberAchievementServiceImpl;
 import com.c206.backend.domain.member.entity.Member;
 import com.c206.backend.domain.member.exception.member.MemberError;
 import com.c206.backend.domain.member.exception.member.MemberException;
@@ -24,6 +25,7 @@ import com.c206.backend.domain.plogging.repository.PloggingRepository;
 import com.c206.backend.domain.plogging.repository.PloggingRouteRepository;
 import com.c206.backend.domain.plogging.repository.TrashRepository;
 import com.c206.backend.domain.plogging.service.PloggingService;
+import com.c206.backend.domain.quest.service.MemberQuestServiceImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +46,8 @@ public class PloggingServiceImpl implements PloggingService {
     private final PloggingRepository ploggingRepository;
     private final TrashRepository trashRepository;
     private final PloggingRouteRepository ploggingRouteRepository;
-    private final TrashServiceImpl trashServiceImpl;
+    private final MemberAchievementServiceImpl memberAchievementServiceImpl;
+    private final MemberQuestServiceImpl memberQuestServiceImpl;
     private final RedisService redisService;
     private final MemberPetService memberPetService;
 
@@ -67,11 +70,12 @@ public class PloggingServiceImpl implements PloggingService {
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime updatedTime = now.plusHours(9);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         Plogging plogging = ploggingRepository.save(Plogging.builder()
                 .member(member)
                 .memberPet(memberPet)
-                .time(now.format(formatter) + " ~ ")
+                .time(updatedTime.format(formatter) + " ~ ")
                 .distance(0)
                 .build());
 
@@ -98,13 +102,14 @@ public class PloggingServiceImpl implements PloggingService {
                 -> new PloggingException(PloggingError.NOT_FOUND_PLOGGING));
         plogging.updateDistance(finishPloggingRequestDto.getDistance());
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime updatedTime = now.plusHours(9);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        plogging.updateTime(now.format(formatter));
+        plogging.updateTime(updatedTime.format(formatter));
 //       플로깅 1회 업적, 퀘스트 진행상황 동기화
-        trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),1L,1);
-        trashServiceImpl.updateMemberQuest(plogging.getMember().getId(),plogging.getMemberPet().getId(),1L);
+        memberAchievementServiceImpl.updateMemberAchievement(plogging.getMember().getId(),1L,1);
+        memberQuestServiceImpl.updateMemberQuest(plogging.getMember().getId(),plogging.getMemberPet().getId(),1L);
 //        플로깅한 거리
-        trashServiceImpl.updateMemberAchievement(plogging.getMember().getId(),
+        memberAchievementServiceImpl.updateMemberAchievement(plogging.getMember().getId(),
                 2L,
                 finishPloggingRequestDto.getDistance());
 

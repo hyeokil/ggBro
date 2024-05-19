@@ -54,6 +54,7 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
   final double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
   List<NMarker> trashTongs = []; // 쓰레기통 마커 변수
   List<Map<String, double>> path = []; // 종료 시 보내 줄 경로 정보
+  bool isStart = true;
 
   // 쓰레기 주웠을 때 쓰는 변수
   late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
@@ -81,7 +82,6 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
     petModel = Provider.of<PetModel>(context, listen: false);
     currentPet = petModel.getCurrentPet();
     isExp = !currentPet['active'];
-    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
     accessToken = userProvider.getAccessToken();
     startAPI();
     totalDistance = 0;
@@ -100,41 +100,42 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
   void startAPI() async {
     await ploggingModel.ploggingStart(accessToken, -1);
     ploggingId = ploggingModel.getPloggingId();
+    // 쓰레기도 같이 초기화
+    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
   }
 
-  getClassficationData() {
+  getNoDeviceData() {
     // test용 버튼 클릭 시 API 콜
     ploggingModel
         .noDeviceTrash(accessToken, trashLatitude, trashLongitude)
         .then((data) {
       if (data == 'Success') {
-        Map<String, dynamic> classificationData =
-            ploggingModel.getClassificationData();
-        if (classificationData.isNotEmpty) {
-          switch (classificationData['trash_type']) {
+        Map<String, dynamic> noDeviceData = ploggingModel.getNoDeviceData();
+        if (noDeviceData.isNotEmpty) {
+          switch (noDeviceData['trash_type']) {
             case 'NORMAL':
               normal += 1;
               displayMonster = '미쪼몽';
               monsterIcon = AppIcons.mizzomon;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             case 'CAN':
               can += 1;
               displayMonster = '포캔몽';
               monsterIcon = AppIcons.pocanmong;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             case 'PLASTIC':
               plastic += 1;
               displayMonster = '플라몽';
               monsterIcon = AppIcons.plamong;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             case 'GLASS':
               glass += 1;
               displayMonster = '율몽';
               monsterIcon = AppIcons.yulmong;
-              drawData(classificationData);
+              drawData(noDeviceData);
               break;
             default:
               return; // 판별하지 못했다면 마커 찍지 X
@@ -154,17 +155,17 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
             );
           });
         }
-        return ploggingModel.getClassificationData();
+        return ploggingModel.getNoDeviceData();
       } else {
         return;
       }
     });
   }
 
-  void drawData(Map<String, dynamic> classificationData) {
+  void drawData(Map<String, dynamic> noDeviceData) {
     setState(() {
-      value += classificationData['value'] as int;
-      if (classificationData['rescue']) {
+      value += noDeviceData['value'] as int;
+      if (noDeviceData['rescue']) {
         box += 1;
         showDialog(
           context: context,
@@ -184,7 +185,6 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
           plastic, can, glass, normal, value, box, isExp);
       trashId += 1;
       NMarker trashMarker = NMarker(
-        angle: 30,
         id: 'trash$trashId',
         position: NLatLng(trashLatitude, trashLongitude),
         icon: NOverlayImage.fromAssetImage(monsterIcon),
@@ -197,7 +197,7 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
 
   getTrashLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best);
     setState(() {
       trashLatitude = position.latitude;
       trashLongitude = position.longitude;
@@ -240,8 +240,18 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
-            locationSettings: const LocationSettings(distanceFilter: 15))
+            locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.bestForNavigation,
+                distanceFilter: 10))
         .listen((Position position) {
+      if (isStart) {
+        path.add(
+            {'latitude': position.latitude, 'longitude': position.longitude});
+        isStart = false;
+      }
+      if (position.speed < 2.5) {
+        return;
+      }
       setState(() {
         previousLatitude = _pathPoints.last.latitude;
         previousLongitude = _pathPoints.last.longitude;
@@ -360,14 +370,7 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
       builder: (BuildContext context) {
         return FinishPloggingDialog(
           totalDistance: totalDistance.floor(),
-          plastic: plastic,
-          glass: glass,
-          can: can,
-          normal: normal,
-          box: box,
-          value: value,
           path: path,
-          isExp: isExp,
         );
       },
     ).then((_) {
@@ -541,9 +544,12 @@ class _NoDevicePloggingState extends State<NoDevicePlogging> {
                           child: Center(
                             child: GestureDetector(
                               onTap: () async {
-                                await getTrashLocation();
                                 isKilling = true;
-                                getClassficationData();
+                                await getTrashLocation();
+                                Future.delayed(
+                                  const Duration(seconds: 3),
+                                  getNoDeviceData,
+                                );
                               },
                               child: Container(
                                 decoration: BoxDecoration(

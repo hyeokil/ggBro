@@ -70,16 +70,7 @@ public class MemberServiceImpl implements MemberService{
 
             Member member = memberRepository.findById(nowMember.get().getId()).orElseThrow(()
                     -> new MemberException(MemberError.NOT_FOUND_MEMBER));
-            memberPetService.provideBasePet(member);
 
-            //기본펫 1번 지급
-            try{
-                List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(member.getId());
-
-                redisService.setValues("latest pet id "+ nowMember.get().getId(), String.valueOf(memberPetList.get(0).getMemberPetId()), 14*24*60*60*1000L);
-            }catch (Exception e){
-                throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_PET);
-            }
 
             //회원-정보 테이블에 기본사항 지정하기
             try{
@@ -110,12 +101,25 @@ public class MemberServiceImpl implements MemberService{
                 throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_ACHIEVEMENT);
             }
 
+
+            memberPetService.provideBasePet(member);
+
+            //기본펫 1번 지급
+            try{
+                List<MemberPetListResponseDto> memberPetList = memberPetService.getMemberPetList(member.getId());
+
+                redisService.setValues("latest pet id "+ nowMember.get().getId(), String.valueOf(memberPetList.get(0).getMemberPetId()), 14*24*60*60*1000L);
+            }catch (Exception e){
+                throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_PET);
+            }
+
             //회원-퀘스트 테이블에 기본사항 지정하기
             try{
                 memberQuestService.addQuestList(member.getId());
             }catch (Exception e){
                 throw new MemberException(MemberError.FAIL_TO_MAKE_BASIC_QUEST);
             }
+
 
             return true;
         }
@@ -139,7 +143,7 @@ public class MemberServiceImpl implements MemberService{
         for(MemberPetListResponseDto memberPetItem : memberPetList){
             MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId(), false);
             totalTrashNormal += memberPetDetail.getNormal();
-            totalTrashNormal += memberPetDetail.getPlastic();
+            totalTrashPlastic += memberPetDetail.getPlastic();
             totalTrashCan += memberPetDetail.getCan();
             totalTrashGlass += memberPetDetail.getGlass();
         }

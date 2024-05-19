@@ -13,21 +13,20 @@ class NoDeviceDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '기기 없을 시 기본적인 플로깅만 가능합니다.',
-            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+            '기기를 사용하지 않는 플로깅입니다',
+            style: CustomFontStyle.getTextStyle(
+                context, CustomFontStyle.yeonSung70),
           ),
           Text(
-            '쓰레기통 위치 확인,',
-            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+            '일부 기능은 지원하지 않습니다.',
+            style: CustomFontStyle.getTextStyle(
+                context, CustomFontStyle.yeonSung70),
           ),
           Text(
-            '실시간 경로 기능만 제공 하고,',
-            style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
+            '정말 진행하시겠습니까?',
+            style: CustomFontStyle.getTextStyle(
+                context, CustomFontStyle.yeonSung70),
           ),
-        Text(
-          '플로깅 기록은 남지 않습니다.',
-          style: CustomFontStyle.getTextStyle(context, CustomFontStyle.yeonSung70),
-        ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
