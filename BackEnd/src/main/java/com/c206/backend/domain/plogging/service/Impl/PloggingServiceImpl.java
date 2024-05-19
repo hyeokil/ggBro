@@ -70,11 +70,12 @@ public class PloggingServiceImpl implements PloggingService {
         MemberPet memberPet = memberPetRepository.findById(memberPetId).orElseThrow(()
                 -> new PetException(PetError.NOT_FOUND_MEMBER_PET));
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime updatedTime = now.plusHours(9);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         Plogging plogging = ploggingRepository.save(Plogging.builder()
                 .member(member)
                 .memberPet(memberPet)
-                .time(now.format(formatter) + " ~ ")
+                .time(updatedTime.format(formatter) + " ~ ")
                 .distance(0)
                 .build());
 
@@ -103,7 +104,7 @@ public class PloggingServiceImpl implements PloggingService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime updatedTime = now.plusHours(9);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        plogging.updateTime(now.format(formatter));
+        plogging.updateTime(updatedTime.format(formatter));
 //       플로깅 1회 업적, 퀘스트 진행상황 동기화
         memberAchievementServiceImpl.updateMemberAchievement(plogging.getMember().getId(),1L,1);
         memberQuestServiceImpl.updateMemberQuest(plogging.getMember().getId(),plogging.getMemberPet().getId(),1L);
