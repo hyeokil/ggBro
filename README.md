@@ -137,8 +137,19 @@
 #### 2. BE
 - OpenJDK 17
 
-- Spring Boot 3.2.2
+- Spring Boot 3.2.4
     - Project : Gradle - Groovy
+- Spring Data JPA
+- Spring Security
+- Spring Validation
+- Redis (master-slave)
+- JWT
+- Hibernate Spatial
+- JTS
+- swagger
+
+- TEST
+    - Apache JMeter
 
 #### 3. DB
 - MYSQL 8.0.35
@@ -148,12 +159,14 @@
 
 - DockerHub
 
-- Jenkins : 2.441
+- Jenkins : 2.445
 
 - nginx : 1.18(Ubuntu)
 
+- SSL
+
 #### 5. AI
-- Famework : Tensorflow
+- Framework : Tensorflow
 
 - 가상환경 : Annaconda
 
