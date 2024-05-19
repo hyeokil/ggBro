@@ -244,6 +244,8 @@ class _ProgressMapState extends State<ProgressMap> {
         }
         return ploggingModel.getClassificationData();
       } else {
+        isKilling = false;
+        setState(() {});
         return;
       }
     });

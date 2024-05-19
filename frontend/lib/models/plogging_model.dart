@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/provider/user_provider.dart';
 
 import "package:http/http.dart" as http;
@@ -53,12 +54,13 @@ class PloggingModel with ChangeNotifier {
     final response = await http.post(url, headers: headers, body: body);
     print(
         'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
-
+    print('classification ${response.statusCode}');
     if (response.statusCode == 200) {
       classificationData =
           json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       return 'Success';
     } else {
+      Fluttertoast.showToast(msg: '몬스터가 아니야!!');
       return 'fail';
     }
   }
