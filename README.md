@@ -124,8 +124,9 @@
 
 <br>
 <br>
+
 # 시스템 아키텍처
-(images/Web App Reference Architecture.png)
+![아키텍처](images/Architecture.png)
 
 # 주요 기술
 #### 1. FE
