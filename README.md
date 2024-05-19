@@ -1,7 +1,7 @@
 <center>
-    <img src="frontend/public/fullLogo.png" width=30%>
+    <img src="frontend/assets/images/logo.png" width=30%>
     <br>
-    <span style="font-size:200%">3D 모델 기반 체형 관리 웹 애플리케이션</span>  
+    <span style="font-size:200%">더러워진 지구를 구하기 위한 플로깅 용사들의 모험</span>  
 </center>
 
 <br>
@@ -22,10 +22,9 @@
 
 # 참여 인원
 
-|                          이승호                          |                        김민욱                        |                            강성권                             |                          김태훈                          |                           서지원                           |                        박형규                        |
+|                          전규훈                          |                        김민욱                        |                            강성권                             |                          김혁일                          |                           박미성                           |                        최시원                        |
 | :------------------------------------------------------: | :--------------------------------------------------: | :-----------------------------------------------------------: | :------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------: |
-|                      Front (Leader)                      |                        Front                         |                             Front                             |                       Back, Server                       |                            Back                            |                         Back                         |
-| <img src="frontend/public/common/호크아이.png" width=30> | <img src="frontend/public/common/헐크.png" width=30> | <img src="frontend/public/common/캡틴 아메리카.png" width=30> | <img src="frontend/public/common/아이언맨.png" width=30> | <img src="frontend/public/common/블랙위도우.png" width=30> | <img src="frontend/public/common/팔콘.png" width=30> |
+|                      Iot (Leader)                      |                        Front                         |                             Front                             |                       Back, Server                       |                            Back,Server                            |                         AI                         |
 
 <br>
 <br>
