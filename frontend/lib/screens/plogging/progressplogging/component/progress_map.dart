@@ -57,6 +57,7 @@ class _ProgressMapState extends State<ProgressMap> {
   final double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
   List<NMarker> trashTongs = []; // 쓰레기통 마커 변수
   List<Map<String, double>> path = []; // 종료 시 보내 줄 경로 정보
+  bool isStart = true;
 
   // 블루투스용 변수들
   late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
@@ -331,6 +332,11 @@ class _ProgressMapState extends State<ProgressMap> {
                 accuracy: LocationAccuracy.bestForNavigation,
                 distanceFilter: 10))
         .listen((Position position) {
+      if (isStart) {
+        path.add(
+            {'latitude': position.latitude, 'longitude': position.longitude});
+        isStart = false;
+      }
       if (position.speed < 2.5) {
         return;
       }
