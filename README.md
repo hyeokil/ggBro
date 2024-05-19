@@ -101,9 +101,9 @@
 
 ## 펫
 
-| ![펫 선택](frontend/public/common/챌린지_조회_댓글.gif) | ![펫 획득](frontend/public/common/챌린지_WebRTC.gif) | ![펫 획득](frontend/public/common/챌린지_WebRTC.gif) |
+| ![펫 선택](frontend/public/common/챌린지_조회_댓글.gif) | ![펫 획득](frontend/public/common/챌린지_WebRTC.gif) | ![펫 구출출](frontend/public/common/챌린지_WebRTC.gif) |
 | :----------------------------------------------------: | :------------------------------------------------: |
-|                  펫 선택                   |                       펫 획득                       |
+|                  펫 선택                   |                       펫 획득                       |                       펫 구출                       |
 
 ## 플로깅
 
