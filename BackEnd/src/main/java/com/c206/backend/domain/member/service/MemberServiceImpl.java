@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService{
         for(MemberPetListResponseDto memberPetItem : memberPetList){
             MemberPetDetailResponseDto memberPetDetail = memberPetService.getMemberPetDetail(memberId, memberPetItem.getMemberPetId(), false);
             totalTrashNormal += memberPetDetail.getNormal();
-            totalTrashNormal += memberPetDetail.getPlastic();
+            totalTrashPlastic += memberPetDetail.getPlastic();
             totalTrashCan += memberPetDetail.getCan();
             totalTrashGlass += memberPetDetail.getGlass();
         }
