@@ -126,7 +126,7 @@
 <br>
 
 # 시스템 아키텍처
-![아키텍처](images/Web App Reference Architecture.png)
+![아키텍처](images/Web_App_Reference_Architecture.png)
 
 # 주요 기술
 #### 1. FE
@@ -176,6 +176,15 @@
 - Library : Keras
 
 - Model : Sequential, CNN
+
+#### 6. 협업툴
+- 형상 관리 : Gitlab
+
+- 이슈 관리 : Jira
+
+- 커뮤니케이션 : Mattermost, Notion, Miro
+
+- 디자인 : Figma, Canva
 
 <br>
 <br>
