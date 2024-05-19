@@ -195,6 +195,8 @@
 
 - MCU : ESP32-CAM
 
+![회로도](images/circuit.png)
+
 #### 6. 협업툴
 
 - 형상 관리 : Gitlab
