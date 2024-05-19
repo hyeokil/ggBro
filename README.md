@@ -131,6 +131,8 @@
 - Android Studio
     - Hedgehog 2023.1.1 Patch 2
 
+- Visual Studio
+
 - Flutter 3.19.1
 
 #### 2. BE
@@ -239,8 +241,7 @@ frontend
 
 # 프로젝트 산출물
 
-- [요구사항 명세서](https://antique-scale-1a2.notion.site/69cc5f7b94b340439022beaa36675c77)
-- [API 명세서](https://antique-scale-1a2.notion.site/API-54c31f40c2224a118bcf1c3dbd18ce92)
-- [ERD](https://www.erdcloud.com/d/t3xtRMofbn7Nrthyk)
-- [와이어프레임(피그마)](https://www.figma.com/file/XFbm01vx7fkKHHvAjCvsPl/%EC%93%B0%EB%A6%AC%EB%94%94%EB%B0%94%EB%94%94?type=design&node-id=4-2&mode=design&t=O5FMFzr8gp3KKMSj-0)
-- [시스템 아키텍처](https://app.cloudcraft.co/view/1c5c2ff3-67b0-40ab-a3c0-775678b09305?key=f15dfd05-a929-455d-9e33-59becb6a5f29)
+- [요구사항 명세서](https://www.notion.so/SSAFY-C206-a9bd69e29d404bfba469baaba88bcfbc)
+- [API 명세서](https://www.notion.so/SSAFY-C206-a9bd69e29d404bfba469baaba88bcfbc)
+- [ERD](https://www.erdcloud.com/team/ijemLkdQX5afChLjg)
+- [와이어프레임(피그마)](https://www.figma.com/files/project/221823514/Team-project?fuid=1324572789228621233)
