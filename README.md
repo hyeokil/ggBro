@@ -171,13 +171,15 @@
 - SSL
 
 #### 5. AI
-- Framework : Tensorflow
+- 학습 환경: Colab, Jupyter Notebook, Python 3.8.10
 
-- 가상환경 : Annaconda
+- Library: Keras 2.13.1, Tensorflow 2.13.1, Numpy 1.24.3, torch 1.8.0, OpenCV 4.9.0.80
 
-- Library : Keras
+- Model: ResNet50, YoloV5
 
-- Model : Sequential, CNN
+- 데이터셋: AI Hub, Roboflow
+
+- 모델 서빙 서버 : Flask 3.0.3
 
 #### 6. 협업툴
 - 형상 관리 : Gitlab
