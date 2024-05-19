@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/auth_model.dart';
 import 'package:frontend/provider/user_provider.dart';
@@ -43,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   bool isLoadingData = false;
 
   _asyncMethod() async {
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("확인"),
+              child: const Text("확인"),
               onPressed: () {
                 // OpenSettings.openDataRoamingSetting();
                 SystemNavigator.pop(); // 대화 상자 닫기
@@ -152,73 +153,78 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: isLoadingData
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Form(
-                    key: _formKey,
-                    child: Column(children: [
-                      EmailField(controller: _email),
-                      PasswordField(
-                        controller: _password,
-                        validator: _validatePassword,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              final auth = Provider.of<AuthModel>(context,
-                                  listen: false);
-                              if (_formKey.currentState!.validate()) {
-                                // 유효성 검사를 통과한 경우 로그인 로직을 실행합니다.
-                                String email = _email.text;
-                                String password = _password.text;
-                                // print('이메일 $email 비밀번호 $password');
-                                // 여기에 로그인 로직을 구현합니다.
-                                AuthStatus loginStatus =
-                                    await auth.login(email, password);
-                                if (loginStatus == AuthStatus.loginSuccess) {
-                                  var user = Provider.of<UserProvider>(context,
-                                      listen: false);
-                                  var tutorial = user.getTutorial();
-                                  if (tutorial) {
-                                    context.go('/main');
-                                  } else {
-                                    context.go('/intro');
-                                  }
-                                }
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.orange.shade100,
-                              backgroundColor: AppColors.basicShadowPink,
-                              textStyle: CustomFontStyle.getTextStyle(
-                                  context, CustomFontStyle.yeonSung70),
-                            ),
-                            child: const Text("로그인"),
+            ? Center(
+              child: SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppIcons.logo),
+                      Form(
+                        key: _formKey,
+                        child: Column(children: [
+                          EmailField(controller: _email),
+                          PasswordField(
+                            controller: _password,
+                            validator: _validatePassword,
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.green.shade100,
-                                backgroundColor: AppColors.basicgreen,
-                                textStyle: CustomFontStyle.getTextStyle(
-                                    context, CustomFontStyle.yeonSung70)),
-                            onPressed: () {
-                              _formKey.currentState!.reset();
-                              _email.clear();
-                              _password.clear();
-                              context.push('/signUp');
-                            },
-                            child: const Text("회원가입"),
-                          )
-                        ],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () async {
+                                  final auth = Provider.of<AuthModel>(context,
+                                      listen: false);
+                                  if (_formKey.currentState!.validate()) {
+                                    // 유효성 검사를 통과한 경우 로그인 로직을 실행합니다.
+                                    String email = _email.text;
+                                    String password = _password.text;
+                                    // print('이메일 $email 비밀번호 $password');
+                                    // 여기에 로그인 로직을 구현합니다.
+                                    AuthStatus loginStatus =
+                                        await auth.login(email, password);
+                                    if (loginStatus == AuthStatus.loginSuccess) {
+                                      var user = Provider.of<UserProvider>(context,
+                                          listen: false);
+                                      var tutorial = user.getTutorial();
+                                      if (tutorial) {
+                                        context.go('/main');
+                                      } else {
+                                        context.go('/intro');
+                                      }
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.orange.shade100,
+                                  backgroundColor: AppColors.basicShadowPink,
+                                  textStyle: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung70),
+                                ),
+                                child: const Text("로그인"),
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.green.shade100,
+                                    backgroundColor: AppColors.basicgreen,
+                                    textStyle: CustomFontStyle.getTextStyle(
+                                        context, CustomFontStyle.yeonSung70)),
+                                onPressed: () {
+                                  _formKey.currentState!.reset();
+                                  _email.clear();
+                                  _password.clear();
+                                  context.push('/signUp');
+                                },
+                                child: const Text("회원가입"),
+                              )
+                            ],
+                          ),
+                        ]),
                       ),
-                    ]),
+                    ],
                   ),
-                ],
-              )
-            : Center(
+              ),
+            )
+            : const Center(
                 child: CircularProgressIndicator(),
               ),
       ),

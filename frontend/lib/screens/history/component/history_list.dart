@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/constant/app_colors.dart';
+import 'package:frontend/core/theme/constant/app_icons.dart';
 import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/history_model.dart';
 import 'package:frontend/models/pet_model.dart';
@@ -122,9 +123,12 @@ class _HistoryListState extends State<HistoryList> {
                         height: 55,
                         width: 55,
                         child: ProfileImage(
-                          image: Image.network(
-                              allPets[widget.historyList['pet_id'] - 1]
-                                  ['image']),
+                          image: allPets[widget.historyList['pet_id'] - 1]
+                                  ['active']
+                              ? Image.network(
+                                  allPets[widget.historyList['pet_id'] - 1]
+                                      ['image'])
+                              : Image.asset(AppIcons.intro_box),
                           isPressed: false,
                         ), // 같이 간 펫
                       ),
@@ -138,7 +142,7 @@ class _HistoryListState extends State<HistoryList> {
                             ),
                           ),
                           Text(
-                            '${widget.historyList['distance']} KM',
+                            '${widget.historyList['distance'] / 1000} KM',
                             style: CustomFontStyle.getTextStyle(
                               context,
                               CustomFontStyle.yeonSung80_white,

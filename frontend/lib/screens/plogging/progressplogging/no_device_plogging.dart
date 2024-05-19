@@ -9,8 +9,17 @@ import 'package:frontend/core/theme/custom/custom_font_style.dart';
 import 'package:frontend/models/pet_model.dart';
 import 'package:frontend/models/plogging_model.dart';
 import 'package:frontend/provider/main_provider.dart';
+import 'package:frontend/provider/plogging_provider.dart';
 import 'package:frontend/provider/user_provider.dart';
+import 'package:frontend/screens/plogging/finishplogging/finish_plogging_dialog.dart';
+import 'package:frontend/screens/plogging/progressplogging/component/finishcheck_plogging.dart';
+import 'package:frontend/screens/plogging/progressplogging/component/total_trash.dart';
+import 'package:frontend/screens/plogging/progressplogging/dialog/box_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_get_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_kill_trash_dialog.dart';
+import 'package:frontend/screens/tutorial/plogging_tutorial_lacation_dialog.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import "package:http/http.dart" as http;
@@ -21,13 +30,13 @@ class NoDevicePlogging extends StatefulWidget {
   });
 
   @override
-  State<NoDevicePlogging> createState() => _NoDeviceState();
+  State<NoDevicePlogging> createState() => _NoDevicePloggingState();
 }
 
-class _NoDeviceState extends State<NoDevicePlogging> {
+class _NoDevicePloggingState extends State<NoDevicePlogging> {
   late MainProvider mainProvider;
   late UserProvider userProvider;
-
+  late PloggingProvider ploggingProvider;
   late PetModel petModel;
   late Map<String, dynamic> currentPet;
 
@@ -37,17 +46,28 @@ class _NoDeviceState extends State<NoDevicePlogging> {
   double previousLongitude = 0; // 직전 위도 경도 변수
   final List<NLatLng> _pathPoints = []; // 실시간 경로를 저장할 변수
   late StreamSubscription<Position> pathStream; // 실시간 경로 받아오는 stream 객체 변수
-  double totalDistance = 0;
+  late double totalDistance;
+  bool isTrashTotal = false; // 쓰레기 집계 현황 체크
   bool _isLocationLoaded = false; // 위치 데이터 로드 상태를 추적하는 플래그
   NaverMapController? _mapController; // 지도 컨트롤러를 옵셔널로 선언
   bool isSelectedTrashTong = false;
   final double _currentZoom = 15.0; // 클러스터링 초기 줌 레벨 설정
   List<NMarker> trashTongs = []; // 쓰레기통 마커 변수
+  List<Map<String, double>> path = []; // 종료 시 보내 줄 경로 정보
+  bool isStart = true;
+
+  // 쓰레기 주웠을 때 쓰는 변수
+  late double trashLatitude, trashLongitude; // 현재 위치 위도 경도를 업데이트 해 줄 변수
+  int trashId = 0;
 
   // api 응답 관련 변수
   late PloggingModel ploggingModel;
   late int ploggingId;
-  late String accessToken;
+  late String accessToken, displayMonster, monsterIcon;
+  late bool isExp;
+  bool isKill = false;
+  bool isKilling = false;
+  int plastic = 0, can = 0, glass = 0, normal = 0, box = 0, value = 0;
 
   late bool memberTutorial;
 
@@ -56,10 +76,15 @@ class _NoDeviceState extends State<NoDevicePlogging> {
     super.initState();
     userProvider = Provider.of<UserProvider>(context, listen: false);
     memberTutorial = userProvider.getMemberTutorial();
+    ploggingModel = Provider.of<PloggingModel>(context, listen: false);
+    ploggingProvider = Provider.of<PloggingProvider>(context, listen: false);
+    mainProvider = Provider.of<MainProvider>(context, listen: false);
     petModel = Provider.of<PetModel>(context, listen: false);
     currentPet = petModel.getCurrentPet();
+    isExp = !currentPet['active'];
     accessToken = userProvider.getAccessToken();
-    mainProvider = Provider.of<MainProvider>(context, listen: false);
+    startAPI();
+    totalDistance = 0;
     getPathLocation();
     realTimePath();
   }
@@ -72,15 +97,141 @@ class _NoDeviceState extends State<NoDevicePlogging> {
     super.dispose();
   }
 
+  void startAPI() async {
+    await ploggingModel.ploggingStart(accessToken, -1);
+    ploggingId = ploggingModel.getPloggingId();
+    // 쓰레기도 같이 초기화
+    ploggingProvider.setTrashs(0, 0, 0, 0, 0, 0, isExp);
+  }
+
+  getNoDeviceData() {
+    // test용 버튼 클릭 시 API 콜
+    ploggingModel
+        .noDeviceTrash(accessToken, trashLatitude, trashLongitude)
+        .then((data) {
+      if (data == 'Success') {
+        Map<String, dynamic> noDeviceData = ploggingModel.getNoDeviceData();
+        if (noDeviceData.isNotEmpty) {
+          switch (noDeviceData['trash_type']) {
+            case 'NORMAL':
+              normal += 1;
+              displayMonster = '미쪼몽';
+              monsterIcon = AppIcons.mizzomon;
+              drawData(noDeviceData);
+              break;
+            case 'CAN':
+              can += 1;
+              displayMonster = '포캔몽';
+              monsterIcon = AppIcons.pocanmong;
+              drawData(noDeviceData);
+              break;
+            case 'PLASTIC':
+              plastic += 1;
+              displayMonster = '플라몽';
+              monsterIcon = AppIcons.plamong;
+              drawData(noDeviceData);
+              break;
+            case 'GLASS':
+              glass += 1;
+              displayMonster = '율몽';
+              monsterIcon = AppIcons.yulmong;
+              drawData(noDeviceData);
+              break;
+            default:
+              return; // 판별하지 못했다면 마커 찍지 X
+          }
+        }
+        if (memberTutorial == false) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return PloggingTutorialKillTrashDialog(
+                  displayMonster: displayMonster,
+                  monsterIcon: monsterIcon,
+                  onConfirm: showFinishPloggingDialog,
+                );
+              },
+            );
+          });
+        }
+        return ploggingModel.getNoDeviceData();
+      } else {
+        return;
+      }
+    });
+  }
+
+  void drawData(Map<String, dynamic> noDeviceData) {
+    setState(() {
+      value += noDeviceData['value'] as int;
+      if (noDeviceData['rescue']) {
+        box += 1;
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const BoxDialog();
+          },
+        );
+      }
+
+      isKill = true;
+      isKilling = false;
+      Future.delayed(const Duration(seconds: 3), () {
+        isKill = false;
+        setState(() {});
+      });
+      ploggingProvider.setTrashs(
+          plastic, can, glass, normal, value, box, isExp);
+      trashId += 1;
+      NMarker trashMarker = NMarker(
+        id: 'trash$trashId',
+        position: NLatLng(trashLatitude, trashLongitude),
+        icon: NOverlayImage.fromAssetImage(monsterIcon),
+        size: const NSize(30, 40),
+      );
+      trashMarker.setGlobalZIndex(trashId);
+      _mapController!.addOverlay(trashMarker);
+    });
+  }
+
+  getTrashLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    setState(() {
+      trashLatitude = position.latitude;
+      trashLongitude = position.longitude;
+    });
+  }
+
   // 현재 위치 조회하는 함수
   getPathLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.best);
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
       _pathPoints.add(NLatLng(position.latitude, position.longitude));
       _isLocationLoaded = true;
+      if (memberTutorial == false) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const PloggingTutorialLocationDialog();
+            },
+          ).then(
+            (value) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const PloggingTutorialGetTrashDialog();
+                },
+              );
+            },
+          );
+        });
+      }
     });
     print('현재 위치 : ${position.latitude}, ${position.longitude}');
   }
@@ -89,14 +240,26 @@ class _NoDeviceState extends State<NoDevicePlogging> {
   realTimePath() {
     // distanceFilter의 거리 이동 시 계속해서 위치를 받아옴
     pathStream = Geolocator.getPositionStream(
-            locationSettings: const LocationSettings(distanceFilter: 20))
+            locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.bestForNavigation,
+                distanceFilter: 10))
         .listen((Position position) {
+      if (isStart) {
+        path.add(
+            {'latitude': position.latitude, 'longitude': position.longitude});
+        isStart = false;
+      }
+      if (position.speed < 1) {
+        return;
+      }
       setState(() {
         previousLatitude = _pathPoints.last.latitude;
         previousLongitude = _pathPoints.last.longitude;
         latitude = position.latitude;
         longitude = position.longitude;
 
+        path.add(
+            {'latitude': position.latitude, 'longitude': position.longitude});
         _pathPoints.add(NLatLng(latitude, longitude)); // 받아온 위치 추가하는 부분
 
         double distanceInMeters = Geolocator.distanceBetween(
@@ -200,14 +363,31 @@ class _NoDeviceState extends State<NoDevicePlogging> {
     }
   }
 
-  void goMain() {
-    context.pushReplacement('/main');
+  void showFinishPloggingDialog() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return FinishPloggingDialog(
+          totalDistance: totalDistance.floor(),
+          path: path,
+        );
+      },
+    ).then((_) {
+      var petModel = Provider.of<PetModel>(context, listen: false);
+      petModel.getPetDetail(accessToken, -1);
+      var currency =
+          Provider.of<UserProvider>(context, listen: false).getCurrency();
+      if (!isExp) {
+        userProvider.setCurrency(currency + value);
+      }
+      context.pushReplacement('/main');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -227,7 +407,7 @@ class _NoDeviceState extends State<NoDevicePlogging> {
                           : const NOverlayImage.fromAssetImage(
                               AppIcons.intro_box),
                     );
-                    mylocation.setIconSize(const NSize(50, 70));
+                    mylocation.setIconSize(const NSize(50, 50));
                     mylocation.setCircleColor(Colors.transparent);
 
                     _mapController!
@@ -248,11 +428,53 @@ class _NoDeviceState extends State<NoDevicePlogging> {
                           tilt: 45)),
                 ),
                 Positioned(
-                  top: MediaQuery.of(context).size.height * 0.75,
-                  right: 0,
+                  bottom: 0,
+                  left: MediaQuery.of(context).size.width * 0.2,
+                  right: MediaQuery.of(context).size.width * 0.2,
+                  child: GestureDetector(
+                    onVerticalDragUpdate: (e) {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return const TotalTrash();
+                          }));
+                    },
+                    onTap: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: ((context) {
+                            return const TotalTrash();
+                          }));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20)),
+                          boxShadow: [
+                            BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.2),
+                                blurRadius: 1,
+                                spreadRadius: 1)
+                          ]),
+                      height: MediaQuery.of(context).size.height * 0.04,
+                      child: Center(
+                        child: Text(
+                          '원정 집계 현황',
+                          style: CustomFontStyle.getTextStyle(
+                              context, CustomFontStyle.yeonSung70),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: MediaQuery.of(context).size.height * 0.7,
+                  right: MediaQuery.of(context).size.height * 0.005,
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.15,
-                    height: MediaQuery.of(context).size.height * 0.25,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     child: Column(
                       children: [
                         Flexible(
@@ -321,50 +543,57 @@ class _NoDeviceState extends State<NoDevicePlogging> {
                           flex: 1,
                           child: Center(
                             child: GestureDetector(
+                              onTap: () async {
+                                isKilling = true;
+                                await getTrashLocation();
+                                Future.delayed(
+                                  const Duration(seconds: 3),
+                                  getNoDeviceData,
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: AppColors.basicgreen,
+                                    borderRadius: BorderRadius.circular(40),
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.basicgray
+                                              .withOpacity(0.2),
+                                          blurRadius: 1,
+                                          spreadRadius: 1)
+                                    ]),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                width:
+                                    MediaQuery.of(context).size.height * 0.06,
+                                child: Center(
+                                  child: Text(
+                                    '줍 기',
+                                    style: CustomFontStyle.getTextStyle(context,
+                                        CustomFontStyle.yeonSung70_white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          flex: 1,
+                          child: Center(
+                            child: GestureDetector(
                               onTap: () {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      backgroundColor: Colors.white,
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Text(
-                                            '원정을 종료하시겠습니까?',
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              ElevatedButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(),
-                                                  child: const Text('취소')),
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    var main = Provider.of<
-                                                            MainProvider>(
-                                                        context,
-                                                        listen: false);
-                                                    main.setIsTutorialPloggingFinish();
-                                                    Navigator.of(context).pop();
-                                                    goMain();
-                                                  },
-                                                  child: const Text('확인'))
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                    return FinishCheckPloggingDialog(
+                                      onConfirm: showFinishPloggingDialog,
                                     );
                                   },
                                 );
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: Colors.red,
+                                    color: AppColors.error,
                                     borderRadius: BorderRadius.circular(40),
                                     boxShadow: [
                                       BoxShadow(
@@ -392,6 +621,97 @@ class _NoDeviceState extends State<NoDevicePlogging> {
                     ),
                   ),
                 ),
+                isKill
+                    ? Positioned(
+                        top: MediaQuery.of(context).size.height * 0.02,
+                        right: MediaQuery.of(context).size.height * 0.02,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(width: 3, color: Colors.white),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.basicgray.withOpacity(0.5),
+                                offset: const Offset(0, 4),
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.004,
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.09,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.04,
+                                  // color: Colors.black,
+                                  child: Image.asset(monsterIcon),
+                                ),
+                              ),
+                              Positioned(
+                                top: MediaQuery.of(context).size.height * 0.01,
+                                right: MediaQuery.of(context).size.width * 0.02,
+                                child: Text(
+                                  '$displayMonster 처치 + 1',
+                                  style: CustomFontStyle.getTextStyle(
+                                    context,
+                                    CustomFontStyle.yeonSung60,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                isKilling
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IgnorePointer(
+                              child: Container(
+                                child: GifView.asset(
+                                  AppIcons.effect,
+                                  frameRate: 13,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '몬스터 처치중',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                                Text(
+                                  '.',
+                                  style: CustomFontStyle.getTextStyle(
+                                      context, CustomFontStyle.yeonSung150),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
               ])
             : const Center(
                 child: CircularProgressIndicator(),

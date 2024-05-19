@@ -23,6 +23,13 @@ class PloggingProvider with ChangeNotifier {
     notifyListeners(); // 상태 변경 알림
   }
 
+  isPlogging() {
+    if (_plastic > 0 || _can > 0 || _glass > 0 || _normal > 0) {
+      return true;
+    }
+    return false;
+  }
+
   getTrashs() {
     return {
       'plastic': _plastic,

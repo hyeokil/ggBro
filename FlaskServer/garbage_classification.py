@@ -21,6 +21,7 @@ from pathlib import Path
 
 from flask import Flask
 
+
 app = Flask(__name__)
 app_root = Path(app.root_path)  # Flask 앱의 루트 경로
 
@@ -31,6 +32,43 @@ def safe_path(file_name):
 weights_path = safe_path("best.pt")
 source_path = safe_path("image.jpg")
 detect_file_path = safe_path("./yolov5/detect.py")
+output_image_path = safe_path("grabcut_image.jpg")
+
+no_detected = 0
+
+def remove_background_grabcut(image_path, output_path):
+    # 이미지 읽기
+    original_image = cv2.imread(image_path)
+    image = original_image.copy()  # 작업용 복사본 생성
+
+    # 초기 마스크 생성
+    mask = np.full(image.shape[:2], cv2.GC_PR_BGD, dtype=np.uint8)  # 대부분의 영역을 가능한 배경으로 설정
+
+    # 확실한 배경 설정을 최소화
+    mask[:1, :] = cv2.GC_BGD  # 상단 1픽셀
+    mask[-1:, :] = cv2.GC_BGD  # 하단 1픽셀
+    mask[:, :1] = cv2.GC_BGD  # 좌측 1픽셀
+    mask[:, -1:] = cv2.GC_BGD  # 우측 1픽셀
+
+    # 이미지 중앙에 더 작은 사각형을 확실한 전경으로 설정
+    height, width = image.shape[:2]
+    fg_rect = (width // 4, height // 4, width // 2, height // 2)
+    cv2.rectangle(mask, (fg_rect[0], fg_rect[1]), (fg_rect[0] + fg_rect[2], fg_rect[1] + fg_rect[3]), cv2.GC_FGD, -1)
+
+    # GrabCut에 필요한 임시 배열 생성
+    bgd_model = np.zeros((1, 65), np.float64)
+    fgd_model = np.zeros((1, 65), np.float64)
+
+    # GrabCut 알고리즘 적용, 반복 횟수를 조정
+    cv2.grabCut(image, mask, None, bgd_model, fgd_model, 5, cv2.GC_INIT_WITH_MASK)
+
+    # 마스크를 사용하여 원본 이미지에서 전경 추출
+    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+    result = original_image * mask2[:, :, np.newaxis]
+
+    # 결과 이미지 저장
+    cv2.imwrite(output_path, result)
+
 
 def crop_image(file_path):
 
@@ -40,6 +78,8 @@ def crop_image(file_path):
     if os.path.exists(result_dir):
         import shutil
         shutil.rmtree(result_dir)
+
+    no_detected = 0
         
     cmd = f"python {detect_file_path} --weights {weights_path} --img 320 --conf 0.25 --source {source_path} --save-txt --save-conf --exist-ok --device cpu"
 
@@ -58,8 +98,29 @@ def crop_image(file_path):
         with open(txt_path, 'r') as file:
             lines = file.readlines()
     else:
-        print(f"No detection results file at {txt_path}")  # 결과 파일 경로 로그 추가
-        return 0
+        no_detected = 1
+
+        print(f"[First] No detection results file at {txt_path}")  # 결과 파일 경로 로그 추가
+
+        # 객체 탐지 실패 시 GrabCut 수행 및 재탐지
+        input_image_path = source_path
+        remove_background_grabcut(input_image_path, output_image_path)
+
+        cmd = f"python {detect_file_path} --weights {weights_path} --img 320 --conf 0.20 --source {output_image_path} --save-txt --save-conf --exist-ok --device cpu"
+        result2 = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+        # print(result2)
+    
+    if no_detected == 1:
+        txt_path_grab = result_dir / 'labels' / f"{Path(output_image_path).stem}.txt"
+
+        if txt_path_grab.exists():
+            with open(txt_path_grab, 'r') as file:
+                lines = file.readlines()
+        else:
+            print(f"[Final] No detection results file at {txt_path_grab}")  # 결과 파일 경로 로그 추가
+            return 0
+
 
     # 객체 데이터 파싱
     objects = []
@@ -143,6 +204,7 @@ def prepare_image(file_path, output_size=(384, 384)):
 
     return img_array
 
+
 def classify_garbage(image_path):
 
     # Yolo 객체 탐지 및 Crop
@@ -160,7 +222,8 @@ def classify_garbage(image_path):
     # 이미지 전처리
     prepared_image = prepare_image(cropped_image_path)
 
-    cv2.imwrite('./prepared_image.jpg', prepared_image)
+    # prepared_image_to_save = (prepared_image * 255).astype(np.uint8)[0]  # 차원 축소와 타입 변환
+    # cv2.imwrite('./prepared_image.jpg', prepared_image_to_save)
 
     model = load_model("cnn(batch_size_256_lr_e-3).h5", compile=False)
 

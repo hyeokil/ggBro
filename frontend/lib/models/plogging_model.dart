@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/provider/user_provider.dart';
 
 import "package:http/http.dart" as http;
@@ -53,18 +54,46 @@ class PloggingModel with ChangeNotifier {
     final response = await http.post(url, headers: headers, body: body);
     print(
         'classificationTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
-
+    print('classification ${response.statusCode}');
     if (response.statusCode == 200) {
       classificationData =
           json.decode(utf8.decode(response.bodyBytes))["dataBody"];
       return 'Success';
     } else {
+      Fluttertoast.showToast(msg: '몬스터가 아니야!!');
       return 'fail';
     }
   }
 
   getClassificationData() {
     return classificationData;
+  }
+
+  late Map<String, dynamic> noDeviceData;
+
+  Future<String> noDeviceTrash(
+      String accessToken, double latitude, double longitude) async {
+    var url = Uri.https(address, "/api/v1/plogging/trash/test/$ploggingId");
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer $accessToken"
+    };
+    final body = jsonEncode({'latitude': latitude, 'longitude': longitude});
+    print('noDeviceTrash request : $url, headers : $headers body : $body');
+    final response = await http.post(url, headers: headers, body: body);
+    print(
+        'noDeviceTrash response : ${json.decode(utf8.decode(response.bodyBytes))}');
+
+    if (response.statusCode == 200) {
+      noDeviceData = json.decode(utf8.decode(response.bodyBytes))["dataBody"];
+      return 'Success';
+    } else {
+      return 'fail';
+    }
+  }
+
+  getNoDeviceData() {
+    return noDeviceData;
   }
 
   late Map<String, dynamic> finishData;
